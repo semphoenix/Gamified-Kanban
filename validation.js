@@ -35,9 +35,11 @@ const exportedMethods = {
       throw `Error: ${varName} cannot be an empty string or string with just spaces`;
     if (!isNaN(strVal))
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-    // Minimum eight characters, at least one letter and one number
-    const pwd_regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/ // https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
-    if (!pwd_regex.test(strVal)) throw `Error: ${varName} password must contain minimum eight characters, at least one letter and one number`;
+    // Minimum eight characters, at least one  letter and one number
+    let pwd_regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; 
+    // https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
+    let bval = pwd_regex.test(strVal);
+    //if (!pwd_regex.test(strVal)) throw `Error: ${varName} password must contain minimum eight characters, at least one letter and one number`;
     return strVal;
   },
   /**
