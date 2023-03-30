@@ -35,11 +35,11 @@ const exportedMethods = {
       throw `Error: ${varName} cannot be an empty string or string with just spaces`;
     if (!isNaN(strVal))
       throw `Error: ${strVal} is not a valid value for ${varName} as it only contains digits`;
-    // Minimum eight characters, at least one  letter and one number
-    let pwd_regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/; 
+    // Minimum eight characters, at least one  letter and one number and one special character
+    let pwd_regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; 
     // https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
     let bval = pwd_regex.test(strVal);
-    //if (!pwd_regex.test(strVal)) throw `Error: ${varName} password must contain minimum eight characters, at least one letter and one number`;
+    if (!bval) throw `Error: ${varName} password must contain minimum eight characters, at least one letter and one number`;
     return strVal;
   },
   /**
@@ -53,6 +53,20 @@ const exportedMethods = {
     if (typeof age !== 'number' || Number.isNaN(age) || !Number.isInteger(age)) throw `Error: ${varName} must be an integer number!`;
     if (age < 13) throw `Error: ${varName} must be greater than 12!`;
     return age;
+  },
+
+  checkDifficulty(difficulty, varName) {
+    if (difficulty===undefined) throw `Error: You must supply a ${varName}!`;
+    if (typeof difficulty !== 'number' || Number.isNaN(difficulty) || !Number.isInteger(difficulty)) throw `Error: ${varName} must be an integer number!`;
+    if (difficulty <1 || difficulty > 3) throw `Error: ${varName} must be 1=easy, 2=medium, 3=hard`;
+    return difficulty;
+  },
+
+  checkStatus(status, varName) {
+    if (status===undefined) throw `Error: You must supply a ${varName}!`;
+    if (typeof status !== 'number' || Number.isNaN(status) || !Number.isInteger(status)) throw `Error: ${varName} must be an integer number!`;
+    if (status <0 || status > 3) throw `Error: ${varName} must be to-do = 0, in-progress = 1, in-review = 2, completed = 3`;
+    return status;
   },
 
   checkStringArray(arr, varName) {
