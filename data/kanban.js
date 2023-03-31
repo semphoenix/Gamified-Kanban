@@ -45,6 +45,7 @@ let exportedMethods = {
         let kanban = await this.getKanbanById(kanbanId);
         if (kanban.groupUsers.length > 4) throw 'Error: max 5 group members of kanban';
         let newUser = {
+            _id: new ObjectId(),
             userId: userId,
             points: 0,
             rewards: []
@@ -82,6 +83,7 @@ let exportedMethods = {
 
         // any limit on number of tasks per kanban or per users?
         const newTask = {
+            _id: new ObjectId(),
             assignment: userId,
             name: name,
             description: description,

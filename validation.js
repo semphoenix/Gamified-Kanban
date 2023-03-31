@@ -39,7 +39,7 @@ const exportedMethods = {
     let pwd_regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/; 
     // https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
     let bval = pwd_regex.test(strVal);
-    if (!bval) throw `Error: ${varName} password must contain minimum eight characters, at least one letter and one number`;
+    if (!bval) throw `Error: ${varName} password must contain minimum eight characters, at least one letter, one number, and one special character @$!%*#?&`;
     return strVal;
   },
   /**
