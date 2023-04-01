@@ -30,6 +30,15 @@ await kanban.addUsertoKanban(eid, pkid);
 await kanban.addUsertoKanban(lid, pkid);
 // await kanban.addUsertoKanban(wid, pkid);
 
-await kanban.addTasktoKanban(pkid, aid, "task 1", "checking all this stuff", 1, 0);
+let t1 = await kanban.addTasktoKanban(pkid, aid, "task 1", "checking all this stuff", 1, 0);
+let t1id = t1._id.toString();
+await kanban.addVote(pkid, sid, t1id, 1);
+await kanban.addVote(pkid, sid, t1id, 1);
+await kanban.addVote(pkid, sid, t1id, 0);
+let t2 = await kanban.addTasktoKanban(pkid, sid, "task 2", "testing testing ", 2, 1);
+let t2id = t2._id.toString();
+await kanban.addVote(pkid, pid, t2id, 1);
+await kanban.addVote(pkid, lid, t2id, 0);
+await kanban.addVote(pkid, sid, t2id, 1);
 
 await closeConnection();

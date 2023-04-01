@@ -99,6 +99,40 @@ let exportedMethods = {
         const insertInfo = await kanbanCollection.findOneAndUpdate({_id: new ObjectId(kanbanId)}, {$set: updateInfo}, {returnDocument: 'after'});
         await userData.addTask(userId);
         return newTask;
+    }, 
+
+    async addVote(kanbanId, userId, taskId, vote){
+        kanbanId = validation.checkId(kanbanId, "kanbanId");
+        userId = validation.checkId(userId, "userId");
+        taskId = validation.checkId(taskId, "taskId");
+        vote = validation.checkVote(vote, "vote");
+        let kanbanCollection = await kanbans();
+        const kanban = await kanbanCollection.findOne({tasks: {$elemMatch: {_id: new ObjectId(taskId)}}});
+        if (kanban==undefined) throw 'Error: kanban with that task does not exist';
+        // iterate over users and check userId is valid
+        let found = false;
+        for (let i = 0; i < kanban.groupUsers.length; i++) {
+            const obj = kanban.groupUsers[i];
+            if (obj.userId === userId) found=true;
+        }
+        if (!found) throw 'Error: userId is not of this kanban'
+        // user cannot vote on their own task 
+        let task;
+        kanban.tasks.forEach((t) => {
+          if (t._id==taskId) task = t;
+        });
+        if (task.assignment== userId) throw 'Error: user cannot vote on their own task';
+        // get the task from taskId, go into votingstatus, find the key that matches userId and set the 
+        // value to cite
+        
+        task.votingStatus[userId] = vote;
+        //console.log(task.votingStatus);
+        const updateInfo = {
+            tasks: kanban.tasks
+        }
+        kanbanCollection = await kanbans();
+        const res = await kanbanCollection.findOneAndUpdate({_id: new ObjectId(kanbanId)}, {$set: updateInfo}, {returnDocument: 'after'});
+        return task.votingStatus;
     }
 };
 

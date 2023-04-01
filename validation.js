@@ -69,6 +69,13 @@ const exportedMethods = {
     return status;
   },
 
+  checkVote(vote, varName){
+    if (vote===undefined) throw `Error: You must supply a ${varName}!`;
+    if (typeof vote !== 'number' || Number.isNaN(vote) || !Number.isInteger(vote)) throw `Error: ${varName} must be an integer number!`;
+    if (vote !==0 && vote !== 1) throw `Error: ${varName} must be to-do = 0, in-progress = 1, in-review = 2, completed = 3`;
+    return vote;
+  },
+
   checkStringArray(arr, varName) {
     //We will allow an empty array for this,
     //if it's not empty, we will make sure all tags are strings
