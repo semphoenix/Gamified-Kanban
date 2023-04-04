@@ -4,6 +4,11 @@ import {ObjectId} from 'mongodb';
 import validation from '../validation.js';
 var colors = ["red", "blue", "orange", "green", "purple"];
 let exportedMethods = {
+    /**
+     * 
+     * @param {ObjectId} kanbanId 
+     * @returns kanban object
+     */
     async getKanbanById(kanbanId) {
         kanbanId = validation.checkId(kanbanId, "kanbanId");
         const kanbanCollection = await kanbans();
@@ -11,7 +16,12 @@ let exportedMethods = {
         if (!kanban) throw 'Error: kanban not found';
         return kanban;
       },
-    // what should i do for user colors?
+    /**
+     * takes in the ownerId, and the desired groupName for kanban
+     * @param {ObjectId} ownerId 
+     * @param {string} groupName 
+     * @returns kanban object
+     */
     async addKanban(ownerId, groupName){
         ownerId = validation.checkId(ownerId, "ownerid");
         const ownerData  = await userData.getUserById(ownerId);
@@ -28,7 +38,8 @@ let exportedMethods = {
             owner: owner,
             groupName: groupName,
             groupUsers: [],
-            userColors: {},
+            userColors: {}, 
+            // available colors
             completedTasks: 0,
             tasks: []
         }
@@ -38,7 +49,13 @@ let exportedMethods = {
         await this.addUsertoKanban(ownerId, newId.toString(), groupName)
         return await this.getKanbanById(newId.toString());;
     }, 
-
+    /**
+     * NOTE THIS NEEDS TO BE UPDATED
+     * Adds user to the kanban. calles addKanbantoUser in data/users.js
+     * @param {ObjectId} userId 
+     * @param {ObjectId} kanbanId 
+     * @returns kanban.groupUsers
+     */
     async addUsertoKanban(userId, kanbanId) {
         userId = validation.checkId(userId, "userId");
         kanbanId = validation.checkId(kanbanId, "kanbanId");
@@ -64,7 +81,16 @@ let exportedMethods = {
         await userData.addKanbantoUser(userId, kanbanId, groupName);
         return kanban.groupUsers;
     },
-
+    /**
+     * Info for creating a task
+     * @param {ObjectId} kanbanId 
+     * @param {ObjectId} userId 
+     * @param {string} name 
+     * @param {string} description 
+     * @param {int} difficulty 
+     * @param {int} status 
+     * @returns task object
+     */
     async addTasktoKanban(kanbanId, userId, name, description, difficulty, status) {
         kanbanId = validation.checkId(kanbanId, "kanbanId");
         userId = validation.checkId(userId, "userId");
@@ -100,7 +126,14 @@ let exportedMethods = {
         await userData.addTask(userId);
         return newTask;
     }, 
-
+    /**
+     * lets userId vote on a task for a given kanbanId
+     * @param {ObjectId} kanbanId 
+     * @param {ObjectId} userId 
+     * @param {ObjectId} taskId 
+     * @param {int} vote 
+     * @returns task.votingStatus
+     */
     async addVote(kanbanId, userId, taskId, vote){
         kanbanId = validation.checkId(kanbanId, "kanbanId");
         userId = validation.checkId(userId, "userId");
@@ -123,16 +156,22 @@ let exportedMethods = {
         });
         if (task.assignment== userId) throw 'Error: user cannot vote on their own task';
         // get the task from taskId, go into votingstatus, find the key that matches userId and set the 
-        // value to cite
-        
+        // value to cite    
         task.votingStatus[userId] = vote;
-        //console.log(task.votingStatus);
         const updateInfo = {
             tasks: kanban.tasks
         }
         kanbanCollection = await kanbans();
         const res = await kanbanCollection.findOneAndUpdate({_id: new ObjectId(kanbanId)}, {$set: updateInfo}, {returnDocument: 'after'});
         return task.votingStatus;
+    }, 
+
+    async getUserRewards(userId, kanbanId){
+        TODO
+    }, 
+
+    async getUserPoints(userId, kanbanId) {
+
     }
 };
 
