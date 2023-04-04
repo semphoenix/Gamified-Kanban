@@ -16,7 +16,7 @@ let exportedMethods = {
         ownerId = validation.checkId(ownerId, "ownerid");
         const ownerData  = await userData.getUserById(ownerId);
         const ownerUname = ownerData.username;
-        if (ownerData.groups.length > 5) throw 'Error: addKanband: owner is in 5 groups!'
+        if (ownerData.groups.length >= 5) throw 'Error: addKanband: owner is in 5 groups!'
 
         groupName = validation.checkString(groupName, "groupName");
         let owner = {
