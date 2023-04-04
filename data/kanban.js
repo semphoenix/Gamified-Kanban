@@ -113,7 +113,7 @@ let exportedMethods = {
             assignment: userId,
             name: name,
             description: description,
-            difficulty, difficulty,
+            difficulty: difficulty,
             status:status,
             votingStatus: votingStatus
         }
