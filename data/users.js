@@ -1,4 +1,5 @@
 import {users} from '../config/mongoCollections.js';
+import {kanbans} from '../config/mongoCollections.js';
 import {ObjectId} from 'mongodb';
 import validation from '../validation.js';
 
@@ -21,7 +22,7 @@ let exportedMethods = {
      * @returns username
      */
     async getUsernameById(id) {
-        id = validation.checkId(id);
+        id = validation.checkId(id, "getUsernameById userId");
         const userCollection = await users();
         const user = await userCollection.findOne({_id: new ObjectId(id)});
         if (!user) throw 'Error: User not found';
@@ -34,7 +35,7 @@ let exportedMethods = {
      * @param {int} age 
      * @returns user object
      */
-    async addUser(username, pswd, age) {
+    async createUser(username, pswd, age) {
         username = validation.checkString(username,"data/users addUser username");
         pswd = validation.checkPassword(pswd,"data/users addUser pswd");
         age = validation.checkAge(age,"data/users addUser age");
@@ -62,16 +63,11 @@ let exportedMethods = {
      * @param {string} kanbanGroupName 
      * @returns user.groups
      */
-    async addKanbantoUser(userId, kanbanId, kanbanGroupName) {
-        userId = validation.checkId(userId);
-        kanbanId = validation.checkId(kanbanId);
-        kanbanGroupName = validation.checkString(kanbanGroupName);
-        const newGroup = {
-            groupId: kanbanId,
-            groupName: kanbanGroupName
-        }
+    async addKanbantoUser(userId, kanbanId) {
+        userId = validation.checkId(userId, "addkanbantouser userId");
+        kanbanId = validation.checkId(kanbanId, "addkanbantouser kanbanId");
         let user = await this.getUserById(userId);
-        user.groups.push(newGroup);
+        user.groups.push(kanbanId);
         const updateInfo = {
             groups: user.groups
         }
@@ -94,17 +90,30 @@ let exportedMethods = {
         const insertInfo = await userCollection.findOneAndUpdate({_id: new ObjectId(userId)}, {$set: updateInfo}, {returnDocument: 'after'});
         return user.completedTasks;
     },
-
+    /**
+     * 
+     * @param {ObjectId} userId 
+     * @return array of kanban objects that user is in
+     */
     async getAllUserGroups(userId){
-        TODO
+        let user = await this.getUserById(userId);
+        const kanbanCollection = await kanbans();
+        let kanbans = [];
+        for (let i=0; i<user.groups.length; i++){
+            let k = await kanbanCollection.findOne({_id: new ObjectId(user.groups[i])});
+            kanbans.push(k);
+        };
+        return kanbans;        
     }, 
 
     async getNumRewards(userId) {
-        TODO
+        let user = this.getUserById(userId);
+        return user.totalRewards;
     }, 
     
     async getNumCompletedTasks(userId) {
-
+        let user = this.getUserById(userId);
+        return user.completedTasks;
     }, 
     /**
      * Cridential validation. will try and match username to a user. if it's a hit, it will check pswd is correct. if all good, will return user object
