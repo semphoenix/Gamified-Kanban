@@ -1,7 +1,6 @@
-import kanbanFxns from './kanbans.js';
+import kanbanFxns from './kanban.js';
 import validation from '../validation.js';
 import {kanbans} from '../config/mongoCollections.js';
-import {users} from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
  /**
      * Info for creating a task
