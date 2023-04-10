@@ -82,11 +82,27 @@ let exportedMethods = {
      
 
     async getUserRewards(userId, kanbanId){
-        TODO
+        return "TODO"
     }, 
 
     async getUserPoints(userId, kanbanId) {
+        return "TODO"
+    },
+    
+    /**
+     * Called to get all kanbans, primarily for testing seeded database.
+     * @returns list(kanbans)
+     */
+    async getAllKanbans(){
+        const kanbanCollection = await kanbans();
+        let kanbanList = await kanbanCollection.find({}).toArray()
+        if(!kanbanList) throw "Error: getAllKanbans: Kanban collection is empty!"
 
+        kanbanList = kanbanList.map(element => {
+            element._id = element._id.toString()
+            return element})
+
+        return kanbanList
     }
 };
 

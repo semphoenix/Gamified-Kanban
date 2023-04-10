@@ -123,6 +123,22 @@ let exportedMethods = {
      */
     async getAttemptedCredentials(username, pswd){
         TODO
+    }, 
+    
+    /**
+     * Called to get all users, primarily for testing seeded database.
+     * @returns list(users)
+     */
+    async getAllUsers(){
+        const userCollection = await users();
+        let userList = await userCollection.find({}).toArray()
+        if(!userList) throw "Error: getAllKanbans: Kanban collection is empty!"
+
+        userList = userList.map(element => {
+            element._id = element._id.toString()
+            return element})
+
+        return userList
     }
 };
 
