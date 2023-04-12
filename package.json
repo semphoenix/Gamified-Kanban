@@ -19,6 +19,6 @@
   },
   "homepage": "https://github.com/semphoenix/Gamified-Kanban#readme",
   "dependencies": {
-    "mongodb": "^5.1.0"
+    "mongodb": "^5.2.0"
   }
 }

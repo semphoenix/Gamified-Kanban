@@ -1,5 +1,6 @@
 import {users} from '../config/mongoCollections.js';
 import {kanbans} from '../config/mongoCollections.js';
+import kanban_data from './kanban.js';
 import {ObjectId} from 'mongodb';
 import validation from '../validation.js';
 
@@ -67,6 +68,10 @@ let exportedMethods = {
         userId = validation.checkId(userId, "addkanbantouser userId");
         kanbanId = validation.checkId(kanbanId, "addkanbantouser kanbanId");
         let user = await this.getUserById(userId);
+
+        if (user.groups.includes(kanbanId)) throw "Error: addKanbantoUser: user is already in kanban"
+        let kanban = await kanban_data.getKanbanById(kanbanId)
+
         user.groups.push(kanbanId);
         const updateInfo = {
             groups: user.groups
@@ -76,7 +81,7 @@ let exportedMethods = {
         return user.groups;
     }, 
     /**
-     * will increment the numeber of completedTasks for a user by 1.
+     * will increment the number of completedTasks for a user by 1.
      * @param {ObjectId} userId 
      * @returns user.completedTasks
      */
@@ -98,21 +103,21 @@ let exportedMethods = {
     async getAllUserGroups(userId){
         let user = await this.getUserById(userId);
         const kanbanCollection = await kanbans();
-        let kanbans = [];
+        let kanbans_list = [];
         for (let i=0; i<user.groups.length; i++){
             let k = await kanbanCollection.findOne({_id: new ObjectId(user.groups[i])});
-            kanbans.push(k);
+            kanbans_list.push(k);
         };
-        return kanbans;        
+        return kanbans_list;        
     }, 
 
     async getNumRewards(userId) {
-        let user = this.getUserById(userId);
+        let user = await this.getUserById(userId);
         return user.totalRewards;
     }, 
     
     async getNumCompletedTasks(userId) {
-        let user = this.getUserById(userId);
+        let user = await this.getUserById(userId);
         return user.completedTasks;
     }, 
     /**
@@ -123,6 +128,22 @@ let exportedMethods = {
      */
     async getAttemptedCredentials(username, pswd){
         TODO
+    }, 
+    
+    /**
+     * Called to get all users, primarily for testing seeded database.
+     * @returns list(users)
+     */
+    async getAllUsers(){
+        const userCollection = await users();
+        let userList = await userCollection.find({}).toArray()
+        if(!userList) throw "Error: getAllKanbans: Kanban collection is empty!"
+
+        userList = userList.map(element => {
+            element._id = element._id.toString()
+            return element})
+
+        return userList
     }
 };
 

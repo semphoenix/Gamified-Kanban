@@ -4,11 +4,11 @@ import {kanbans} from '../config/mongoCollections.js';
 import { ObjectId } from 'mongodb';
  /**
      * Info for creating a task
-     * @param {ObjectId} kanbanId 
-     * @param {ObjectId} userId 
-     * @param {string} name 
-     * @param {string} description 
-     * @param {int} difficulty 
+     * @param {ObjectId} kanbanId: represents id of Kanban
+     * @param {ObjectId} userId: represents id of User
+     * @param {string} name: title of task 
+     * @param {string} description: description of task
+     * @param {int} difficulty: value 
      * @param {int} status 
      * @returns task object
      */
