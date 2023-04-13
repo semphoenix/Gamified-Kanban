@@ -2,7 +2,6 @@ import { kanbans } from "../config/mongoCollections.js";
 import userData from "./users.js";
 import { ObjectId } from "mongodb";
 import validation from "../validation.js";
-import { getCompletedTasks } from "./tasks.js";
 var colors = ["red", "blue", "orange", "green", "purple"];
 var allRewards = ["reward 1", "reward 2", "reward 3", "reward 4"]; // Place holder
 let exportedMethods = {
