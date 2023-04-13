@@ -3,6 +3,8 @@ import {kanbans} from '../config/mongoCollections.js';
 import kanban_data from './kanban.js';
 import {ObjectId} from 'mongodb';
 import validation from '../validation.js';
+import bcrypt from 'bcrypt';
+const saltrounds = 16;
 
 let exportedMethods = {
     /**
@@ -38,15 +40,18 @@ let exportedMethods = {
      */
     async createUser(username, pswd, age) {
         username = validation.checkString(username,"data/users addUser username");
+        username = username.toLowerCase();
         pswd = validation.checkPassword(pswd,"data/users addUser pswd");
         age = validation.checkAge(age,"data/users addUser age");
         // check if username is unique
         const userCollection = await users();
         if (await userCollection.findOne( { username: username })) throw 'data/users addUser username already exists';
+        // hashes the password
+        const hashedpswd = await bcrypt.hash(pswd, saltrounds);
         // init other params
         let newUser = {
             username: username,
-            pswd: pswd,
+            pswd: hashedpswd,
             age: age,
             totalRewards: 0,
             completedTasks: 0,
@@ -127,14 +132,24 @@ let exportedMethods = {
      * @param {string} pswd 
      */
     async getAttemptedCredentials(username, pswd){
-        TODO
+        username = validation.checkString(username, "username");
+        username = username.toLowerCase();
+        const userCollection = await users();
+        const user = await userCollection.findOne({username: username});
+        if (!user) 
+            throw "Error in getAttemptedCredentials: no user with that username";
+        const hashedpswd = user.pswd;
+        const compareToSherlock = await bcrypt.compare(pswd, hashedpswd);
+        if (!compareToSherlock) 
+            throw "Error in getAttemptedCredentials: pswd not correct!"
+        return user;
     }, 
     
     /**
      * Called to get all users, primarily for testing seeded database.
      * @returns list(users)
      */
-    async getAllUsers(){
+    async getAllUsers() {
         const userCollection = await users();
         let userList = await userCollection.find({}).toArray()
         if(!userList) throw "Error: getAllKanbans: Kanban collection is empty!"
