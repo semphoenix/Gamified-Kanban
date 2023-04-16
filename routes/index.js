@@ -1,11 +1,12 @@
-import userRoutes from './users.js';
-import  kanbanRoutes from './kanban.js';
+import userRoutes from "./users.js";
+import kanbanRoutes from "./kanban.js";
 
 const constructorMethod = (app) => {
-  app.use('/', userRoutes);
-    // stuff for kanbans
-  app.use('*', (req, res) => {
-    res.redirect('/');
+  app.use("/", loginRoutes);
+  app.use("/user", userRoutes);
+  app.use("/kanban", kanbanRoutes);
+  app.use("*", (req, res) => {
+    res.status(404).json({ error: "Not found" });
   });
 };
 
