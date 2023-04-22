@@ -36,15 +36,10 @@ router.route("/createKanban").post(async (req, res) => {
   try {
     const { ownerId, groupName } = kanbanData;
     const newKanban = await kanbanFxns.createKanban(ownerId, groupName);
-    res.json(newPost); //Change to render later
+    res.json(newKanban); //Change to render later
   } catch (e) {
     res.status(500).json({ error: e });
   }
 });
-
-// router.get("/logout", async (req, res) => {
-//   req.session.destroy();
-//   res.send("Logged out");
-// });
 
 export default router;

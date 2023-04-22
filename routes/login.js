@@ -14,7 +14,6 @@ router
   })
   .post(async (req, res) => {
     const userData = req.body;
-    let user;
     let errors = [];
     // if there's a problem with input, will be added to errors
     try {
@@ -29,12 +28,12 @@ router
     }
 
     try {
-      user = await userFxns.getAttemptedCredentials(
+      let user = await userFxns.getAttemptedCredentials(
         userData.username,
         userData.password
       );
-      //req.session.user = user;
-      res.json("Logged in!"); //Change to render later
+      req.session.user = user;
+      res.redirect(`/user/${user._id.toString()}`);
     } catch (e) {
       errors.push("Invalid Credentials");
     }
@@ -88,7 +87,8 @@ router.route("/signup").post(async (req, res) => {
 
 router.get("/logout", async (req, res) => {
   req.session.destroy();
-  res.send("Logged out");
+  console.log("Logged OUt!");
+  res.redirect("login");
 });
 
 export default router;
