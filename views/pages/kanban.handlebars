@@ -1,0 +1,69 @@
+<div class="container">
+    <div class="kanban-board">
+
+        <div class="group-heading">
+            <strong class="group-heading-text">Group Name</strong>
+            <p class="group-id">groupId:</p>
+        </div>
+
+        <div class="kanban-block" id="side-column">
+            <div class="group-button-block">
+                <label for="choosegroup">Groups</label>
+                <select name="choosegroup" id="choosegroup">
+                    <option>Group1</option>
+                    </select>
+            </div>
+            <div class="create-task-button">
+                <button id="task-button" onclick="createTask()">Create new task</span>
+                <!-- Will open create-new-task-block div on click -->
+            </div>
+
+            <div class="gacha-button">
+                <button id="gacha-button" onclick="">Gacha</span>
+            </div>
+            <div class="completed-task-button">
+                <button id="completed-tasks-button" onclick="">Completed Tasks</span>
+            </div>
+            <div class="profile-button">
+                <button id="profile-button" onclick="">Profile</span>
+            </div>
+        </div>
+
+        <div class="kanban-block" id="todo" ondrop="drop()" ondragover="drag()">
+            <!-- include drop and drag functions -->
+            <strong>To Do</strong>
+        </div>
+        <div class="kanban-block" id="inprogress" ondrop="drop()" ondragover="drag()">
+            <strong>In Progress</strong>
+        </div>
+        <div class="kanban-block" id="inreview" ondrop="drop()" ondragover="drag()">
+            <strong>In Review</strong>
+        </div>
+
+        <div class="create-new-task-block" id="create-new-task-block">
+            <strong>New Task</strong>
+            <span class="create-task-form">
+                <label class="create-task-form-label" for="task-name">Task</label>
+                <input class="create-task-form-input" type="text" name="task-name" id="task-name">
+            </span>
+            <span class="create-task-form">
+                <label class="create-task-form-label" for="task-name">Description</label>
+                <input type="text" class="create-task-form-input" name="task-description" id="task-description"></textarea>
+            </span>
+            <span class="create-task-form">
+                <label class="create-task-form-label" for="task-name">Difficulty</label>
+                <select class="create-task-form-input" name="task-difficulty" id="task-difficulty">
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </span>
+            <span class="create-task-buttons">
+                <button id="save-button" onclick="submitTask()">Submit</span>
+                <button id="cancel-button" onclick="closeTask()">Close</span>
+            </span>
+        </div>
+
+
+    </div>
+</div>
