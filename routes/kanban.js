@@ -42,4 +42,24 @@ router.route("/createKanban").post(async (req, res) => {
   }
 });
 
+router
+  .route('/:kanbanId/gatcha')
+  .get(async (req, res) => {
+    try{
+        req.params.id = validation.checkId(req.params.kanbanId, "Id Url Param")
+        res.json("GATCHA PAGE") // TODO: Change to render the gatcha page
+    } catch(e){
+        res.status(404).json({error: e})
+    }
+  })
+  .post(async (req, res) =>{
+    try{
+        req.params.id = validation(checkId(req.params.kanbanId, "Id Url Param"))
+        let updated_user = await kanbanFxns.playGame(req.session.user.userId, req.params.id)
+        res.json("Yay you did it") // TODO: Change to render the gatcha page with new amount of points
+    } catch(e){
+        res.status(404).json({error:e})
+    }
+  })
+
 export default router;
