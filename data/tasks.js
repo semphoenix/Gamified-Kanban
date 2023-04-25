@@ -167,54 +167,22 @@ let exportedMethods = {
     if (res.lastErrorObject.n === 0) throw "Error: castVote failed";
     return task.votingStatus;
   },
-  async getTodoTasks(kanbanId) {
-    kanbanId = validation.checkId(kanbanId, "kanbanId");
-    const kanban = await kanbanFxns.getKanbanById(kanbanId);
-    if (!kanban) throw "Error: kanban not found";
-    let todoTasks = [];
-    const tasks = kanban.tasks;
-    for (let x of tasks) {
-      if (x.assignment === 0) todoTasks.push(x);
-    }
-    return todoTasks;
-  },
-  async getInProgressTasks(kanbanId) {
-    kanbanId = validation.checkId(kanbanId, "kanbanId");
-    const kanban = await kanbanFxns.getKanbanById(kanbanId);
-    if (!kanban) throw "Error: kanban not found";
-    let inProgressTasks = [];
-    const tasks = kanban.tasks;
-    for (let x of tasks) {
-      if (x.assignment === 1) inProgressTasks.push(x);
-    }
-    return inProgressTasks;
-  },
-  async getInReviewTasks(kanbanId) {
-    kanbanId = validation.checkId(kanbanId, "kanbanId");
-    const kanban = await kanbanFxns.getKanbanById(kanbanId);
-    if (!kanban) throw "Error: kanban not found";
-    let inReviewTasks = [];
-    const tasks = kanban.tasks;
-    for (let x of tasks) {
-      if (x.assignment === 2) inReviewTasks.push(x);
-    }
-    return inReviewTasks;
-  },
   /**
-   * This will be used to retrieve all completed tasks in Kanban.
+   * This will be used to retrieve all tasks with certain status in Kanban.
    * @param {ObjectId} kanbanId
+   * @param {ObjectId} status
    * @returns all completed tasks in kanban
    */
-  async getCompletedTasks(kanbanId) {
+  async getSomeTasks(kanbanId, status) {
     kanbanId = validation.checkId(kanbanId, "kanbanId");
     const kanban = await kanbanFxns.getKanbanById(kanbanId);
     if (!kanban) throw "Error: kanban not found";
-    let completedTasks = [];
+    let someTasks = [];
     const tasks = kanban.tasks;
-    for (let task of tasks) {
-      if (task.status == 3) completedTasks.push(task);
+    for (let x of tasks) {
+      if (x.assignment === status) someTasks.push(x);
     }
-    return completedTasks;
+    return someTasks;
   },
 };
 export default exportedMethods;

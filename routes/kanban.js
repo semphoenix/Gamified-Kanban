@@ -18,9 +18,9 @@ router.route("/:kanbanId").get(async (req, res) => {
       groupName: kanban.groupName,
       kanbanId: kanban._id.toString(),
       Groups: user.groups,
-      todoTasks: await taskFxns.getTodoTasks(kanbanId),
-      inprogressTasks: await taskFxns.getInProgressTasks(kanbanId),
-      inreviewTasks: await taskFxns.getInReviewTasks(kanbanId),
+      todoTasks: await taskFxns.getSomeTasks(kanbanId, 0),
+      inprogressTasks: await taskFxns.getSomeTasks(kanbanId, 1),
+      inreviewTasks: await taskFxns.getSomeTasks(kanbanId, 2),
     });
   } catch (e) {
     res
