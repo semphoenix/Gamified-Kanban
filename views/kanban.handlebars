@@ -1,69 +1,81 @@
-<div class="container">
-    <div class="kanban-board">
+<div class="kanban-board">
 
-        <div class="group-heading">
-            <strong class="group-heading-text">Group Name</strong>
-            <p class="group-id">groupId:</p>
+    <div class="group-heading">
+        <p class="group-heading-text">{{groupName}}</p>
+        <p class="group-id">{{kanbanId}}</p>
+    </div>
+
+    <div class="kanban-block" id="side-column">
+
+        <div class="group-button-block">
+            <label for="choosegroup">Groups</label>
+            {{#each Groups}}
+            <select name="choosegroup" id="choosegroup">
+                <option>{{this}}</option>
+            </select>
+            {{/each}}
         </div>
 
-        <div class="kanban-block" id="side-column">
-            <div class="group-button-block">
-                <label for="choosegroup">Groups</label>
-                <select name="choosegroup" id="choosegroup">
-                    <option>Group1</option>
-                    </select>
-            </div>
-            <div class="create-task-button">
-                <button id="task-button" onclick="createTask()">Create new task</button>
-                <!-- Will open create-new-task-block div on click -->
-            </div>
-
-            <div class="gacha-button">
-                <a href="/gacha"><button id="gacha-button">Gacha</button></a>
-            </div>
-            <div class="completed-task-button">
-                <a href="/completedtasks"><button id="completed-tasks-button" onclick="">Completed Tasks</button></a>
-            </div>
-            <div class="profile-button">
-                <a href="/profile"><button id="profile-button" onclick="">Profile</button></a>
-            </div>
+        <div class="create-task-button">
+            <button id="task-button">Create new task</button>
+            <!-- Will open create-new-task-block div on click -->
         </div>
 
-        <div class="kanban-block" id="todo" ondrop="drop()" ondragover="drag()">
-            <!-- include drop and drag functions -->
-            <strong>To Do</strong>
+        <div class="gacha-button">
+            <a href="/gacha"><button id="gacha-button">Gacha</button></a>
         </div>
-        <div class="kanban-block" id="inprogress" ondrop="drop()" ondragover="drag()">
-            <strong>In Progress</strong>
+        <div class="completed-task-button">
+            <a href="/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
         </div>
-        <div class="kanban-block" id="inreview" ondrop="drop()" ondragover="drag()">
-            <strong>In Review</strong>
+        <div class="profile-button">
+            <a href="/profile"><button id="profile-button">Profile</button></a>
         </div>
-
-        <div class="create-new-task-block" id="create-new-task-block">
-            <strong>New Task</strong>
-            <span class="create-task-form">
-                <label class="create-task-form-label" for="task-name">Task</label>
-                <input class="create-task-form-input" type="text" name="task-name" id="task-name">
-            </span>
-            <span class="create-task-form">
-                <label class="create-task-form-label" for="task-name">Description</label>
-                <input type="text" class="create-task-form-input" name="task-description" id="task-description"></textarea>
-            </span>
-            <span class="create-task-form">
-                <label class="create-task-form-label" for="task-name">Difficulty</label>
-                <select class="create-task-form-input" name="task-difficulty" id="task-difficulty">
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                </select>
-            </span>
-            <span class="create-task-buttons">
-                <button id="save-button" onclick="submitTask()">Submit</button>
-                <button id="cancel-button" onclick="closeTask()">Close</button>
-            </span>
-        </div>
-
 
     </div>
+
+    <div class="kanban-block" id="todo">
+        <p>To Do</p>
+        {{#each todoTasks}}
+            <div>{{this}}</div>
+        {{/each}}
+    </div>
+
+    <div class="kanban-block" id="inprogress">
+        <p>In Progress</p>
+        {{#each inprogressTasks}}
+            <div>{{this}}</div>
+        {{/each}}
+    </div>
+
+    <div class="kanban-block" id="inreview">
+        <p>In Review</p>
+        {{#each inreviewTasks}}
+            <div>{{this}}</div>
+        {{/each}}
+    </div>
+
+
+    <div class="create-new-task-block" id="create-new-task-block">
+        <p>New Task</p>
+        <form class="create-task-form" id="create-task-form">
+            <label class="create-task-form-label" for="task-name">Task</label>
+            <input class="create-task-form-input" type="text" name="task-name" id="task-name" required>
+            
+            <label class="create-task-form-label" for="task-description">Description</label>
+            <textarea class="create-task-form-input" name="task-description" id="task-description" required></textarea>
+            
+            <label class="create-task-form-label" for="task-difficulty">Difficulty</label>
+            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" required>
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            
+            <div class="create-task-buttons">
+                <button type="submit" id="save-button">Submit</button>
+                <button type="button" id="cancel-button" onclick="closeTask()">Close</button>
+            </div>
+        </form>
+    </div>
 </div>
+
