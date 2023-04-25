@@ -1,18 +1,19 @@
 import users from '../data/users.js'
 import { get_seeded_db } from "./reference-db.js";
+import { closeConnection } from "../config/mongoConnection.js"
 
 const db = await get_seeded_db()
 
 /* TESTED FUNCTIONS:
 ====================================
-    getUserById(id)
-    getUsernameById(id)
-    createUser(username, pswd, age)
-    addKanbantoUser(userId, kanbanId)
-    addCompletedTask(userId)
-    getAllUserGroups(userId)
-    getNumRewards(userId)
-    getNumCompletedTasks(userId) 
+    getUserById(id) DONE
+    getUsernameById(id) DONE
+    createUser(username, pswd, age) DONE
+    addKanbantoUser(userId, kanbanId) DONE
+    addCompletedTask(userId) DONE
+    getAllUserGroups(userId) TODO
+    getNumRewards(userId) TODO
+    getNumCompletedTasks(userId) TODO
 */
 
 // console.log(db)
@@ -168,6 +169,12 @@ try{
 }
 
 try{
+    await users.addKanbantoUser(db.WILLIAM._id.toString(), "testString")
+} catch(e){
+    console.log(e)  
+}
+
+try{
     failedUserIdCase = db.EMMA._id.toString()
     if (failedUserIdCase[0] === 'a'){failedUserIdCase='b' + failedUserIdCase.substring(1)}
     else {failedUserIdCase='a' + failedUserIdCase.substring(1)}
@@ -188,7 +195,141 @@ try{
 // ~~ TESTING addCompletedTask (userId) ~~
 console.log("\n~~ TESTING addCompletedTask (userId) ~~")
 
+let numberCompleted = 0
+
+try{
+    numberCompleted = db.ASH.completedTasks
+    if(numberCompleted + 1 === await users.addCompletedTask(db.ASH._id.toString())) {console.log("Aiden successfully completes a task!")} 
+    else{console.log("Task DID NOT register as completed!")}
+} catch(e){
+    console.log(e)
+}
+
+try{
+    numberCompleted = await users.addCompletedTask(failedUserIdCase)
+} catch(e){
+    console.log(e)
+}
+
+try{
+    numberCompleted = await users.addCompletedTask("")
+} catch(e){
+    console.log(e)
+}
+
+try{
+    numberCompleted = await users.addCompletedTask(1)
+} catch(e){
+    console.log(e)
+}
+
+// ~~ TESTING getAllUserGroups (userId)
+console.log("\n~~ TESTING getAllUserGroups (userId) ~~")
+
+let ashGroups = []
+
+try{
+    ashGroups = await users.getAllUserGroups(db.ASH._id.toString())
+    console.log(ashGroups) 
+} catch(e){
+    console.log(e)
+}
+
+try{
+    await users.getAllUserGroups(failedUserIdCase)
+} catch(e){
+    console.log(e)
+}
+
+try{
+    await users.getAllUserGroups("failedUserIdCase")
+} catch(e){
+    console.log(e)
+}
+
+try{
+    await users.getAllUserGroups("")
+} catch(e){
+    console.log(e)
+}
+
+try{
+    await users.getAllUserGroups(1)
+} catch(e){
+    console.log(e)
+}
+
+// ~~ TESTING getNumRewards(userId)
+console.log("\n~~ TESTING getNumRewards (userId) ~~")
+
+let numRewards = 0
+
+try{
+    numRewards = await users.getNumRewards(db.ASH._id.toString())
+    console.log(numRewards)
+} catch(e){
+    console.log(e)
+} 
+
+try{
+    await users.getNumRewards("")
+} catch(e){
+    console.log(e)
+}
+
+try{
+    await users.getNumRewards("Failed String")
+} catch(e){
+    console.log(e)
+}
+
+try{
+    await users.getNumRewards(1)
+} catch(e){
+    console.log(e)
+}
+
+try{
+    await users.getNumRewards(failedUserIdCase)
+} catch(e){
+    console.log(e)
+}
+
+// ~~ TESTING getNumCompletedTasks(userId)
+console.log("\n~~ TESTING getNumCompletedTasks (userId) ~~")
+
+let numCompletedTasks = 0
+
+try{
+    numCompletedTasks = await users.getNumCompletedTasks(db.ASH._id.toString())
+    console.log(numCompletedTasks)
+} catch(e){
+    console.log(e)
+} 
+
+try{
+    await users.getNumCompletedTasks("")
+} catch(e){
+    console.log(e)
+}
+
+try{
+    await users.getNumCompletedTasks("Failed String")
+} catch(e){
+    console.log(e)
+}
 
 
+try{
+    await users.getNumCompletedTasks(1)
+} catch(e){
+    console.log(e)
+}
 
-await closeConnection();
+try{
+    await users.getNumCompletedTasks(failedUserIdCase)
+} catch(e){
+    console.log(e)
+}
+
+closeConnection()
