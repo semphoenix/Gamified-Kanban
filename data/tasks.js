@@ -141,18 +141,18 @@ let exportedMethods = {
     kanban.tasks.forEach((t) => {
       if (t._id.toString() == taskId) task = t;
     });
-    if (task.assignment == userId)
+    if (task.assignment === userId)
       throw "Error: user cannot vote on their own task";
     // get the task from taskId, go into votingstatus, find the key that matches userId and set the
     // value to cite
     task.votingStatus[userId] = vote;
     // checks to see if majority approved task
     let users = Object.keys(task.votingStatus);
-    let acceptedVotes;
-    users.forEach((user) => (acceptedVotes += task.votingStatus[user]));
-    if (acceptedVotes > kanban.groupUsers.length / 2) {
-      task.status = 3;
-      kanban.completedTasks += 1;
+    let acceptedVotes = 0;
+    users.forEach(user => acceptedVotes += task.votingStatus[user]);
+    if (acceptedVotes > kanban.groupUsers.length/2) {
+        task.status = 3;
+        kanban.completedTasks += 1;
     }
     const updateInfo = {
       tasks: kanban.tasks,
@@ -160,8 +160,8 @@ let exportedMethods = {
     };
     kanbanCollection = await kanbans();
     const res = await kanbanCollection.findOneAndUpdate(
-      { _id: new ObjectId(kanbanId) },
-      { $set: { updateInfo } },
+      { _id: new ObjectId(kanban._id) },
+      { $set: updateInfo },
       { returnDocument: "after" }
     );
     if (res.lastErrorObject.n === 0) throw "Error: castVote failed";
@@ -185,4 +185,7 @@ let exportedMethods = {
     return someTasks;
   },
 };
+console.log(await exportedMethods.castVote("64358ed05a55422433ae736f", "6446dff966ffc2b828b57110", 1));
+
 export default exportedMethods;
+
