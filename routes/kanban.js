@@ -1,22 +1,31 @@
 import { Router } from "express";
 const router = Router();
 import { kanbanFxns } from "../data/index.js";
+import { taskFxns } from "../data/index.js";
 import validation from "../validation.js";
 
 router.route("/:kanbanId").get(async (req, res) => {
+  let kanbanId;
   try {
-    req.params.kanbanId = validation.checkId(
-      req.params.kanbanId,
-      "Id URL Param"
-    );
+    kanbanId = validation.checkId(req.params.kanbanId, "Id URL Param");
   } catch (e) {
-    return res.status(400).json({ error: e });
+    return res.status(400).render("error", { error: "Invalid Id" });
   }
   try {
-    const kanban = await kanbanFxns.getKanbanById(req.params.kanbanId);
-    res.json(kanban); //Change this to render when we have pages
+    const kanban = await kanbanFxns.getKanbanById(kanbanId);
+    let user = req.session.user;
+    res.render("kanban", {
+      groupName: kanban.groupName,
+      kanbanId: kanban._id.toString(),
+      Groups: user.groups,
+      todoTasks: await taskFxns.getSomeTasks(kanbanId, 0),
+      inprogressTasks: await taskFxns.getSomeTasks(kanbanId, 1),
+      inreviewTasks: await taskFxns.getSomeTasks(kanbanId, 2),
+    });
   } catch (e) {
-    res.status(404).json({ error: e });
+    res
+      .status(404)
+      .render("error", { error: "Kanban of that id does not exist!" });
   }
 });
 
