@@ -1,17 +1,17 @@
 <div class="kanban-board">
 
     <header>
-        <div class="group-heading">    
-            <h1 class="group-heading-text">{{groupName}}</h1>
-            <h2 class="group-id">{{kanbanId}}</h2>
+        <div id="group-heading">    
+            <h1 id="group-heading-text">{{groupName}}</h1>
+            <h2 id="group-id">{{kanbanId}}</h2>
         </div>
     </header>
 
     <div class="kanban-block" id="side-column">
-        <div class="group-button-block">
-            <form class="choose-group-form" id="choose-group-form">
+        <div id="group-button-block">
+            <form class="choose-group-form" id="kanban-choose-group-form">
                 <label for="choose-group">Groups</label>
-                <select name="choose-group" id="choose-group" form="choose-group-form">
+                <select id="choose-group" form="kanban-choose-group-form">
                     {{#each Groups}}
                     <option class="choosen-group-option" value="{{this}}">{{this}}</option>
                     {{/each}}
@@ -20,25 +20,24 @@
             </form>
         </div>
 
-        <div class="create-task-button">
+        <div id="create-task-button">
             <button id="task-button">Create new task</button>
             <!-- Will open create-new-task-block div on click -->
         </div>
 
-        <div class="gacha-button">
+        <div id="gacha-button">
             <a href="/gacha"><button id="gacha-button">Gacha</button></a>
         </div>
-        <div class="completed-task-button">
+        <div id="completed-task-button">
             <a href="/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
         </div>
-        <div class="profile-button">
+        <div id="profile-button">
             <a href="/profile"><button id="profile-button">Profile</button></a>
         </div>
-
     </div>
 
     <div class="kanban-block" id="todo">
-        <h3 id="Todo-title">To Do</h3>
+        <h3 class="kanban-block-title" id="todo-title">To Do</h3>
         {{#each todoTasks}}
             <div class="kanban-task-block">
                 <h3 class="task-name">{{this.name}}</h3>
@@ -49,7 +48,7 @@
     </div>
 
     <div class="kanban-block" id="inprogress">
-        <p>In Progress</p>
+        <h3 class="kanban-block-title" id="inprogress-title">To Do</h3>
         {{#each inprogressTasks}}
             <div class="kanban-task-block">
                 <h3 class="task-name">{{this.name}}</h3>
@@ -60,7 +59,7 @@
     </div>
 
     <div class="kanban-block" id="inreview">
-        <p>In Review</p>
+        <h3 class="kanban-block-title" id="inprogress-review">To Do</h3>
         {{#each inreviewTasks}}
             <div class="kanban-task-block">
                 <h3 class="task-name">{{this.name}}</h3>
@@ -69,7 +68,7 @@
                 <form class="task-vote-form">
                     <label for="task-{{this.name}}-yes">Sucessfully Completed</label>
                     <input id="task-{{this.name}}-yes" type="radio" class="kanban-task-vote" name="Yes" value="Yes">
-                    
+
                     <label for="task-{{this.name}}-no">Not Completed</label>
                     <input id="task-{{this.name}}-no" type="radio" class="kanban-task-vote" name="False" value="No">
 
@@ -80,9 +79,9 @@
     </div>
 
 
-    <div class="create-new-task-block" id="create-new-task-block">
+    <div id="create-new-task-block">
         <p>New Task</p>
-        <form class="create-task-form" id="create-task-form">
+        <form id="create-task-form">
             <label class="create-task-form-label" for="task-name">Task</label>
             <input class="create-task-form-input" type="text" name="task-name" id="task-name" required>
             
@@ -90,7 +89,7 @@
             <textarea class="create-task-form-input" name="task-description" id="task-description" required></textarea>
             
             <label class="create-task-form-label" for="task-difficulty">Difficulty</label>
-            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" required>
+            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" form="create-task-form" required>
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>

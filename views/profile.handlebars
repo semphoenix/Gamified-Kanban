@@ -1,7 +1,7 @@
 <div class="group-button-block">
-    <form class="choose-group-form" id="choose-group-form">
-        <label for="choose-group">Groups</label>
-        <select name="choose-group" id="choose-group" form="choose-group-form">
+    <form id="profile-choose-group-form">
+        <label for="profile-choose-group">Groups</label>
+        <select name="choose-group" id="choose-group" form="profile-choose-group">
             {{#each Groups}}
             <option class="choosen-group-option" value="{{this}}">{{this}}</option>
             {{/each}}
@@ -17,8 +17,8 @@
 
 <main>
     <h1>Prizes</h1>
-    <div class="prize-color-button-block">
-        <form class="choose-prize-color-form" id="prize-color-form">
+    <div class="prize-block">
+        <form class="prize-form" id="prize-color-form">
             <label for="choose-color">Color Choices</label>
             <select name="choose-color" id="choose-color" form="prize-color-form">
                 {{#each Prizes.colors}}
@@ -29,8 +29,8 @@
         </form>
     </div>
 
-    <div class="prize-border-button-block">
-        <form class="choose-prize-border-form" id="prize-border-form">
+    <div class="prize-block">
+        <form class="prize-form" id="prize-border-form">
             <label for="choose-border">Border Choices</label>
             <select name="choose-border" id="choose-border" form="prize-border-form">
                 {{#each Prizes.borders}}
@@ -41,8 +41,8 @@
         </form>
     </div>
 
-    <!-- MUST CHANGE TO NOT USE HTML BASED STYLING-->
-    <div class="prize-picture-button-block">
+    <!-- MUST CHANGE TO NOT USE HTML BASED STYLING (check option tag)-->
+    <div id="prize-picture-button-block">
         <form class="choose-prize-picture-form" id="prize-picture-form">
             <label for="choose-picture">Picture Choices</label>
             <select name="choose-picture" id="choose-picture" form="prize-picture-form">
