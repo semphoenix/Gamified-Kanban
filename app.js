@@ -43,7 +43,7 @@ app.use(
   })
 );
 
-app.use("/", myMiddleWares);
+app.use(myMiddleWares());
 
 configRoutes(app);
 
