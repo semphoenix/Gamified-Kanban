@@ -9,7 +9,7 @@ router
     try {
       res.render("login");
     } catch (e) {
-      res.status(500).render({ error: e, status: "500" });
+      res.status(500).render("error", { error: e, status: "500" });
     }
   })
   .post(async (req, res) => {
@@ -43,7 +43,7 @@ router
       res.redirect(`/user/${user._id.toString()}`);
     } catch (e) {
       errors.push("Invalid Credentials");
-      res.render("login", {
+      res.status(400).render("login", {
         errors: errors,
         LoginErrors: true,
         user: userData,
@@ -63,6 +63,7 @@ router
   })
   .post(async (req, res) => {
     const userData = req.body;
+    console.log("Signup Post");
     let user;
     let errors = [];
     // if there's a problem with input, will be added to errors
@@ -83,7 +84,7 @@ router
       errors.push(e);
     }
     if (errors.length > 0) {
-      res.render("login", {
+      res.status(400).render("signup", {
         errors: errors,
         SignupErrors: true,
         user: userData,
@@ -97,10 +98,10 @@ router
         userData.age
       );
       req.session.user = user;
-      res.json("User Created!"); //Change to render later
+      res.redirect("/login"); // Should add some sort of message on login page to tell user their account has been created.
     } catch (e) {
       errors.push(e);
-      res.status(500).render("login", {
+      res.status(400).render("signup", {
         errors: errors,
         SignupErrors: true,
         user: userData,

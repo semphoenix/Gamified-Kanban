@@ -83,23 +83,6 @@ let exportedMethods = {
     return kanban.tasks;
   },
   /**
-   * This will be used to retrieve all completed tasks in Kanban.
-   * @param {ObjectId} kanbanId
-   * @returns all completed tasks in kanban
-   */
-  async getCompletedTasks(kanbanId) {
-    kanbanId = validation.checkId(kanbanId, "kanbanId");
-    const kanban = await kanbanFxns.getKanbanById(kanbanId);
-    if (!kanban) throw "Error: kanban not found";
-    let completedTasks = [];
-    const tasks = kanban.tasks;
-    for (let task of tasks) {
-      if (task.status == 2) completedTasks.push(task);
-    }
-    return completedTasks;
-  },
-
-  /**
    * changes the status of a task
    * @param {ObjectId} taskId
    * @param {int} newStatus
@@ -110,16 +93,22 @@ let exportedMethods = {
     newStatus = validation.checkStatus(newStatus, "status");
     let kanbanCollection = await kanbans();
     const kanban = await kanbanCollection // get the tasks
-    .findOne({tasks: {$elemMatch: {_id: new ObjectId(taskId)}}}, { tasks: 1 });
+      .findOne(
+        { tasks: { $elemMatch: { _id: new ObjectId(taskId) } } },
+        { tasks: 1 }
+      );
     let tasks = kanban.tasks;
     let task;
     kanban.tasks.forEach((t) => {
       if (t._id.toString() == taskId) task = t;
     });
     task.status = newStatus;
-    const insertInfo = await kanbanCollection.findOneAndUpdate({_id: kanbanId}, 
-      {$set: {tasks: tasks}}, {returnDocument: 'after'});
-    if (insertInfo.lastErrorObject.n === 0) throw 'Error: changeStatus failed';
+    const insertInfo = await kanbanCollection.findOneAndUpdate(
+      { _id: kanbanId },
+      { $set: { tasks: tasks } },
+      { returnDocument: "after" }
+    );
+    if (insertInfo.lastErrorObject.n === 0) throw "Error: changeStatus failed";
     return task;
   },
 
@@ -160,14 +149,14 @@ let exportedMethods = {
     // checks to see if majority approved task
     let users = Object.keys(task.votingStatus);
     let acceptedVotes;
-    users.forEach(user => acceptedVotes += task.votingStatus[user]);
-    if (acceptedVotes > kanban.groupUsers.length/2) {
-        task.status = 3;
-        kanban.completedTasks += 1;
+    users.forEach((user) => (acceptedVotes += task.votingStatus[user]));
+    if (acceptedVotes > kanban.groupUsers.length / 2) {
+      task.status = 3;
+      kanban.completedTasks += 1;
     }
     const updateInfo = {
       tasks: kanban.tasks,
-      completedTasks: kanban.completedTasks
+      completedTasks: kanban.completedTasks,
     };
     kanbanCollection = await kanbans();
     const res = await kanbanCollection.findOneAndUpdate(
@@ -177,6 +166,55 @@ let exportedMethods = {
     );
     if (res.lastErrorObject.n === 0) throw "Error: castVote failed";
     return task.votingStatus;
+  },
+  async getTodoTasks(kanbanId) {
+    kanbanId = validation.checkId(kanbanId, "kanbanId");
+    const kanban = await kanbanFxns.getKanbanById(kanbanId);
+    if (!kanban) throw "Error: kanban not found";
+    let todoTasks = [];
+    const tasks = kanban.tasks;
+    for (let x of tasks) {
+      if (x.assignment === 0) todoTasks.push(x);
+    }
+    return todoTasks;
+  },
+  async getInProgressTasks(kanbanId) {
+    kanbanId = validation.checkId(kanbanId, "kanbanId");
+    const kanban = await kanbanFxns.getKanbanById(kanbanId);
+    if (!kanban) throw "Error: kanban not found";
+    let inProgressTasks = [];
+    const tasks = kanban.tasks;
+    for (let x of tasks) {
+      if (x.assignment === 1) inProgressTasks.push(x);
+    }
+    return inProgressTasks;
+  },
+  async getInReviewTasks(kanbanId) {
+    kanbanId = validation.checkId(kanbanId, "kanbanId");
+    const kanban = await kanbanFxns.getKanbanById(kanbanId);
+    if (!kanban) throw "Error: kanban not found";
+    let inReviewTasks = [];
+    const tasks = kanban.tasks;
+    for (let x of tasks) {
+      if (x.assignment === 2) inReviewTasks.push(x);
+    }
+    return inReviewTasks;
+  },
+  /**
+   * This will be used to retrieve all completed tasks in Kanban.
+   * @param {ObjectId} kanbanId
+   * @returns all completed tasks in kanban
+   */
+  async getCompletedTasks(kanbanId) {
+    kanbanId = validation.checkId(kanbanId, "kanbanId");
+    const kanban = await kanbanFxns.getKanbanById(kanbanId);
+    if (!kanban) throw "Error: kanban not found";
+    let completedTasks = [];
+    const tasks = kanban.tasks;
+    for (let task of tasks) {
+      if (task.status == 3) completedTasks.push(task);
+    }
+    return completedTasks;
   },
 };
 export default exportedMethods;
