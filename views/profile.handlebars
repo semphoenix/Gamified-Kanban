@@ -1,29 +1,56 @@
-<label for="groups">Groups</label>
+<div class="group-button-block">
+    <form id="profile-choose-group-form">
+        <label for="profile-choose-group">Groups</label>
+        <select name="choose-group" id="choose-group" form="profile-choose-group">
+            {{#each Groups}}
+            <option class="choosen-group-option" value="{{this}}">{{this}}</option>
+            {{/each}}
+        </select>
+        <button type="submit" value="submit"/>        
+    </form>
+</div>
 
-<select name="groups" id="cars">
-  <option value="Group1">Group1</option>
-  <option value="Group2">Group2</option>
-  <option value="Group3">Group3</option>
-  <option value="Group4">Group4</option>
-</select>
+<div class="accounts-button">
+    <h2>{{User}}</h2>
+    <a href="/accounts"><button id="accounts-button">Accounts</button></a>
+</div>
 
-<button class="accountButton" type="button">Account</button>
+<main>
+    <h1>Prizes</h1>
+    <div class="prize-block">
+        <form class="prize-form" id="prize-color-form">
+            <label for="choose-color">Color Choices</label>
+            <select name="choose-color" id="choose-color" form="prize-color-form">
+                {{#each Prizes.colors}}
+                <option class="prize-color-option" value="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
+            <button type="submit" value="submit"/>        
+        </form>
+    </div>
 
-<h1>Prizes</h1>
+    <div class="prize-block">
+        <form class="prize-form" id="prize-border-form">
+            <label for="choose-border">Border Choices</label>
+            <select name="choose-border" id="choose-border" form="prize-border-form">
+                {{#each Prizes.borders}}
+                <option class="prize-border-option" value="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
+            <button type="submit" value="submit"/>        
+        </form>
+    </div>
 
-<label for="groups">Groups</label>
-<select name="postColor" id="post">
-  <option value="light">Light</option>
-  <option value="dark">Dark</option>
-</select>
-
-<select name="borderColor" id="border">
-  <option value="white">White</option>
-  <option value="black">Black</option>
-</select>
-
-<div id="profilePic"></div>
-<ul>
-    <li><input type="checkbox">Picture</li>
-    <li><input type="checkbox">Picture</li>
- <ul>
+    <!-- MUST CHANGE TO NOT USE HTML BASED STYLING (check option tag)-->
+    <div id="prize-picture-button-block">
+        <form class="choose-prize-picture-form" id="prize-picture-form">
+            <label for="choose-picture">Picture Choices</label>
+            <select name="choose-picture" id="choose-picture" form="prize-picture-form">
+                {{#each Prizes.pictures}}
+                <option class="prize-picture-option" style="background-image:{{this.img_url}}" value="{{this}}">{{this}}</option>
+                {{/each}}
+            </select>
+            <button type="submit" value="submit"/>        
+        </form>
+    </div>
+</main>
