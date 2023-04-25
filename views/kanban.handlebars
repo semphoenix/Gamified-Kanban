@@ -1,19 +1,23 @@
 <div class="kanban-board">
 
-    <div class="group-heading">
-        <p class="group-heading-text">{{groupName}}</p>
-        <p class="group-id">{{kanbanId}}</p>
-    </div>
+    <header>
+        <div class="group-heading">    
+            <h1 class="group-heading-text">{{groupName}}</h1>
+            <h2 class="group-id">{{kanbanId}}</h2>
+        </div>
+    </header>
 
     <div class="kanban-block" id="side-column">
-
         <div class="group-button-block">
-            <label for="choosegroup">Groups</label>
-            {{#each Groups}}
-            <select name="choosegroup" id="choosegroup">
-                <option>{{this}}</option>
-            </select>
-            {{/each}}
+            <form class="choose-group-form" id="choose-group-form">
+                <label for="choose-group">Groups</label>
+                <select name="choose-group" id="choose-group" form="choose-group-form">
+                    {{#each Groups}}
+                    <option class="choosen-group-option" value="{{this}}">{{this}}</option>
+                    {{/each}}
+                </select>
+                <input type="submit" value="submit"/>        
+            </form>
         </div>
 
         <div class="create-task-button">
@@ -34,23 +38,44 @@
     </div>
 
     <div class="kanban-block" id="todo">
-        <p>To Do</p>
+        <h3 id="Todo-title">To Do</h3>
         {{#each todoTasks}}
-            <div>{{this}}</div>
+            <div class="kanban-task-block">
+                <h3 class="task-name">{{this.name}}</h3>
+                <p class="task-description">{{this.description}}</p>
+                <p class="task-user">{{this.user}}</p>
+            </div>
         {{/each}}
     </div>
 
     <div class="kanban-block" id="inprogress">
         <p>In Progress</p>
         {{#each inprogressTasks}}
-            <div>{{this}}</div>
+            <div class="kanban-task-block">
+                <h3 class="task-name">{{this.name}}</h3>
+                <p class="task-description">{{this.description}}</p>
+                <p class="task-user">{{this.user}}</p>
+            </div>
         {{/each}}
     </div>
 
     <div class="kanban-block" id="inreview">
         <p>In Review</p>
         {{#each inreviewTasks}}
-            <div>{{this}}</div>
+            <div class="kanban-task-block">
+                <h3 class="task-name">{{this.name}}</h3>
+                <p class="task-description">{{this.description}}</p>
+                <p class="task-user">{{this.user}}</p>
+                <form class="task-vote-form">
+                    <label for="task-{{this.name}}-yes">Sucessfully Completed</label>
+                    <input id="task-{{this.name}}-yes" type="radio" class="kanban-task-vote" name="Yes" value="Yes">
+                    
+                    <label for="task-{{this.name}}-no">Not Completed</label>
+                    <input id="task-{{this.name}}-no" type="radio" class="kanban-task-vote" name="False" value="No">
+
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
         {{/each}}
     </div>
 
