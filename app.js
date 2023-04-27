@@ -106,12 +106,13 @@ app.use("/user/privateUser", async (req, res, next) => {
 // });
 app.use("/user/privateUser/:id", async (req, res, next) => {
   // Have to check if you can access page
+
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
   let user = await userFxns.getUserById(id);
   if (user.groups === 0) {
     return res.redirect(`/user/accountsPage/${id}`); //This should be error: not in a kanban OR we could just render a empty profile
-  }
-  if (!isAuth) {
-    return res.redirect("/login");
   }
   next();
 });
