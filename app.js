@@ -7,6 +7,7 @@ import { dirname } from "path";
 import exphbs from "express-handlebars";
 import session from "express-session";
 import { kanbanFxns } from "./data/index.js";
+import { userFxns } from "./data/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -105,7 +106,8 @@ app.use("/user/privateUser", async (req, res, next) => {
 // });
 app.use("/user/privateUser/:id", async (req, res, next) => {
   // Have to check if you can access page
-  if (req.session.user.groups.length === 0) {
+  let user = await userFxns.getUserById(id);
+  if (user.groups === 0) {
     return res.redirect(`/user/accountsPage/${id}`); //This should be error: not in a kanban OR we could just render a empty profile
   }
   if (!isAuth) {
@@ -150,7 +152,7 @@ app.use("/kanban/:kanbanId", async (req, res, next) => {
       return obj.userId;
     });
     if (!usersInKanban.includes(id)) {
-      return res.render("error", {error: "User cannot access this kanban"}); //Or should this just be error
+      return res.render("error", { error: "User cannot access this kanban" }); //Or should this just be error
     }
   }
   next();
