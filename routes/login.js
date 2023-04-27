@@ -1,6 +1,6 @@
 import { Router } from "express";
 const router = Router();
-import { kanbanFxns, userFxns } from "../data/index.js";
+import { userFxns } from "../data/index.js";
 import validation from "../validation.js";
 
 router
@@ -40,7 +40,8 @@ router
         userData.password
       );
       req.session.user = user;
-      res.redirect(`/user/${user._id.toString()}`);
+      console.log("Logging in");
+      res.redirect(`/user/accountsPage/${user._id.toString()}`);
     } catch (e) {
       errors.push("Invalid Credentials");
       res.status(400).render("login", {
@@ -63,7 +64,6 @@ router
   })
   .post(async (req, res) => {
     const userData = req.body;
-    console.log("Signup Post");
     let user;
     let errors = [];
     // if there's a problem with input, will be added to errors
@@ -95,6 +95,7 @@ router
       user = await userFxns.createUser(
         userData.username,
         userData.password,
+        userData.confirmPassword,
         userData.age
       );
       req.session.user = user;

@@ -38,10 +38,11 @@ let exportedMethods = {
    * @param {int} age
    * @returns user object
    */
-  async createUser(username, pswd, age) {
+  async createUser(username, pswd, confirmPwsd, age) {
     username = validation.checkString(username, "data/users addUser username");
     username = username.toLowerCase();
     pswd = validation.checkPassword(pswd, "data/users addUser pswd");
+    if (pswd !== confirmPwsd) throw "Passwords do not match";
     age = validation.checkAge(age, "data/users addUser age");
     // check if username is unique
     const userCollection = await users();
