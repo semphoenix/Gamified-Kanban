@@ -53,7 +53,7 @@ app.use(async (req, res, next) => {
     isAuth = false;
   }
   if (req.path === "/") {
-    if (isAuth) return res.redirect(`/user/privateUser/${id}`);
+    if (isAuth) return res.redirect(`/user/accountsPage/${id}`);
     else return res.redirect("/login");
   }
   next();
@@ -61,7 +61,7 @@ app.use(async (req, res, next) => {
 
 app.use("/login", async (req, res, next) => {
   if (isAuth) {
-    res.redirect(`/privateUser/${id}`);
+    res.redirect(`/user/accountsPage/${id}`);
     return;
   }
   next();
@@ -69,7 +69,7 @@ app.use("/login", async (req, res, next) => {
 
 app.use("/signup", async (req, res, next) => {
   if (isAuth) {
-    res.redirect(`/privateUser/${id}`);
+    res.redirect(`/user/accountsPage/${id}`);
     return;
   }
   next();
@@ -77,11 +77,9 @@ app.use("/signup", async (req, res, next) => {
 app.use("/user", async (req, res, next) => {
   if (req.path === "/user") {
     if (!isAuth) {
-      console.log("Not AUth");
       return res.redirect("/login");
     } else if (isAuth) {
-      console.log("AUth");
-      return res.redirect(`/user/privateUser/${id}`);
+      return res.redirect(`/user/accountsPage/${id}`);
     }
   }
   next();
@@ -89,10 +87,8 @@ app.use("/user", async (req, res, next) => {
 app.use("/user/privateUser", async (req, res, next) => {
   if (req.path === "/user/privateUser") {
     if (!isAuth) {
-      console.log("Not AUth");
       return res.redirect("/login");
     } else if (isAuth) {
-      console.log("AUth");
       return res.redirect(`/user/privateUser/${id}`);
     }
   }
@@ -108,11 +104,13 @@ app.use("/user/privateUser", async (req, res, next) => {
 //   next();
 // });
 app.use("/user/privateUser/:id", async (req, res, next) => {
+  // Have to check if you can access page
+  if (req.session.user.groups.length === 0) {
+    return res.redirect(`/user/accountsPage/${id}`); //This should be error: not in a kanban OR we could just render a empty profile
+  }
   if (!isAuth) {
-    console.log("Not Auth!");
     return res.redirect("/login");
   }
-  console.log("Auth");
   next();
 });
 // app.use("/user/publicUser/:id", async (req, res, next) => {
@@ -129,7 +127,7 @@ app.use("/user/accountsPage/:id", async (req, res, next) => {
   } else if (id !== req.params.id) {
     return res.render("error", {
       error: "Not authorized to use user's profile",
-    }); //Should user be able to access their public page??
+    });
   }
   next();
 });
@@ -152,7 +150,7 @@ app.use("/kanban/:kanbanId", async (req, res, next) => {
       return obj.userId;
     });
     if (!usersInKanban.includes(id)) {
-      return res.redirect(`/user/privateUser/${id}`); //Or should this just be error
+      return res.render("error", {error: "User cannot access this kanban"}); //Or should this just be error
     }
   }
   next();
