@@ -4,24 +4,24 @@
         <nav>
             <a href="/user/privateUser/{{userId}}" id="accounts-profile-link">Profile Page</a>
         </nav>
+        <h2>Username: {{Username}}</h2>
     </header>
     
     <div class="join-group-block">
         <h2 id="accounts-join-group-title">Join Group</h2>
         <form id="accounts-join-group-form">
-            <h3>Group Id</h3>
             <label for="join-group-id">Group Id</label>
             <input type="text" id="join-group-id">
-            <button type="submit" id="">Submit</button>
+            <button type="submit">Submit</button>
         </form>
     </div>
 
     <div class="create-group-block">
         <h2 id="accounts-create-group-title">Create Group</h2>
-        <form id="accounts-create-group-form">
+        <form action="/kanban/createKanban" id="accounts-create-group-form" method="POST">
             <h3>Group Name</h3>
-            <label for="create-group-name">Group Name</label>
-            <input type="text" id="create-group-name">
+            <label for="groupName">Group Name</label>
+            <input type="text" id="groupName" name="groupName">
             <button type="submit" id="">Submit</button>
         </form>
     </div>

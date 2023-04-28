@@ -1,11 +1,11 @@
 import { Router } from "express";
 const router = Router();
-import { kanbanFxns } from "../data/index.js";
+import { kanbanFxns, userFxns } from "../data/index.js";
 import { taskFxns } from "../data/index.js";
 import validation from "../validation.js";
 
 router
-  .route("/:kanbanId")
+  .route("/kanbans/:kanbanId")
   .get(async (req, res) => {
     let kanbanId;
     try {
@@ -62,6 +62,7 @@ router
   });
 
 router.route("/createKanban").post(async (req, res) => {
+  console.log("createKanban");
   let user;
   let ownerId;
   try {
@@ -72,7 +73,7 @@ router.route("/createKanban").post(async (req, res) => {
       .status(404)
       .render("error", { error: "There are no fields in the request body" });
   }
-  const kanbanData = req.body;
+  let kanbanData = req.body;
   if (!kanbanData || Object.keys(kanbanData).length === 0) {
     return res
       .status(400)
@@ -88,9 +89,11 @@ router.route("/createKanban").post(async (req, res) => {
     return res.status(400).render("error", { error: e });
   }
   try {
+    console.log("creating kanban");
     const { groupName } = kanbanData;
     const newKanban = await kanbanFxns.createKanban(ownerId, groupName);
-    return res.redirect(`/kanban/:${newKanban._id.toString()}`);
+    req.session.user = await userFxns.getUserById(user._id);
+    return res.redirect(`/kanban/kanbans/${newKanban._id.toString()}`);
   } catch (e) {
     return res.status(500).render("error", { error: e });
   }

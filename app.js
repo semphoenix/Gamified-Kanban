@@ -144,18 +144,25 @@ app.use("/kanban", async (req, res, next) => {
   }
   next();
 });
-app.use("/kanban/:kanbanId", async (req, res, next) => {
+app.use("/kanban/kanbans/:kanbanId", async (req, res, next) => {
+  console.log("req.params: ", req.params);
+  console.log("isAuth: ", isAuth);
   if (!isAuth) {
     return res.redirect("/login");
-  } else {
+  }
+  try {
     const kanban = await kanbanFxns.getKanbanById(req.params.kanbanId);
-    let usersInKanban = kanban.groupUsers.map(function (obj) {
+    let usersInKanban = kanban.groupUsers.map((obj) => {
       return obj.userId;
     });
     if (!usersInKanban.includes(id)) {
-      return res.render("error", { error: "User cannot access this kanban" }); //Or should this just be error
+      return res.render("error", {
+        error: "User cannot access this kanban ",
+      }); //Or should this just be error
     }
-  }
+  } catch (e) {
+    return res.render("error", { error: e }); //Or should this just be error
+  } //Or should this just be error}
   next();
 });
 app.use("/kanban/createKanban", async (req, res, next) => {

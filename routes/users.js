@@ -48,7 +48,10 @@ router.route("/accountsPage/:id").get(async (req, res) => {
   }
   try {
     const user = await userFxns.getUserById(req.params.id); //Not used
-    res.render("accounts", { userId: req.params.id }); //Change this to render when we have pages
+    res.render("accounts", {
+      userId: req.params.id,
+      Username: user.username,
+    }); //Change this to render when we have pages
   } catch (e) {
     res.status(404).json({ error: e });
   }
