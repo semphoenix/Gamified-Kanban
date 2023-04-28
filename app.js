@@ -7,6 +7,7 @@ import { dirname } from "path";
 import exphbs from "express-handlebars";
 import session from "express-session";
 import { kanbanFxns } from "./data/index.js";
+import { userFxns } from "./data/index.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
@@ -46,7 +47,6 @@ app.use(
 let isAuth;
 let id;
 app.use(async (req, res, next) => {
-  console.log("Being used!");
   if (req.session.user) {
     isAuth = true;
     id = req.session.user._id.toString();
@@ -54,16 +54,15 @@ app.use(async (req, res, next) => {
     isAuth = false;
   }
   if (req.path === "/") {
-    if (isAuth) return res.redirect(`/user/privateUser/:${id}`);
+    if (isAuth) return res.redirect(`/user/accountsPage/${id}`);
     else return res.redirect("/login");
   }
   next();
 });
 
 app.use("/login", async (req, res, next) => {
-  console.log("Being used!!");
   if (isAuth) {
-    res.redirect(`/privateUser/:${id}`);
+    res.redirect(`/user/accountsPage/${id}`);
     return;
   }
   next();
@@ -71,25 +70,30 @@ app.use("/login", async (req, res, next) => {
 
 app.use("/signup", async (req, res, next) => {
   if (isAuth) {
-    res.redirect(`/privateUser/:${id}`);
+    res.redirect(`/user/accountsPage/${id}`);
     return;
   }
   next();
 });
 app.use("/user", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
-  } else if (isAuth) {
-    return res.redirect(`/user/privateUser/:${id}`);
+  if (req.path === "/user") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    } else if (isAuth) {
+      return res.redirect(`/user/accountsPage/${id}`);
+    }
   }
   next();
 });
 app.use("/user/privateUser", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
-  } else if (isAuth) {
-    return res.redirect(`/user/privateUser/:${id}`);
+  if (req.path === "/user/privateUser") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    } else if (isAuth) {
+      return res.redirect(`/user/privateUser/${id}`);
+    }
   }
+
   next();
 });
 // app.use("/user/publicUser", async (req, res, next) => {
@@ -101,10 +105,14 @@ app.use("/user/privateUser", async (req, res, next) => {
 //   next();
 // });
 app.use("/user/privateUser/:id", async (req, res, next) => {
+  // Have to check if you can access page
+
   if (!isAuth) {
     return res.redirect("/login");
-  } else if (id !== req.params.id) {
-    return res.redirect(`/user/publicUser/:${id}`);
+  }
+  let user = await userFxns.getUserById(id);
+  if (user.groups === 0) {
+    return res.redirect(`/user/accountsPage/${id}`); //This should be error: not in a kanban OR we could just render a empty profile
   }
   next();
 });
@@ -119,31 +127,42 @@ app.use("/user/privateUser/:id", async (req, res, next) => {
 app.use("/user/accountsPage/:id", async (req, res, next) => {
   if (!isAuth) {
     return res.redirect("/login");
-  } else if (id === req.params.id) {
-    return res.redirect(`/user/accountsPage/:${id}`); //Should user be able to access their public page??
+  } else if (id !== req.params.id) {
+    return res.render("error", {
+      error: "Not authorized to use user's profile",
+    });
   }
   next();
 });
 app.use("/kanban", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
-  } else if (isAuth) {
-    return res.redirect(`/privateUser/:${id}`); //Or should this just be error
+  if (req.path === "/kanban") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    } else if (isAuth) {
+      return res.redirect(`/accountsPage/${id}`); //Or should this just be error
+    }
   }
   next();
 });
-app.use("/kanban/:kanbanId", async (req, res, next) => {
+app.use("/kanban/kanbans/:kanbanId", async (req, res, next) => {
+  console.log("req.params: ", req.params);
+  console.log("isAuth: ", isAuth);
   if (!isAuth) {
     return res.redirect("/login");
-  } else {
+  }
+  try {
     const kanban = await kanbanFxns.getKanbanById(req.params.kanbanId);
-    let usersInKanban = kanban.groupUsers.map(function (obj) {
+    let usersInKanban = kanban.groupUsers.map((obj) => {
       return obj.userId;
     });
     if (!usersInKanban.includes(id)) {
-      return res.redirect(`/user/privateUser/:${id}`); //Or should this just be error
+      return res.render("error", {
+        error: "User cannot access this kanban ",
+      }); //Or should this just be error
     }
-  }
+  } catch (e) {
+    return res.render("error", { error: e }); //Or should this just be error
+  } //Or should this just be error}
   next();
 });
 app.use("/kanban/createKanban", async (req, res, next) => {

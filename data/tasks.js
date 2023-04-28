@@ -149,10 +149,10 @@ let exportedMethods = {
     // checks to see if majority approved task
     let users = Object.keys(task.votingStatus);
     let acceptedVotes = 0;
-    users.forEach(user => acceptedVotes += task.votingStatus[user]);
-    if (acceptedVotes > kanban.groupUsers.length/2) {
-        task.status = 3;
-        kanban.completedTasks += 1;
+    users.forEach((user) => (acceptedVotes += task.votingStatus[user]));
+    if (acceptedVotes > kanban.groupUsers.length / 2) {
+      task.status = 3;
+      kanban.completedTasks += 1;
     }
     const updateInfo = {
       tasks: kanban.tasks,
@@ -171,7 +171,7 @@ let exportedMethods = {
    * This will be used to retrieve all tasks with certain status in Kanban.
    * @param {ObjectId} kanbanId
    * @param {ObjectId} status
-   * @returns all completed tasks in kanban
+   * @returns all tasks with certain status
    */
   async getSomeTasks(kanbanId, status) {
     kanbanId = validation.checkId(kanbanId, "kanbanId");
@@ -180,12 +180,9 @@ let exportedMethods = {
     let someTasks = [];
     const tasks = kanban.tasks;
     for (let x of tasks) {
-      if (x.assignment === status) someTasks.push(x);
+      if (x.status === status) someTasks.push(x);
     }
     return someTasks;
   },
 };
-console.log(await exportedMethods.castVote("64358ed05a55422433ae736f", "6446dff966ffc2b828b57110", 1));
-
 export default exportedMethods;
-
