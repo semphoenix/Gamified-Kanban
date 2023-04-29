@@ -1,9 +1,9 @@
 <div class="group-button-block">
-    <form id="profile-choose-group-form">
+    <form action="" id="profile-choose-group-form" method="get">
         <label for="profile-choose-group">Groups</label>
         <select name="choose-group" id="choose-group" form="profile-choose-group">
             {{#each Groups}}
-            <option class="choosen-group-option" value="{{this}}">{{this}}</option>
+            <option class="choosen-group-option" value="{{this.groupName}}">{{this.groupName}}</option>
             {{/each}}
         </select>
         <button type="submit" value="submit"/>        

@@ -17,11 +17,13 @@ router
       const kanban = await kanbanFxns.getKanbanById(kanbanId);
       let user = req.session.user;
       let todoTasks = await taskFxns.getSomeTasks(kanbanId, 0);
+      const kanbans = await kanbanFxns.getAllKanbans(user.groups)
+
       console.log(todoTasks);
       res.render("kanban", {
         groupName: kanban.groupName,
         kanbanId: kanban._id.toString(),
-        Groups: user.groups,
+        Groups: kanbans,
         todoTasks: todoTasks,
         inprogressTasks: await taskFxns.getSomeTasks(kanbanId, 1),
         inreviewTasks: await taskFxns.getSomeTasks(kanbanId, 2),
@@ -104,23 +106,28 @@ router
   .get(async (req, res) => {
     try {
       req.params.id = validation.checkId(req.params.kanbanId, "Id Url Param");
-      return res.json("GATCHA PAGE"); // TODO: Change to render the gatcha page
+      const points = await kanbanFxns.getUserPoints(
+        req.session.user.userId, 
+        req.params.id
+      );
+      return res.render("gatcha", {points: points});
     } catch (e) {
-      return res.status(404).json({ error: e });
+      return res.status(404).render('gatcha', {error: e, points:"---"});
     }
   })
   .post(async (req, res) => {
     try {
-      req.params.id = validation(checkId(req.params.kanbanId, "Id Url Param"));
+      req.params.id = validation.checkId(req.params.kanbanId, "Id Url Param");
       let updated_user = await kanbanFxns.playGame(
         req.session.user.userId,
         req.params.id
       );
-      return res.json("Yay you did it"); // TODO: Change to render the gatcha page with new amount of points
+      return res.render("gatcha", {points: points}); // TODO: Change to render the gatcha page with new amount of points
     } catch (e) {
-      return res.status(404).json({ error: e });
+      return res.status(404).json({error: e, points: "---"});
     }
   });
+
 router.route(":kanbanId/vote/:taskId").patch(async (req, res) => {
   // for casting a vote
   let taskId = req.params.taskId;

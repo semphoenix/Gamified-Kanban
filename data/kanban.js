@@ -139,6 +139,17 @@ let exportedMethods = {
     return userPoints;
   },
   /**
+   * This is what will be used to retrieve a list of kanbans
+   * @param [{ObjectId}] kanbanIds
+   * @returns list of kanbans
+   */
+  async getAllKanbans(kanbanIds) {
+    kanbanIds = kanbanIds.map(kanbanId => validation.checkId(kanbanId))
+    const allKanbans = Promise.all(kanbanIds.map(kanbanId => this.getKanbanById(kanbanId)))
+    return allKanbans
+  },
+
+  /**
    * This is what will be used to simulate a pull for the user.
    * @param {ObjectId} userId
    * @param {ObjectId} kanbanId

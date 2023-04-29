@@ -17,8 +17,9 @@ router.route("/privateUser/:id").get(async (req, res) => {
       req.params.id,
       userGroup
     );
+    const kanbans = await kanbanFxns.getAllKanbans(user.groups)
     res.render("profile", {
-      Groups: user.groups,
+      Groups: kanbans,
       User: user.username,
       userId: req.params.id,
       Prizes: userInKanban.rewards,
