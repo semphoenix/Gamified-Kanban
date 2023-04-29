@@ -1,6 +1,6 @@
 import { Router } from "express";
 const router = Router();
-import { kanbanFxns, userFxns } from "../data/index.js";
+import { userFxns } from "../data/index.js";
 import validation from "../validation.js";
 
 router
@@ -9,7 +9,7 @@ router
     try {
       res.render("login");
     } catch (e) {
-      res.status(500).render({ error: e, status: "500" });
+      res.status(500).render("error", { error: e, status: "500" });
     }
   })
   .post(async (req, res) => {
@@ -40,10 +40,11 @@ router
         userData.password
       );
       req.session.user = user;
-      res.redirect(`/user/${user._id.toString()}`);
+      console.log("Logging in");
+      res.redirect(`/user/accountsPage/${user._id.toString()}`);
     } catch (e) {
       errors.push("Invalid Credentials");
-      res.render("login", {
+      res.status(400).render("login", {
         errors: errors,
         LoginErrors: true,
         user: userData,
@@ -83,7 +84,7 @@ router
       errors.push(e);
     }
     if (errors.length > 0) {
-      res.render("login", {
+      res.status(400).render("signup", {
         errors: errors,
         SignupErrors: true,
         user: userData,
@@ -94,13 +95,14 @@ router
       user = await userFxns.createUser(
         userData.username,
         userData.password,
+        userData.confirmPassword,
         userData.age
       );
       req.session.user = user;
-      res.json("User Created!"); //Change to render later
+      res.redirect("/login"); // Should add some sort of message on login page to tell user their account has been created.
     } catch (e) {
       errors.push(e);
-      res.status(500).render("login", {
+      res.status(400).render("signup", {
         errors: errors,
         SignupErrors: true,
         user: userData,

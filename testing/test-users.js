@@ -11,12 +11,10 @@ const db = await get_seeded_db()
     createUser(username, pswd, age) DONE
     addKanbantoUser(userId, kanbanId) DONE
     addCompletedTask(userId) DONE
-    getAllUserGroups(userId) TODO
-    getNumRewards(userId) TODO
-    getNumCompletedTasks(userId) TODO
+    getAllUserGroups(userId) DONE
+    getNumRewards(userId) DONE
+    getNumCompletedTasks(userId) DONE
 */
-
-// console.log(db)
 
 // ~~ TESTING getUserById(id) ~~
 console.log("~~ TESTING getUsersById(id) ~~")
