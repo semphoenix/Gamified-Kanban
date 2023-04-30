@@ -21,8 +21,8 @@
         </div>
 
         <div id="create-task-button">
-            <button id="task-button">Create new task</button>
-            <!-- Will open create-new-task-block div on click -->
+            <button id="task-button" onclick="displayCreate()">Create new task</button>
+            <!-- Will open create-new-task-block div on click. And it will close it if clicked again -->
         </div>
 
         <div id="gacha-button">
@@ -79,7 +79,7 @@
     </div>
 
 
-    <div id="create-new-task-block">
+    <div id="create-new-task-block" style="display:none;">
         <p>New Task</p>
         <form id="create-task-form">
             <label class="create-task-form-label" for="task-name">Task</label>
@@ -103,3 +103,13 @@
     </div>
 </div>
 
+<script>
+    function displayCreate() {
+    let div = document.getElementById("create-new-task-block");
+    if (div.style.display === "none") {
+        div.style.display = "block";
+    } else {
+        div.style.display = "none";
+    }   
+}
+</script>
