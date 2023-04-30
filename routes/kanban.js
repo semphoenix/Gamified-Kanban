@@ -5,28 +5,29 @@ import { taskFxns } from "../data/index.js";
 import validation from "../validation.js";
 
 router
-  .route("/kanbans/:kanbanId")
+  .route("/kanbans")
   .get(async (req, res) => {
-    let kanbanId;
     try {
-      kanbanId = validation.checkId(req.params.kanbanId, "Id URL Param");
-    } catch (e) {
-      return res.status(400).render("error", { error: "Invalid Id" });
-    }
-    try {
-      const kanban = await kanbanFxns.getKanbanById(kanbanId);
-      let user = req.session.user;
-      let todoTasks = await taskFxns.getSomeTasks(kanbanId, 0);
-      const kanbans = await kanbanFxns.getAllKanbans(user.groups)
+      // Define temp variable for user
+      const user = req.session.user
 
-      console.log(todoTasks);
+      // Check session cookie for selectedKanbanId and load in data
+      validation.checkId(req.session.selectedKanbanId)
+      const selectedKanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
+
+      // For selectedKanban, get todoTasks & load kanbans for dropdown
+      const todoTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 0);
+      console.log(user.groups)
+      let kanbans = await kanbanFxns.getAllKanbans(user.groups)
+      console.log(kanbans)
+
       res.render("kanban", {
-        groupName: kanban.groupName,
-        kanbanId: kanban._id.toString(),
-        Groups: kanbans,
+        groupName: selectedKanban.groupName,
+        kanbanId: selectedKanban._id.toString(),
+        groups: kanbans,
         todoTasks: todoTasks,
-        inprogressTasks: await taskFxns.getSomeTasks(kanbanId, 1),
-        inreviewTasks: await taskFxns.getSomeTasks(kanbanId, 2),
+        inprogressTasks: await taskFxns.getSomeTasks(req.session.selectedKanbanId, 1),
+        inreviewTasks: await taskFxns.getSomeTasks(req.session.selectedKanbanId, 2)
       });
     } catch (e) {
       return res
@@ -35,29 +36,61 @@ router
     }
   })
   .post(async (req, res) => {
-    // for adding a task
-    let kanbanId = req.params.kanbanId;
-    let { userId, name, description, difficulty, status } = req.body;
+    // Initializing variables
+    let { userId, name, description, difficulty, status } = ""
+    let content;
+    let postType = ""
+
     try {
-      kanbanId = validation.checkId(kanbanId, "kanbanId");
-      userId = validation.checkId(userId, "userId");
-      name = validation.checkString(name, "name");
-      description = validation.checkString(description, "description");
-      difficulty = validation.checkDifficulty(difficulty, "difficulty");
-      status = validation.checkStatus(status, "status");
+      content = req.body
+     
+      // If no necessary data avaialble through error
+      if(!content){
+        throw "Route: Kanbans/ ~ A form submitted with no necessary data"        
+      } 
+      // If the post request is for "chooseGroup"
+      else if(!("kanbanId" in content) || ("userId" in content) || ("name" in content) || ("description" in content) || ("difficulty" in content) || ("status" in content)){
+        postType = "Choose Group"
+        content.chooseGroup = validation.checkId(content.chooseGroup, "chooseGroup")
+      } 
+      // If the post request if for "createTask"
+      else {
+        postType = "Create Task"
+        let { userId, name, description, difficulty, status } = req.body;
+        kanbanId = validation.checkId(kanbanId, "kanbanId");
+        userId = validation.checkId(userId, "userId");
+        name = validation.checkString(name, "name");
+        description = validation.checkString(description, "description");
+        difficulty = validation.checkDifficulty(difficulty, "difficulty");
+        status = validation.checkStatus(status, "status");
+      }
+
     } catch (e) {
       return res.status(400).render("error", { error: e });
     }
+
     try {
-      const newTask = await taskFxns.createTask(
-        kanbanId,
-        userId,
-        name,
-        description,
-        difficulty,
-        status
-      );
-      return res.status(200).json(newTask);
+      // Process response for "Choose Group" post request
+      if (postType === "Choose Group"){
+        req.session.selectedKanbanId = content.chooseGroup
+        return res.redirect("/kanban/kanbans")
+      } 
+
+      // Process response for "Create Task" post request
+      else if (postType === "Create Task"){
+        const newTask = await taskFxns.createTask(
+          kanbanId,
+          userId,
+          name,
+          description,
+          difficulty,
+          status
+        )
+        return res.status(200).json(newTask);
+      } else{
+        throw "Route: Kanbans/ ~ Something went wrong with the post request"
+      }
+
     } catch (e) {
       return res.status(404).json({ error: e });
     }
@@ -95,20 +128,21 @@ router.route("/createKanban").post(async (req, res) => {
     const { groupName } = kanbanData;
     const newKanban = await kanbanFxns.createKanban(ownerId, groupName);
     req.session.user = await userFxns.getUserById(user._id);
-    return res.redirect(`/kanban/kanbans/${newKanban._id.toString()}`);
+    req.session.selectedKanbanId = newKanban._id
+    return res.redirect(`/kanban/kanbans`);
   } catch (e) {
     return res.status(500).render("error", { error: e });
   }
 });
 
 router
-  .route("/:kanbanId/gatcha")
+  .route("/gatcha")
   .get(async (req, res) => {
     try {
-      req.params.id = validation.checkId(req.params.kanbanId, "Id Url Param");
+      validation.checkId(req.session.selectedKanbanId, "Current Kanban");
       const points = await kanbanFxns.getUserPoints(
-        req.session.user.userId, 
-        req.params.id
+        req.session.user._id, 
+        req.session.selectedKanbanId
       );
       return res.render("gatcha", {points: points});
     } catch (e) {
@@ -117,12 +151,12 @@ router
   })
   .post(async (req, res) => {
     try {
-      req.params.id = validation.checkId(req.params.kanbanId, "Id Url Param");
+      validation.checkId(req.session.selectedKanbanId, "Current Kanban");
       let updated_user = await kanbanFxns.playGame(
         req.session.user.userId,
-        req.params.id
+        req.session.selectedKanbanId
       );
-      return res.render("gatcha", {points: points}); // TODO: Change to render the gatcha page with new amount of points
+      return res.render("gatcha", {points: updated_user.points}); // TODO: Change to render the gatcha page with new amount of points
     } catch (e) {
       return res.status(404).json({error: e, points: "---"});
     }
@@ -150,7 +184,7 @@ router.route(":kanbanId/vote/:taskId").patch(async (req, res) => {
     return res.render("kanban", {
       groupName: kanban.groupName,
       kanbanId: kanban._id.toString(),
-      Groups: user.groups,
+      groups: user.groups,
       todoTasks: await taskFxns.getSomeTasks(kanbanId, 0),
       inprogressTasks: await taskFxns.getSomeTasks(kanbanId, 1),
       inreviewTasks: await taskFxns.getSomeTasks(kanbanId, 2),
@@ -178,7 +212,7 @@ router.route(":kanbanId/changeStatus/:taskId").patch(async (req, res) => {
     return res.status(200).render("kanban", {
       groupName: kanban.groupName,
       kanbanId: kanban._id.toString(),
-      Groups: user.groups,
+      groups: user.groups,
       todoTasks: await taskFxns.getSomeTasks(kanbanId, 0),
       inprogressTasks: await taskFxns.getSomeTasks(kanbanId, 1),
       inreviewTasks: await taskFxns.getSomeTasks(kanbanId, 2),

@@ -1,18 +1,23 @@
 <div class="group-button-block">
-    <form action="" id="profile-choose-group-form" method="get">
-        <label for="profile-choose-group">Groups</label>
-        <select name="choose-group" id="choose-group" form="profile-choose-group">
-            {{#each Groups}}
-            <option class="choosen-group-option" value="{{this.groupName}}">{{this.groupName}}</option>
+    <form action="/user/privateUser" id="profile-choose-group-form" method="post">
+        <label for="chooseGroup">Groups</label>
+        <select name="chooseGroup" id="chooseGroup" form="profile-choose-group-form">
+            {{#each groups}}
+            <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
             {{/each}}
         </select>
-        <button type="submit" value="submit"/>        
+        <input type="submit" value="submit"/>        
     </form>
 </div>
 
 <div class="accounts-button">
-    <h2>{{User}}</h2>
-    <a href="/user/accountsPage/{{userId}}"><button id="accounts-button">Accounts</button></a>
+    <h2>{{user}}</h2>
+    <a href="/user/accountsPage"><button id="accounts-button">Accounts</button></a>
+</div>
+
+<div class="kanban-button">
+    <h2>{{currentKanban.groupName}}</h2>
+    <a href="/kanban/kanbans"><button id="accounts-button">KanbanPage</button></a>
 </div>
 
 <main>
@@ -21,7 +26,7 @@
         <form class="prize-form" id="prize-color-form">
             <label for="choose-color">Color Choices</label>
             <select name="choose-color" id="choose-color" form="prize-color-form">
-                {{#each Prizes.colors}}
+                {{#each prizes.colors}}
                 <option class="prize-color-option" value="{{this}}">{{this}}</option>
                 {{/each}}
             </select>
@@ -33,7 +38,7 @@
         <form class="prize-form" id="prize-border-form">
             <label for="choose-border">Border Choices</label>
             <select name="choose-border" id="choose-border" form="prize-border-form">
-                {{#each Prizes.borders}}
+                {{#each prizes.borders}}
                 <option class="prize-border-option" value="{{this}}">{{this}}</option>
                 {{/each}}
             </select>
@@ -46,7 +51,7 @@
         <form class="choose-prize-picture-form" id="prize-picture-form">
             <label for="choose-picture">Picture Choices</label>
             <select name="choose-picture" id="choose-picture" form="prize-picture-form">
-                {{#each Prizes.pictures}}
+                {{#each prizes.pictures}}
                 <option class="prize-picture-option" style="background-image:{{this.img_url}}" value="{{this}}">{{this}}</option>
                 {{/each}}
             </select>

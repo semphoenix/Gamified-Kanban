@@ -143,9 +143,13 @@ let exportedMethods = {
    * @param [{ObjectId}] kanbanIds
    * @returns list of kanbans
    */
+  
   async getAllKanbans(kanbanIds) {
-    kanbanIds = kanbanIds.map(kanbanId => validation.checkId(kanbanId))
-    const allKanbans = Promise.all(kanbanIds.map(kanbanId => this.getKanbanById(kanbanId)))
+    kanbanIds = kanbanIds.map(kanbanId => validation.checkId(kanbanId, "kanbanId"))
+    const allKanbans = await Promise.all(kanbanIds.map(async (kanbanId) => {
+      const kanban = await this.getKanbanById(kanbanId);
+      return kanban
+    }))
     return allKanbans
   },
 
