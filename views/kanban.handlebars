@@ -26,13 +26,16 @@
         </div>
 
         <div id="gacha-button">
+            {{!-- has not been implemented yet --}}
             <a href="/gacha"><button id="gacha-button">Gacha</button></a>
         </div>
         <div id="completed-task-button">
+            {{!-- has not been implemented yet --}}
             <a href="/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
         </div>
         <div id="profile-button">
-            <a href="/profile"><button id="profile-button">Profile</button></a>
+            {{!-- waiting to see how to implement --}}
+            <a href="/users/privateUser"><button id="profile-button">Profile</button></a>
         </div>
     </div>
 
@@ -78,7 +81,6 @@
         {{/each}}
     </div>
 
-
     <div id="create-new-task-block" style="display:none;">
         <p>New Task</p>
         <form id="create-task-form">
@@ -97,7 +99,7 @@
             
             <div class="create-task-buttons">
                 <button type="submit" id="save-button">Submit</button>
-                <button type="button" id="cancel-button" onclick="closeTask()">Close</button>
+                <button type="button" id="cancel-button" onclick="displayCreate()">Close</button>
             </div>
         </form>
     </div>
