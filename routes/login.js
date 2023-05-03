@@ -29,7 +29,7 @@ router
     if (errors.length > 0) {
       res.render("login", {
         errors: errors,
-        LoginErrors: true,
+        loginErrors: true,
         user: userData,
       });
       return;
@@ -41,7 +41,7 @@ router
       );
       req.session.user = user;
       console.log("Logging in");
-      res.redirect(`/user/accountsPage/${user._id.toString()}`);
+      res.redirect(`/user/accountsPage`);
     } catch (e) {
       errors.push("Invalid Credentials");
       res.status(400).render("login", {
