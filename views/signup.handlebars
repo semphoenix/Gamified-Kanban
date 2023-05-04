@@ -1,16 +1,16 @@
 <h1>Signup</h1>
   <form action="/signup" id="signUpForm" method="POST">
     <label for="username">Username</label>
-    <input type="text" id="username" name="username" placeholder="Username" value="{{user.username}}" required>
+    <input type="text" id="username" name="username" placeholder="Username" value="{{user.username}}">
 
     <label for="username">Age</label>
-    <input type="text" id="age" name="age" placeholder="Age" value="{{user.age}}" required>
+    <input type="text" id="age" name="age" placeholder="Age" value="{{user.age}}">
 
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" placeholder="Password" required>
+    <input type="password" id="password" name="password" placeholder="Password">
     
     <label for="confirmPassword">Confirm Password</label>
-    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password">
     <input type="submit" value="Signup">
   </form>
 <div id="signupError" class="signupError" hidden></div>
