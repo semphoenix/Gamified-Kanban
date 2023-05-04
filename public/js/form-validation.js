@@ -11,6 +11,7 @@
     }
   
     checkPassword = (strVal, varName) => {
+      console.log(strVal);
       if (!strVal) throw `Error: You must supply a ${varName}!`;
       if (typeof strVal !== 'string') throw `Error: ${varName} must be a string!`;
       strVal = strVal.trim();
@@ -24,6 +25,11 @@
       let bval = pwd_regex.test(strVal);
       if (!bval) throw `Error: ${varName} password must contain minimum eight characters, at least one letter, one number, and one special character @$!%*#?&`;
       return strVal;
+    }
+
+    comparePassword = (pswd1, pswd2) => {
+      if(pswd1 !== pswd2)
+        throw "Error: passwords must match";
     }
   
     checkAge = (age, varName) => {
@@ -101,6 +107,7 @@
           checkAge(age.value, "age");
           checkPassword(password.value, "password");
           checkPassword(confirmPassword.value, "password");
+          comparePassword(password.value, confirmPassword.value);
           event.target.submit();
         } catch(e) {
           signupErrorDiv.innerHTML = `<ul class="error-list"><li>${e}</li></ul>`;
