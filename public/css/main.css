@@ -184,12 +184,10 @@ nav {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Header */
 header {
   position: fixed;
   top: 5%;
   width: 100%;
-  /* background-color: #fff; */
   z-index: 1;
 }
 
@@ -208,7 +206,6 @@ header {
   color: gray;
 }
 
-/* Side column */
 #side-column {
   display: flex;
   flex-direction: column;
