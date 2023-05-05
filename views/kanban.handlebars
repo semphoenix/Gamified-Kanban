@@ -9,11 +9,11 @@
 
     <div class="kanban-block" id="side-column">
         <div id="group-button-block">
-            <form class="choose-group-form" id="kanban-choose-group-form">
-                <label for="choose-group">Groups</label>
-                <select id="choose-group" form="kanban-choose-group-form">
-                    {{#each Groups}}
-                    <option class="choosen-group-option" value="{{this}}">{{this}}</option>
+            <form action="/kanban/kanbans" class="choose-group-form" id="kanban-choose-group-form" method="post">
+                <label for="chooseGroup">Groups</label>
+                <select name="chooseGroup" id="chooseGroup" form="kanban-choose-group-form">
+                    {{#each groups}}
+                    <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
                     {{/each}}
                 </select>
                 <input type="submit" value="submit"/>        
@@ -25,17 +25,14 @@
             <!-- Will open create-new-task-block div on click. And it will close it if clicked again -->
         </div>
 
-        <div id="gacha-button">
-            {{!-- has not been implemented yet --}}
-            <a href="/gacha"><button id="gacha-button">Gacha</button></a>
+        <div id="gatcha-button">
+            <a href="/kanban/gatcha"><button id="gatcha-button">Gacha</button></a>
         </div>
         <div id="completed-task-button">
-            {{!-- has not been implemented yet --}}
-            <a href="/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
+            <a href="/kanban/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
         </div>
         <div id="profile-button">
-            {{!-- waiting to see how to implement --}}
-            <a href="/users/privateUser"><button id="profile-button">Profile</button></a>
+            <a href="/user/privateUser"><button id="profile-button">Profile</button></a>
         </div>
     </div>
 
@@ -83,15 +80,15 @@
 
     <div id="create-new-task-block" style="display:none;">
         <p>New Task</p>
-        <form id="create-task-form">
+        <form id="create-task-form" action="/kanban/kanbans" method="POST">
             <label class="create-task-form-label" for="task-name">Task</label>
-            <input class="create-task-form-input" type="text" name="task-name" id="task-name" required>
+            <input class="create-task-form-input" type="text" name="task-name" id="task-name">
             
             <label class="create-task-form-label" for="task-description">Description</label>
-            <textarea class="create-task-form-input" name="task-description" id="task-description" required></textarea>
+            <textarea class="create-task-form-input" name="task-description" id="task-description"></textarea>
             
             <label class="create-task-form-label" for="task-difficulty">Difficulty</label>
-            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" form="create-task-form" required>
+            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" form="create-task-form">
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
@@ -102,6 +99,7 @@
                 <button type="button" id="cancel-button" onclick="displayCreate()">Close</button>
             </div>
         </form>
+        <div id="task-error"></div hidden>
     </div>
 </div>
 

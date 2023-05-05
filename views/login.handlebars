@@ -1,14 +1,13 @@
 <h1>Login</h1>
   <form action="/login" id="loginForm" method="POST">
     <label for="username">Username</label>
-    <input type="text" id="username" name="username" placeholder="Username" required>
+    <input type="text" id="username" name="username" placeholder="Username">
 
     <label for="password">Password</label>
-    <input type="password" id="password" name="password" placeholder="Password" required>
+    <input type="password" id="password" name="password" placeholder="Password">
     <input type="submit" value="Login">
   </form>
-<div id="loginError" class="loginError" hidden></div>
-    {{#if LoginErrors}}
+  <div id="loginError" class="loginError" hidden></div>
   <ul class="error-list">
     {{#each errors}}
     <li>
@@ -16,7 +15,6 @@
     </li>
     {{/each}}
   </ul>
-  {{/if}}
 <a href="/signup">Click here to signup!</a>
   <h2>About</h2>
   <h2>Tutorial</h2>

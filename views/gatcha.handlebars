@@ -1,0 +1,17 @@
+<div class="container">
+    <a href="/kanban/kanbans"><button id="back-to-kanban">Back To Kanban</button></a>
+
+    <div class="points-section">
+        <p id="points-total">Points: {{points}}</p>
+        {{#if error}}
+        <p class="error-tag" id="gatcha-error-tag">{{error}}</p>
+        {{/if}}
+    </div>
+
+    <div class="game-container">
+        <form id="pull-reward">
+            <button id="pull-button">PLAY</button>
+            <input type="submit" value="submit"/>        
+        </form>
+    </div>
+</div>

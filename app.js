@@ -38,6 +38,7 @@ app.use(express.json());
 app.use(
   session({
     name: "AuthCookie",
+    selectedKanbanId: undefined,
     secret: "some secret string!",
     resave: false,
     saveUninitialized: false,
@@ -54,7 +55,7 @@ app.use(async (req, res, next) => {
     isAuth = false;
   }
   if (req.path === "/") {
-    if (isAuth) return res.redirect(`/user/accountsPage/${id}`);
+    if (isAuth) return res.redirect(`/user/accountsPage`);
     else return res.redirect("/login");
   }
   next();
@@ -62,7 +63,7 @@ app.use(async (req, res, next) => {
 
 app.use("/login", async (req, res, next) => {
   if (isAuth) {
-    res.redirect(`/user/accountsPage/${id}`);
+    res.redirect(`/user/accountsPage`);
     return;
   }
   next();
@@ -70,7 +71,7 @@ app.use("/login", async (req, res, next) => {
 
 app.use("/signup", async (req, res, next) => {
   if (isAuth) {
-    res.redirect(`/user/accountsPage/${id}`);
+    res.redirect(`/user/accountsPage`);
     return;
   }
   next();
@@ -80,7 +81,7 @@ app.use("/user", async (req, res, next) => {
     if (!isAuth) {
       return res.redirect("/login");
     } else if (isAuth) {
-      return res.redirect(`/user/accountsPage/${id}`);
+      return res.redirect(`/user/accountsPage`);
     }
   }
   next();
@@ -90,7 +91,7 @@ app.use("/user/privateUser", async (req, res, next) => {
     if (!isAuth) {
       return res.redirect("/login");
     } else if (isAuth) {
-      return res.redirect(`/user/privateUser/${id}`);
+      return res.redirect(`/user/privateUser`);
     }
   }
 
@@ -104,7 +105,7 @@ app.use("/user/privateUser", async (req, res, next) => {
 //   }
 //   next();
 // });
-app.use("/user/privateUser/:id", async (req, res, next) => {
+app.use("/user/privateUser", async (req, res, next) => {
   // Have to check if you can access page
 
   if (!isAuth) {
@@ -112,7 +113,7 @@ app.use("/user/privateUser/:id", async (req, res, next) => {
   }
   let user = await userFxns.getUserById(id);
   if (user.groups === 0) {
-    return res.redirect(`/user/accountsPage/${id}`); //This should be error: not in a kanban OR we could just render a empty profile
+    return res.redirect(`/user/accountsPage`); //This should be error: not in a kanban OR we could just render a empty profile
   }
   next();
 });
@@ -124,13 +125,13 @@ app.use("/user/privateUser/:id", async (req, res, next) => {
 //   }
 //   next();
 // });
-app.use("/user/accountsPage/:id", async (req, res, next) => {
+app.use("/user/accountsPage/", async (req, res, next) => {
   if (!isAuth) {
     return res.redirect("/login");
-  } else if (id !== req.params.id) {
-    return res.render("error", {
-      error: "Not authorized to use user's profile",
-    });
+  // } else if (id !== req.params.id) {
+  //   return res.render("error", {
+  //     error: "Not authorized to use user's profile",
+  //   });
   }
   next();
 });
@@ -139,19 +140,20 @@ app.use("/kanban", async (req, res, next) => {
     if (!isAuth) {
       return res.redirect("/login");
     } else if (isAuth) {
-      return res.redirect(`/accountsPage/${id}`); //Or should this just be error
+      return res.redirect(`/accountsPage`); //Or should this just be error
     }
   }
   next();
 });
-app.use("/kanban/kanbans/:kanbanId", async (req, res, next) => {
+app.use("/kanban/kanbans", async (req, res, next) => {
   console.log("req.params: ", req.params);
   console.log("isAuth: ", isAuth);
   if (!isAuth) {
     return res.redirect("/login");
   }
   try {
-    const kanban = await kanbanFxns.getKanbanById(req.params.kanbanId);
+    if(!req.session.selectedKanbanId) throw "Error: cookie does not contian Kanban!"
+    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
     let usersInKanban = kanban.groupUsers.map((obj) => {
       return obj.userId;
     });
