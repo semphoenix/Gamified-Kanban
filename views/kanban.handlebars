@@ -78,7 +78,7 @@
         {{/each}}
     </div>
 
-    <div id="create-new-task-block" style="display:none;">
+    <div id="create-new-task-block" hidden>
         <p>New Task</p>
         <form id="create-task-form" action="/kanban/kanbans" method="POST">
             <label class="create-task-form-label" for="task-name">Task</label>
@@ -96,20 +96,9 @@
             
             <div class="create-task-buttons">
                 <button type="submit" id="save-button">Submit</button>
-                <button type="button" id="cancel-button" onclick="displayCreate()">Close</button>
+                <button type="button" id="cancel-button">Close</button>
             </div>
         </form>
         <div id="task-error"></div hidden>
     </div>
 </div>
-
-<script>
-    function displayCreate() {
-    let div = document.getElementById("create-new-task-block");
-    if (div.style.display === "none") {
-        div.style.display = "block";
-    } else {
-        div.style.display = "none";
-    }   
-}
-</script>
