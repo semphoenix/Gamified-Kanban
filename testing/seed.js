@@ -7,18 +7,18 @@ const db = await dbConnection();
 await db.dropDatabase();
 
 // Populate DB with Users
-const PATRICK = await users.createUser("Patrick1234", "passWORd1234!", 45);
-const AIDEN = await users.createUser("Aiden6394", "passWORd1234!", 13);
-const CHARLOTTE = await users.createUser("Charlotte2345", "Pa$$w0rd5678", 27);
-const SAMUEL = await users.createUser("Samuel4567", "P@ssw0rd9012", 32);
+const PATRICK = await users.createUser("Patrick1234", "passWORd1234!", "passWORd1234!", 45);
+const AIDEN = await users.createUser("Aiden6394", "passWORd1234!", "passWORd1234!", 13);
+const CHARLOTTE = await users.createUser("Charlotte2345", "Pa$$w0rd5678","Pa$$w0rd5678", 27);
+const SAMUEL = await users.createUser("Samuel4567", "P@ssw0rd9012", "P@ssw0rd9012",32);
 
-const EMMA = await users.createUser("Emma5678", "password?123", 21);
-const LIAM = await users.createUser("Liam3456", "pass?word456", 29);
-const AVA = await users.createUser("Ava1234", "pas?sword789", 35);
+const EMMA = await users.createUser("Emma5678", "password?123", "password?123",21);
+const LIAM = await users.createUser("Liam3456", "pass?word456", "pass?word456",29);
+const AVA = await users.createUser("Ava1234", "pas?sword789", "pas?sword789",35);
 
-const WILLIAM = await users.createUser("William7890", "passw?ord012", 42);
+const WILLIAM = await users.createUser("William7890", "passw?ord012","passw?ord012", 42);
 
-const ASH = await users.createUser("AshCatch'em", "g0@pik@chuu6", 13);
+const ASH = await users.createUser("AshCatch'em", "g0@pik@chuu6", "g0@pik@chuu6",13);
 
 // Populate DB with Kanbans
 const TEAM_VALOR = await kanban.createKanban(

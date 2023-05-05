@@ -103,8 +103,8 @@ router.route("/createTask").post(async(req,res) => {
   taskname = validation.checkString(taskname, "route /createTask taskname");
   taskdescription = validation.checkString(taskdescription, "route /createTask taskdescription");
   taskdifficulty = validation.checkDifficulty(Number(taskdifficulty), "route /createTask taskdifficulty");
-  let created = await taskFxns.createTask(req.session.selectedKanbanId, req.session.user._id, taskname, taskdescription, taskdifficulty, 0)
-  res.status(200).json(created);
+  let created = await taskFxns.createTask(req.session.selectedKanbanId, req.session.user._id, taskname, taskdescription, taskdifficulty, 0);
+  res.redirect("/kanban/kanbans");
 })
 router.route("/createKanban").post(async (req, res) => {
   console.log("createKanban");
