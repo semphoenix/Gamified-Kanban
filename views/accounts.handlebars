@@ -1,9 +1,11 @@
+
 <main>
-    <header>
+    <nav>
+        <a href="/user/privateUser/{{userId}}" id="accounts-profile-link">Profile Page</a>
+    </nav>
+    <header id="accountsHeader">
         <h1 id="accounts-title">Accounts Page</h1>
-        <nav>
-            <a href="/user/privateUser/{{userId}}" id="accounts-profile-link">Profile Page</a>
-        </nav>
+        
         <h2>Username: {{Username}}</h2>
     </header>
     
@@ -19,10 +21,12 @@
     <div class="create-group-block">
         <h2 id="accounts-create-group-title">Create Group</h2>
         <form action="/kanban/createKanban" id="accounts-create-group-form" method="POST">
-            <h3>Group Name</h3>
+            {{!-- <h3>Group Name</h3> --}}
             <label for="groupName">Group Name</label>
             <input type="text" id="groupName" name="groupName">
             <button type="submit" id="">Submit</button>
         </form>
     </div>
 </main>
+
+
