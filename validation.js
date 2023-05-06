@@ -52,6 +52,7 @@ const exportedMethods = {
     if (!age) throw `Error: You must supply a ${varName}!`;
     if (typeof age !== 'number' || Number.isNaN(age) || !Number.isInteger(age)) throw `Error: ${varName} must be an integer number!`;
     if (age < 13) throw `Error: ${varName} must be greater than 12!`;
+    if (age >= 150) throw `Error: ${varName} must be less than 150!`;
     return age;
   },
 
