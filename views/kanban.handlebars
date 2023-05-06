@@ -1,6 +1,6 @@
 <div class="kanban-board">
 
-    <header>
+    <header id="kanbanHeader">
         <div id="group-heading">    
             <h1 id="group-heading-text">{{groupName}}</h1>
             <h2 id="group-id">{{kanbanId}}</h2>
@@ -25,16 +25,13 @@
             <!-- Will open create-new-task-block div on click. And it will close it if clicked again -->
         </div>
 
-        <div id="gatcha-button">
-            <a href="/kanban/gatcha"><button id="gatcha-button">Gacha</button></a>
-        </div>
-        <div id="completed-task-button">
-            <a href="/kanban/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
-        </div>
-        <div id="profile-button">
+        <div class="sideButtons">
+            <a href="/gacha"><button id="gacha-button">Gacha</button></a>
+            <a href="/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
             <a href="/user/privateUser"><button id="profile-button">Profile</button></a>
         </div>
     </div>
+    
 
     <div class="kanban-block" id="todo">
         <h3 class="kanban-block-title" id="todo-title">To Do</h3>

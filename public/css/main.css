@@ -1,12 +1,497 @@
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(#4e54c8, #8f94fb);
+  height: 100vh;
+  overflow: hidden;
+}
+
+.container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 20%;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 10px 10px 15px rgba(0,0,0,0.05);
+}
+
+main {
+  position: absolute;
+  width: 100%;
+  background: white;
+}
+
+.container h1{
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 1px solid silver;
+}
+
+.loginForm, .signUpForm {
+  padding: 0 40px;
+  box-sizing: border-box;
+}
+
+form .input_fields{
+  position: relative;
+  border-bottom: 2px solid #adadad;
+  margin: 30px 0;
+}
+
+.input_fields input{
+  width: 100%;
+  padding: 0 5px;
+  height: 40px;
+  font-size: 16px;
+  border: none;
+  background: none;
+  outline: none;
+}
+
+
+input[type="submit"] {
+  width: 80%;
+  height: 50px;
+  border: 1px solid;
+  background: #2691d9;
+  border-radius: 25px;
+  font-size: 18px;
+  color: #e9f4fb;
+  font-weight: 500;
+  outline: none;
+  margin: 0 auto;
+  display: block;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover{
+  border-color: #2691d9;
+}
+
+
+.goToSignUp, .goToLogin {
+  margin: 30px 0;
+  text-align: center;
+  font-size: 16px;
+  color: #666666;
+}
+.goToSignUp a, .goToLogin a{
+  color: #2691d9;
+  text-decoration: none;
+}
+
+main {
+  top: 5%;
+  width: 100%;
+  height: 90%;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+#accountsHeader {
+  padding: 0vh;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  
+}
+#accounts-title {
+  margin: 0;
+  font-size: 2rem;
+}
+#accounts-profile-link {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+}
+#accounts-profile-link:hover {
+  background-color: #0069d9;
+}
+.join-group-block h2, .create-group-block h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: normal;
+  padding-bottom: 1%;
+}
+.join-group-block, .create-group-block {
+  margin-bottom: 30px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+#accounts-join-group-form, #accounts-create-group-form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+#accounts-join-group-form label, #accounts-create-group-form label {
+  margin-right: 10px;
+}
+
+
+#accounts-join-group-form input[type="text"], #accounts-create-group-form input[type="text"] {
+  flex: 1;
+  padding: 10px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+}
+
+#accounts-join-group-form input[type="text"]:focus, #accounts-create-group-form input[type="text"]:focus {
+  border-color: #007bff;
+}
+
+#accounts-join-group-form button[type="submit"], #accounts-create-group-form button[type="submit"] {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#accounts-join-group-form button[type="submit"]:hover, #accounts-create-group-form button[type="submit"]:hover {
+  background-color: #0069d9;
+}
+
+nav {
+  text-align: right;
+  padding-top: 3%;
+  padding-bottom: 2%;
+}
+
+.kanban-board {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 20px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+header {
+  position: fixed;
+  top: 5%;
+  width: 100%;
+  z-index: 1;
+}
+
+header h2 {
+  padding-right: 2%;
+}
+
+#group-heading {
+  margin-bottom: 20px;
+}
+
+#group-heading-text {
+  font-size: 2rem;
+  margin: 0;
+}
+
+#group-id {
+  font-size: 1.2rem;
+  margin: 0;
+  color: gray;
+}
+
+#side-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 20%;
+  padding-right: 20px;
+}
+
+#group-button-block {
+  margin-bottom: 20px;
+}
+
+.choose-group-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.choose-group-form label {
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.choosen-group-option {
+  font-size: 1rem;
+}
+
+#task-button {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #ff8800;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#task-button:hover {
+  background-color: #ff9900;
+}
+
+#create-new-task-block {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.create-task-form-label {
+  display: block;
+  font-size: 1.2rem;
+  margin-bottom: 5px;
+}
+
+.create-task-form-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  border: 1px solid gray;
+  border-radius: 5px;
+}
+
+.create-task-form-input:focus {
+  outline: none;
+  border-color: #ff8800;
+}
+
+.create-task-buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#create-task-form button {
+  padding: 10px 20px;
+  font-size: 1.2rem;
+  background-color: #ff8800;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+#create-task-form button:hover {
+  background-color: #ff9900;
+}
+
+#cancel-button {
+  background-color: #ccc;
+  color: black;
+}
+
+#cancel-button:hover {
+  background-color: #ddd;
+}
+
+.kanban-block {
+  display: inline-block;
+  margin-top: 5%;
+  width: 20%;
+  vertical-align: top;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+}
+
+.kanban-block-title {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.kanban-task-block {
+  margin-bottom: 10px;
+  padding: 5px;
+  border-radius: 3px;
+  background-color: #f7f7f7;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.task-name {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.task-description {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.task-user {
+  font-size: 12px;
+  color: #999;
+}
+
+.sideButtons {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.sideButtons a {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.sideButtons button {
+  padding: 10px 20px;
+  font-size: 18px;
+  color: white;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.sideButtons button:hover {
+  background-color: #3e8e41;
+}
+
+#back-to-kanban {
+  padding: 10px;
+  font-size: 16px;
+  color: white;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#back-to-kanban:hover {
+  background-color: #3e8e41;
+}
+
+.points-section {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 5%;
+  align-items: center;
+}
+
+#points-text {
+  font-size: 30px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+#points-num {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+
+.prizes {
+  margin-top: 10%;
+  text-align: left;
+  padding-left: 30%;
+
+}
+
+.prizes label {
+  font-size: 30px;
+  font-weight: bold;
+  padding-left: 20%;
+}
+
+/* .prize-selection {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+} */
+
+
+
+.pull-prize {
+  padding-right: 10%;
+  float: right;
+}
+
+.pull-prize button {
+  margin-left: 30vh;
+  background-color: red;
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  height: 30vh;
+  width: 30vh;
+  cursor: pointer;
+}
+
+.pull-prize button:hover {
+  background-color: darkred;
+}
+
+
+.pull-prize button[type="submit"] {
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 16px;
+  color: white;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+.pull-prize button[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+
+
+.parentPrize div {
+  margin-top: 10%;
+  display: flex;
+  float: left;
+}
 #loginError, #signupError, #taskError, .error-list {
     color: red;
     width: 70%
 }
 
-form {
+/* form {
     flex-direction: "column";
 }
 
 h1 {
     align-self: "center";
-}
+} 
