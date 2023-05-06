@@ -4,9 +4,9 @@ import { ObjectId } from "mongodb";
 import validation from "../validation.js";
 var colors = ["red", "blue", "orange", "green", "purple"];
 let allRewards = {
-  profileRewards: [0, 1, 2, 3, 4, 5],
+  profileRewards: [1, 2, 3, 4, 5],
   borderRewards: ["red", "blue", "orange", "green", "purple"],
-  colorRewards: [-2, -1, 0, 1, 2],
+  colorRewards: [-2, -1, 1, 2],
 };
 let exportedMethods = {
   /**
@@ -80,14 +80,14 @@ let exportedMethods = {
       userId: userId,
       points: 0,
       rewards: {
-        profileRewards: [],
-        borderRewards: [],
-        colorRewards: [],
+        profileRewards: [0],
+        borderRewards: ["default"],
+        colorRewards: [0],
       },
       selectedReward: {
-        profileReward: "default",
+        profileReward: 0,
         borderReward: "default",
-        colorReward: "default",
+        colorReward: 0,
       },
     };
     let availColors = kanban.availColors;
@@ -186,12 +186,17 @@ let exportedMethods = {
       Object.keys(allRewards)[
         Math.floor(Math.random() * Object.keys(allRewards).length)
       ];
+    if (allRewards[rewardType].length === rewards[rewardType].length-1)
+      throw "Already recieved all rewards of this type!";
 
-    let rewardIndex = Math.floor(Math.random() * allRewards[rewardType].length);
-    let reward = allRewards[rewardType][rewardIndex];
-
-    if (rewards[rewardType].includes(reward))
-      throw "Error: You have already received this reward!";
+    let reward;
+    while (true) {
+      let rewardIndex = Math.floor(
+        Math.random() * allRewards[rewardType].length
+      );
+      reward = allRewards[rewardType][rewardIndex];
+      if (!rewards[rewardType].includes(reward)) break;
+    }
 
     rewards[rewardType].push(reward);
 

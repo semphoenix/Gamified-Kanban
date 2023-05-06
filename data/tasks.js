@@ -131,9 +131,13 @@ let exportedMethods = {
       throw "Error: kanban with that task does not exist";
     // iterate over users and check userId is valid
     let found = false;
+    let userIndex;
     for (let i = 0; i < kanban.groupUsers.length; i++) {
       const obj = kanban.groupUsers[i];
-      if (obj.userId === userId) found = true;
+      if (obj.userId === userId) {
+        found = true;
+        userIndex = i;
+      }
     }
     if (!found) throw "Error: userId is not of this kanban";
     // user cannot vote on their own task
@@ -153,10 +157,13 @@ let exportedMethods = {
     if (acceptedVotes > kanban.groupUsers.length / 2) {
       task.status = 3;
       kanban.completedTasks += 1;
+      kanban.groupUsers[userIndex].points += 5;
     }
+
     const updateInfo = {
       tasks: kanban.tasks,
       completedTasks: kanban.completedTasks,
+      groupUsers: kanban.groupUsers,
     };
     kanbanCollection = await kanbans();
     const res = await kanbanCollection.findOneAndUpdate(
