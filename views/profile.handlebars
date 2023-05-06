@@ -58,6 +58,13 @@
             <button type="submit" value="submit"/>        
         </form>
     </div>
+    <div id="profile-picture">
+        {{#if prizes.selectedPicture}}
+            <img src="../public/assets/default.jpg">
+        {{#else}}
+            <img src="../public/assets/{{prizes.selectedPicture}}.jpg">
+        {{/if}}
+    </div>
 </main>
 
 <div class="logout-button">
