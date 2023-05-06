@@ -46,8 +46,7 @@ router
       errors.push("Invalid Credentials");
       res.status(400).render("login", {
         errors: errors,
-        loginErrors: true,
-        user: userData,
+        LoginErrors: true,
       });
       return;
     }
@@ -64,30 +63,42 @@ router
   })
   .post(async (req, res) => {
     const userData = req.body;
+    let userForm = {};
     let user;
     let errors = [];
     // if there's a problem with input, will be added to errors
     try {
       userData.username = validation.checkString(userData.username, "Username");
+      userForm["username"] = userData.username;
     } catch (e) {
       errors.push(e);
     }
     try {
-      userData.password = validation.checkString(userData.password, "Password");
+      userData.password = validation.checkPassword(
+        userData.password,
+        "Password"
+      );
+    } catch (e) {
+      errors.push(e);
+    }
+    try {
+      if (userData.confirmPassword !== userData.password)
+        throw "Passwords do not match!";
     } catch (e) {
       errors.push(e);
     }
     try {
       userData.age = parseInt(userData.age);
       userData.age = validation.checkAge(userData.age, "Age");
+      userForm["age"] = userData.age;
     } catch (e) {
       errors.push(e);
     }
     if (errors.length > 0) {
       res.status(400).render("signup", {
         errors: errors,
-        signupErrors: true,
-        user: userData,
+        SignupErrors: true,
+        user: userForm,
       });
       return;
     }
@@ -104,8 +115,8 @@ router
       errors.push(e);
       res.status(400).render("signup", {
         errors: errors,
-        signupErrors: true,
-        user: userData,
+        SignupErrors: true,
+        user: userForm,
       });
       return;
     }
