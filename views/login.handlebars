@@ -11,7 +11,8 @@
 
     <input type="submit" value="Login">
   </form>
-  <div id="loginError" class="loginError" hidden></div>
+<div id="loginError" class="loginError" hidden></div>
+    {{#if LoginErrors}}
   <ul class="error-list">
     {{#each errors}}
     <li>
@@ -26,6 +27,5 @@
     <a href="/signup">Click here to signup!</a>
   </div>
 </div>
-
 
 

@@ -191,6 +191,10 @@ header {
   z-index: 1;
 }
 
+header h2 {
+  padding-right: 2%;
+}
+
 #group-heading {
   margin-bottom: 20px;
 }
