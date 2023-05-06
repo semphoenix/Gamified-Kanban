@@ -93,7 +93,7 @@ let exportedMethods = {
     let availColors = kanban.availColors;
     let newColor = availColors.slice(0, 1);
     availColors = availColors.slice(1, availColors.length);
-    kanban.userColors[userId] = newColor;
+    kanban.userColors[userId] = newColor[0];
     kanban.groupUsers.push(newUser);
     const updateInfo = {
       groupUsers: kanban.groupUsers,
