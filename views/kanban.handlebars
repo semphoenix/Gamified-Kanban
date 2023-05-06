@@ -9,11 +9,11 @@
 
     <div class="kanban-block" id="side-column">
         <div id="group-button-block">
-            <form class="choose-group-form" id="kanban-choose-group-form">
-                <label for="choose-group">Groups</label>
-                <select id="choose-group" form="kanban-choose-group-form">
-                    {{#each Groups}}
-                    <option class="choosen-group-option" value="{{this}}">{{this}}</option>
+            <form action="/kanban/kanbans" class="choose-group-form" id="kanban-choose-group-form" method="post">
+                <label for="chooseGroup">Groups</label>
+                <select name="chooseGroup" id="chooseGroup" form="kanban-choose-group-form">
+                    {{#each groups}}
+                    <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
                     {{/each}}
                 </select>
                 <input type="submit" value="submit"/>        
@@ -76,17 +76,17 @@
     </div>
 
 
-    <div id="create-new-task-block">
+    <div id="create-new-task-block" hidden>
         <p>New Task</p>
-        <form id="create-task-form">
+        <form id="create-task-form" action="/kanban/kanbans" method="POST">
             <label class="create-task-form-label" for="task-name">Task</label>
-            <input class="create-task-form-input" type="text" name="task-name" id="task-name" required>
+            <input class="create-task-form-input" type="text" name="task-name" id="task-name">
             
             <label class="create-task-form-label" for="task-description">Description</label>
-            <textarea class="create-task-form-input" name="task-description" id="task-description" required></textarea>
+            <textarea class="create-task-form-input" name="task-description" id="task-description"></textarea>
             
             <label class="create-task-form-label" for="task-difficulty">Difficulty</label>
-            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" form="create-task-form" required>
+            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" form="create-task-form">
                 <option value="easy">Easy</option>
                 <option value="medium">Medium</option>
                 <option value="hard">Hard</option>
@@ -94,9 +94,10 @@
             
             <div class="create-task-buttons">
                 <button type="submit" id="save-button">Submit</button>
-                <button type="button" id="cancel-button" onclick="closeTask()">Close</button>
+                <button type="button" id="cancel-button">Close</button>
             </div>
         </form>
+        <div id="task-error"></div hidden>
     </div>
 </div>
 

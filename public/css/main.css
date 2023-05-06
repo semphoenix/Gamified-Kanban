@@ -478,3 +478,15 @@ header {
   display: flex;
   float: left;
 }
+#loginError, #signupError, #taskError, .error-list {
+    color: red;
+    width: 70%
+}
+
+/* form {
+    flex-direction: "column";
+}
+
+h1 {
+    align-self: "center";
+} 
