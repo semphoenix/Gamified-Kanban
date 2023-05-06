@@ -21,8 +21,8 @@
         </div>
 
         <div id="create-task-button">
-            <button id="task-button">Create new task</button>
-            <!-- Will open create-new-task-block div on click -->
+            <button id="task-button" onclick="displayCreate()">Create new task</button>
+            <!-- Will open create-new-task-block div on click. And it will close it if clicked again -->
         </div>
 
         <div id="gatcha-button">
@@ -78,28 +78,27 @@
         {{/each}}
     </div>
 
-
-    <div id="create-new-task-block">
+    <div id="create-new-task-block" hidden>
         <p>New Task</p>
-        <form id="create-task-form">
+        <form id="create-task-form" action="/kanban/createTask" method="POST">
             <label class="create-task-form-label" for="task-name">Task</label>
-            <input class="create-task-form-input" type="text" name="task-name" id="task-name" required>
+            <input class="create-task-form-input" type="text" name="taskname" id="task-name">
             
             <label class="create-task-form-label" for="task-description">Description</label>
-            <textarea class="create-task-form-input" name="task-description" id="task-description" required></textarea>
+            <textarea class="create-task-form-input" name="taskdescription" id="task-description"></textarea>
             
             <label class="create-task-form-label" for="task-difficulty">Difficulty</label>
-            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" form="create-task-form" required>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
+            <select class="create-task-form-input" name="taskdifficulty" id="task-difficulty" form="create-task-form">
+                <option value="1">Easy</option>
+                <option value="2">Medium</option>
+                <option value="3">Hard</option>
             </select>
             
             <div class="create-task-buttons">
                 <button type="submit" id="save-button">Submit</button>
-                <button type="button" id="cancel-button" onclick="closeTask()">Close</button>
+                <button type="button" id="cancel-button">Close</button>
             </div>
         </form>
+        <div id="task-error"></div hidden>
     </div>
 </div>
-
