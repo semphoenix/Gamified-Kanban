@@ -84,6 +84,11 @@ let exportedMethods = {
         borderRewards: [],
         colorRewards: [],
       },
+      selectedReward: {
+        profileReward: "default",
+        borderReward: "default",
+        colorReward: "default",
+      },
     };
     let availColors = kanban.availColors;
     let newColor = availColors.slice(0, 1);
