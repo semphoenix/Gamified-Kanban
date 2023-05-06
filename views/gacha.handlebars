@@ -1,28 +1,29 @@
-<div class="container">
-        <a href="/kanban"><button id="back-to-kanban">Back To Kanban</button></a>
-        <div class="points-section">
-            <p id="points-text">Points:</p>
-            <span id="points-num">{{Points}}</span>
-        </div>
+<main>
+      <a href="/kanban"><button id="back-to-kanban">Back To Kanban</button></a>
+      <div class="points-section">
+          <p id="points-text">Points:</p>
+          <span id="points-num">{{Points}}</span>
+      </div>
 
-        
-       <div class="prizes">
-            <p>Prizes</p>
-            <form action="/submit" method="POST">
+      <div class="parentPrize">
+      <div class="prizes">
+            <label for="prizeForm">Prizes</p>
+            <form name="prizeForm" action="/submit" method="POST">
                 <div class="prize-selection">
-                {{#each Prizes}}
+             
                     <select name="chooseprize" id="chooseprize">
                     <option>{{this}}</option>
                     </select>
-                {{/each}}
+                
                 </div>
-                <button type="submit">Submit</button>
+                <input type="submit" value="submit"/>
             </form>
         </div>
 
 
         <div class="pull-prize">
-            <button id="back-to-kanban" onclick="pullPrize()">PULL</span></a>
+            <button id="pull-prize-button" onclick="pullPrize()">PULL</span></a>
         <div class="points-section">
-        
-</div>
+      </div>
+      
+</main>

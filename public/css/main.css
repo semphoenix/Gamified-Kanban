@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  /* font-family: "Poppins", sans-serif; */
+  font-family: "Poppins", sans-serif;
 }
 
 body{
@@ -58,7 +58,7 @@ form .input_fields{
 }
 
 
-input[type="submit"]{
+input[type="submit"] {
   width: 80%;
   height: 50px;
   border: 1px solid;
@@ -379,4 +379,102 @@ header {
 
 .sideButtons button:hover {
   background-color: #3e8e41;
+}
+
+#back-to-kanban {
+  padding: 10px;
+  font-size: 16px;
+  color: white;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#back-to-kanban:hover {
+  background-color: #3e8e41;
+}
+
+.points-section {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 5%;
+  align-items: center;
+}
+
+#points-text {
+  font-size: 30px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+
+#points-num {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+
+.prizes {
+  margin-top: 10%;
+  text-align: left;
+  padding-left: 30%;
+
+}
+
+.prizes label {
+  font-size: 30px;
+  font-weight: bold;
+  padding-left: 20%;
+}
+
+/* .prize-selection {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+} */
+
+
+
+.pull-prize {
+  padding-right: 10%;
+  float: right;
+}
+
+.pull-prize button {
+  margin-left: 30vh;
+  background-color: red;
+  border-radius: 50%;
+  color: white;
+  font-size: 20px;
+  height: 30vh;
+  width: 30vh;
+  cursor: pointer;
+}
+
+.pull-prize button:hover {
+  background-color: darkred;
+}
+
+
+.pull-prize button[type="submit"] {
+  margin-top: 20px;
+  padding: 10px;
+  font-size: 16px;
+  color: white;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
+.pull-prize button[type="submit"]:hover {
+  background-color: #3e8e41;
+}
+
+
+.parentPrize div {
+  margin-top: 10%;
+  display: flex;
+  float: left;
 }
