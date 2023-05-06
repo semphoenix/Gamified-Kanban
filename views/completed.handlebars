@@ -1,6 +1,28 @@
 <div class="container">
-    <a href="/kanban"><button id="back-to-kanban">Back To Kanban</button></a>
-    <h1>Completed Tasks</h1>
+    <a href="/kanban/kanbans"><button id="back-to-kanban">Back To Kanban</button></a>
+    <header>
+        <h1>Completed Tasks</h1>
+    </header>
     <div class="completed-tasks">
+        <ul class="Tasks" id="TaskList">
+            {{#each Tasks}}
+            <li class="ListedTask">
+                <div class="ListedTask">
+                    <h3 class="ListedTask-name">{{Tasks.name}}</h3>
+                    <p class="ListedTask-description">{{Tasks.description}}</p>
+                    <p class="ListedTask-assignment">{{Tasks.username}}</p>
+                    <p class="ListedTask-difficulty">Difficulty: {{Tasks.difficulty}}</p>
+                    <div class="ListedTask-Votes">
+                        {{!-- <ul class="ListedTask-Votes">
+                            {{#each Tasks.voting_status}}
+                                <li class="ListedTask-IndividualVotes">User {{Tasks.voting_status.user}}</li>
+                            {{/each}}
+                        </ul> --}}
+                    </div>
+                    <p class="ListedTask-votingStatus">Votes: {{Tasks.voting_status}}</p>
+                </div>
+            </li>
+            {{/each}}
+        </ul>
     </div>
 </div>

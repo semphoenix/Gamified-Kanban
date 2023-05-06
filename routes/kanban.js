@@ -96,53 +96,83 @@ router
     }
   });
 
-router.route("/createTask").post(async(req,res) => {
-  console.log("/createTask", req.body);
-  let {taskname, taskdescription, taskdifficulty} = req.body;
-  console.log("taskname", taskname);
-  taskname = validation.checkString(taskname, "route /createTask taskname");
-  taskdescription = validation.checkString(taskdescription, "route /createTask taskdescription");
-  taskdifficulty = validation.checkDifficulty(Number(taskdifficulty), "route /createTask taskdifficulty");
-  let created = await taskFxns.createTask(req.session.selectedKanbanId, req.session.user._id, taskname, taskdescription, taskdifficulty, 0);
-  res.redirect("/kanban/kanbans");
-})
-router.route("/createKanban").post(async (req, res) => {
-  console.log("createKanban");
-  let user;
-  let ownerId;
-  try {
-    user = req.session.user;
-    ownerId = user._id.toString();
-  } catch (e) {
-    return res
-      .status(404)
-      .render("error", { error: "There are no fields in the request body" });
-  }
-  let kanbanData = req.body;
-  if (!kanbanData || Object.keys(kanbanData).length === 0) {
-    return res
-      .status(400)
-      .render("error", { error: "There are no fields in the request body" });
-  }
-  try {
-    ownerId = validation.checkId(ownerId, "Owner Id");
-    kanbanData.groupName = validation.checkString(
-      kanbanData.groupName,
-      "Group Name"
-    );
-  } catch (e) {
-    return res.status(400).render("error", { error: e });
-  }
-  try {
-    console.log("creating kanban");
-    const { groupName } = kanbanData;
-    const newKanban = await kanbanFxns.createKanban(ownerId, groupName);
-    req.session.user = await userFxns.getUserById(user._id);
-    req.session.selectedKanbanId = newKanban._id
-    return res.redirect(`/kanban/kanbans`);
-  } catch (e) {
-    return res.status(500).render("error", { error: e });
-  }
+router
+  .route("/createKanban/joinGroup")
+  .post(async (req, res) => {
+    let user;
+    let kanbanId;
+
+    try{
+      user = req.session.user
+      user._id = validation.checkId(req.session.user._id)
+    } catch (e){
+      return res 
+        .status(404)
+        .render("error", {error: "User is not logged in!?"})
+    }
+
+    try{
+      // Check the error code here
+      if(user.groups.length >= 5) throw "User is already part of 5 groups!"
+      kanbanId = req.body
+      if(!kanbanId || Object.keys(kanbanId).length === 0) throw "There are no fields in the request body"
+      if(!kanbanId['groupId']) throw "Incorrect field submitted to form!"
+      kanbanId = validation.checkId(kanbanId.groupId, "Group Id") 
+    } catch (e){
+      return res
+        .status(400)
+        .render("accounts", {username: user.username, error: e});
+    }
+
+    try{
+      const updatedKanband = await kanbanFxns.addUsertoKanban(user._id, kanbanId)
+      req.session.user = await userFxns.getUserById(user._id);
+      req.session.selectedKanbanId = kanbanId
+      return res.redirect(`/kanban/kanbans/`)
+    } catch(e){
+      return res
+        .status(500)
+        .render('error', {error: e})
+    }
+  })
+
+router
+  .route("/createKanban/createGroup")
+  .post(async (req, res) => {
+    let user;
+    let ownerId;
+    try {
+      user = req.session.user;
+      ownerId = user._id.toString();
+    } catch (e) {
+      return res
+        .status(404)
+        .render("error", { error: "There are no fields in the request body" });
+    }
+    let kanbanData = req.body;
+    if (!kanbanData || Object.keys(kanbanData).length === 0) {
+      return res
+        .status(400)
+        .render("error", { error: "There are no fields in the request body" });
+    }
+    try {
+      ownerId = validation.checkId(ownerId, "Owner Id");
+      kanbanData.groupName = validation.checkString(
+        kanbanData.groupName,
+        "Group Name"
+      );
+    } catch (e) {
+      return res.status(400).render("error", { error: e });
+    }
+    try {
+      const { groupName } = kanbanData;
+      const newKanban = await kanbanFxns.createKanban(ownerId, groupName);
+      req.session.user = await userFxns.getUserById(user._id);
+      req.session.selectedKanbanId = newKanban._id
+      return res.redirect(`/kanban/kanbans`);
+    } catch (e) {
+      return res.status(500).render("error", { error: e });
+    }
 });
 
 router
@@ -163,14 +193,26 @@ router
     try {
       validation.checkId(req.session.selectedKanbanId, "Current Kanban");
       let updated_user = await kanbanFxns.playGame(
-        req.session.user.userId,
+        req.session.user._id,
         req.session.selectedKanbanId
       );
       return res.render("gatcha", {points: updated_user.points}); // TODO: Change to render the gatcha page with new amount of points
     } catch (e) {
-      return res.status(404).json({error: e, points: "---"});
+      return res.status(404).render("gatcha", {error: e, points: "---"});
     }
   });
+
+router
+  .route("/completedTasks")
+  .get(async (req, res) => {
+    try{
+      validation.checkId(req.sesssion.selectedKanbanId, "Current Kanban")
+      let completedTasks = await kanbanFxns.getSomeTasks(req.session.selectedKanbanId, 2)
+      return res.render("completed", {tasks: completedTasks})
+    } catch (e){
+      return res.status(404).render("completed", {tasks: [], error: e})
+    }
+  })
 
 router.route(":kanbanId/vote/:taskId").patch(async (req, res) => {
   // for casting a vote
