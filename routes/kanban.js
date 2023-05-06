@@ -43,7 +43,7 @@ router
 
     try {
       content = req.body
-     
+      console.log(content)
       // If no necessary data avaialble through error
       if(!content){
         throw "Route: Kanbans/ ~ A form submitted with no necessary data"        

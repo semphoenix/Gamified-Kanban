@@ -50,8 +50,8 @@
       difficulty = difficulty.toLowerCase().trim();
       if (typeof difficulty !== 'string' || difficulty.trim() == "") 
         throw `Error: ${varName} must be a valid string!`;
-      if (difficulty !== "easy" && difficulty !== "medium" && difficulty !== "hard") 
-        throw `Error: ${varName} must be either easy, medium, or hard`;
+      if (difficulty !== "1" && difficulty !== "2" && difficulty !== "3") 
+        throw `Error: ${varName} must be either 1, 2, 3`;
       return difficulty;
     }
   

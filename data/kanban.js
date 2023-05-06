@@ -3,7 +3,11 @@ import userData from "./users.js";
 import { ObjectId } from "mongodb";
 import validation from "../validation.js";
 var colors = ["red", "blue", "orange", "green", "purple"];
-var allRewards = ["reward 1", "reward 2", "reward 3", "reward 4"]; // Place holder
+let allRewards = {
+  profileRewards: [1, 2, 3, 4, 5],
+  borderRewards: ["red", "blue", "orange", "green", "purple"],
+  colorRewards: [-2, -1, 1, 2],
+};
 let exportedMethods = {
   /**
    *
@@ -75,7 +79,16 @@ let exportedMethods = {
       _id: new ObjectId(),
       userId: userId,
       points: 0,
-      rewards: [],
+      rewards: {
+        profileRewards: [0],
+        borderRewards: ["default"],
+        colorRewards: [0],
+      },
+      selectedReward: {
+        profileReward: 0,
+        borderReward: "default",
+        colorReward: 0,
+      },
     };
     let availColors = kanban.availColors;
     let newColor = availColors.slice(0, 1);
@@ -143,14 +156,18 @@ let exportedMethods = {
    * @param [{ObjectId}] kanbanIds
    * @returns list of kanbans
    */
-  
+
   async getAllKanbans(kanbanIds) {
-    kanbanIds = kanbanIds.map(kanbanId => validation.checkId(kanbanId, "kanbanId"))
-    const allKanbans = await Promise.all(kanbanIds.map(async (kanbanId) => {
-      const kanban = await this.getKanbanById(kanbanId);
-      return kanban
-    }))
-    return allKanbans
+    kanbanIds = kanbanIds.map((kanbanId) =>
+      validation.checkId(kanbanId, "kanbanId")
+    );
+    const allKanbans = await Promise.all(
+      kanbanIds.map(async (kanbanId) => {
+        const kanban = await this.getKanbanById(kanbanId);
+        return kanban;
+      })
+    );
+    return allKanbans;
   },
 
   /**
@@ -159,20 +176,32 @@ let exportedMethods = {
    * @param {ObjectId} kanbanId
    * @returns updated user
    */
+
   async playGame(userId, kanbanId) {
     let points = await this.getUserPoints(userId, kanbanId);
     let rewards = await this.getUserRewards(userId, kanbanId);
     if (points < 3) throw "Error: Not enough points!";
-    if (rewards.length === allRewards.length)
-      throw "Error: You have recieved all rewards!";
+
+    let rewardType =
+      Object.keys(allRewards)[
+        Math.floor(Math.random() * Object.keys(allRewards).length)
+      ];
+    if (allRewards[rewardType].length === rewards[rewardType].length-1)
+      throw "Already recieved all rewards of this type!";
+
+    let reward;
     while (true) {
-      let randoNum = Math.floor(Math.random() * allRewards.length);
-      if (!rewards.includes(allRewards[randoNum])) {
-        rewards.push(allRewards[randoNum]);
-        break;
-      }
+      let rewardIndex = Math.floor(
+        Math.random() * allRewards[rewardType].length
+      );
+      reward = allRewards[rewardType][rewardIndex];
+      if (!rewards[rewardType].includes(reward)) break;
     }
-    points = points - 3; // Place holder for now. How many points is each pull worth?
+
+    rewards[rewardType].push(reward);
+
+    points = points - 3; //How many points is each pull worth?
+
     let kanbanCollection = await kanbans();
     const insertInfo = await kanbanCollection.findOneAndUpdate(
       { _id: new ObjectId(kanbanId), "groupUsers.userId": userId },
@@ -184,6 +213,7 @@ let exportedMethods = {
       },
       { returnDocument: "after" }
     );
+
     return await this.getUserinKanban(userId, kanbanId);
   },
 };

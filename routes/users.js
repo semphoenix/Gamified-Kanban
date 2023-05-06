@@ -30,7 +30,7 @@ router.route("/privateUser")
         prizes: selectedKanban.Prizes,
       });
     } catch (e) {
-      res.status(404).json({ error: e });
+      res.status(500).json({ error: e });
     }
 })
   // Used to change the selectedKanbanId & reset the page
@@ -41,7 +41,7 @@ router.route("/privateUser")
       req.session.selectedKanbanId = content.chooseGroup
       return res.redirect("/user/privateUser")
     } catch(e){
-      res.status(404).json({error: e})
+      res.status(400).json({error: e})
     }
   });
 
@@ -74,7 +74,7 @@ router.route("/accountsPage").get(async (req, res) => {
       username: user.username,
     }); //Change this to render when we have pages
   } catch (e) {
-    res.status(404).json({ error: e });
+    res.status(500).json({ error: e });
   }
 });
 
