@@ -43,7 +43,7 @@ router
 
     try {
       content = req.body
-     
+      console.log(content)
       // If no necessary data avaialble through error
       if(!content){
         throw "Route: Kanbans/ ~ A form submitted with no necessary data"        
@@ -96,6 +96,16 @@ router
     }
   });
 
+router.route("/createTask").post(async(req,res) => {
+  console.log("/createTask", req.body);
+  let {taskname, taskdescription, taskdifficulty} = req.body;
+  console.log("taskname", taskname);
+  taskname = validation.checkString(taskname, "route /createTask taskname");
+  taskdescription = validation.checkString(taskdescription, "route /createTask taskdescription");
+  taskdifficulty = validation.checkDifficulty(Number(taskdifficulty), "route /createTask taskdifficulty");
+  let created = await taskFxns.createTask(req.session.selectedKanbanId, req.session.user._id, taskname, taskdescription, taskdifficulty, 0);
+  res.redirect("/kanban/kanbans");
+})
 router.route("/createKanban").post(async (req, res) => {
   console.log("createKanban");
   let user;
