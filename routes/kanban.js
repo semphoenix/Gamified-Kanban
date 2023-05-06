@@ -153,14 +153,26 @@ router
     try {
       validation.checkId(req.session.selectedKanbanId, "Current Kanban");
       let updated_user = await kanbanFxns.playGame(
-        req.session.user.userId,
+        req.session.user._id,
         req.session.selectedKanbanId
       );
       return res.render("gatcha", {points: updated_user.points}); // TODO: Change to render the gatcha page with new amount of points
     } catch (e) {
-      return res.status(404).json({error: e, points: "---"});
+      return res.status(404).render("gatcha", {error: e, points: "---"});
     }
   });
+
+router
+  .route("/completedTasks")
+  .get(async (req, res) => {
+    try{
+      validation.checkId(req.sesssion.selectedKanbanId, "Current Kanban")
+      let completedTasks = await kanbanFxns.getSomeTasks(req.session.selectedKanbanId, 2)
+      return res.render("completed", {tasks: completedTasks})
+    } catch (e){
+      return res.status(404).render("completed", {tasks: [], error: e})
+    }
+  })
 
 router.route(":kanbanId/vote/:taskId").patch(async (req, res) => {
   // for casting a vote
