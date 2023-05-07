@@ -7,7 +7,7 @@ router
   .route("/login")
   .get(async (req, res) => {
     try {
-      res.render("login");
+      res.status(200).render("login");
     } catch (e) {
       res.status(500).render("error", { error: e, status: "500" });
     }
@@ -27,7 +27,7 @@ router
       errors.push(e);
     }
     if (errors.length > 0) {
-      res.render("login", {
+      res.status(400).render("login", {
         errors: errors,
         loginErrors: true,
         user: userData,
@@ -41,7 +41,7 @@ router
       );
       req.session.user = user;
       console.log("Logging in");
-      res.redirect(`/user/accountsPage`);
+      res.status(302).redirect(`/user/accountsPage`);
     } catch (e) {
       errors.push("Invalid Credentials");
       res.status(400).render("login", {
@@ -56,7 +56,7 @@ router
   .route("/signup")
   .get(async (req, res) => {
     try {
-      res.render("signup");
+      res.status(200).render("signup");
     } catch (e) {
       res.status(500).render({ error: e, status: "500" });
     }
@@ -110,7 +110,7 @@ router
         userData.age
       );
       req.session.user = user;
-      res.redirect("/login"); // Should add some sort of message on login page to tell user their account has been created.
+      res.status(302).redirect("/login"); // Should add some sort of message on login page to tell user their account has been created.
     } catch (e) {
       errors.push(e);
       res.status(400).render("signup", {
@@ -125,7 +125,7 @@ router
 router.get("/logout", async (req, res) => {
   req.session.destroy();
   console.log("Logged Out!");
-  res.redirect("/login");
+  res.status(200).redirect("/login");
 });
 
 export default router;

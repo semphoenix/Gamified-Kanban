@@ -642,7 +642,7 @@ select[name="choose-picture"] {
 
 
 /* Style for the prize form button */
-.prizeColumn button[type="submit"], .groupColumn input[type="submit"] {
+.prizeColumn button[type="submit"], .groupColumn input[type="submit"],  #logout-button button{
   background-color: #0077b6;
   color: #fff;
   padding: 1vh;
@@ -652,11 +652,11 @@ select[name="choose-picture"] {
   cursor: pointer;
   /* vertical-align: auto; */
 }
-
+/* 
 .prizeColumn button[type="submit"] {
-  /* height: 3.5vh; */
-  /* width: 10vh; */
-}
+  height: 3.5vh;
+  width: 10vh;
+} */
 
 
 

@@ -26,6 +26,9 @@
                 <a href="/kanban/kanbans"><button id="accounts-button">KanbanPage</button></a>
             </div>
 
+            <div class="logout-button" id="logout-button">
+                <button onclick="window.location.href='/logout';">Logout</button>
+            </div>
         </div>
 
         
@@ -73,31 +76,17 @@
                 </form>
             </div>
 
-            {{!-- <div class="prize-block" id="prize-picture-button-block">
-                <form class="choose-prize-picture-form" id="prize-picture-form">
-                <div class="options">
-                    <div class="option">
-                        <input type="radio" name="color" value="" id="color-" checked />
-                        <label for="color-">
-                            <img src="" alt="" /> Select an option
-                        </label>
-                    </div>
-                    <div class="option">
-                        <input type="radio" name="img-hold" value="images" id="img-hold" />
-                        <label for="img-hold">
-                            {{#each prizes.pictures}}
-                            <img src="" alt="" /> {{this}}
-                            {{/each}}
-                        </label>
-                    </div>
-                </div>
-                <button type="submit" value="submit">Apply</button> 
-                </form>
-            </div> --}}
 
-
-
+        <div id="profile-picture">
+            {{#if prizes.selectedPicture}}
+                <img src="../public/assets/default.jpg">
+            {{else}}
+                <img src="../public/assets/{{prizes.selectedPicture}}.jpg">
+            {{/if}}
+        </div>
         </div>
         
     </main>
+
+   
 </div>
