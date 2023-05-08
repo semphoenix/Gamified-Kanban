@@ -3,7 +3,7 @@
     <header id="kanbanHeader">
         <div id="group-heading">    
             <h1 id="group-heading-text">{{groupName}}</h1>
-            <h2 id="group-id">{{kanbanId}}</h2>
+            <h2 id="group-id">Group Id: {{kanbanId}}</h2>
         </div>
     </header>
 
@@ -21,13 +21,13 @@
         </div>
 
         <div id="create-task-button">
-            <button id="task-button" onclick="displayCreate()">Create new task</button>
+            <button id="task-button" type="click">Create new task</button>
             <!-- Will open create-new-task-block div on click. And it will close it if clicked again -->
         </div>
 
         <div class="sideButtons">
-            <a href="/gacha"><button id="gacha-button">Gacha</button></a>
-            <a href="/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
+            <a href="/kanban/gatcha"><button id="gacha-button">Gacha</button></a>
+            <a href="/kanban/completedTasks"><button id="completed-tasks-button">Completed Tasks</button></a>
             <a href="/user/privateUser"><button id="profile-button">Profile</button></a>
         </div>
     </div>
@@ -36,10 +36,10 @@
     <div class="kanban-block" id="todo">
         <h3 class="kanban-block-title" id="todo-title">To Do</h3>
         {{#each todoTasks}}
-            <div class="kanban-task-block">
+            <div class="kanban-task-block" data-id={{this._id}}>
                 <h3 class="task-name">{{this.name}}</h3>
                 <p class="task-description">{{this.description}}</p>
-                <p class="task-user">{{this.user}}</p>
+                <p class="task-user">Assigned to: {{this.user}}</p>
             </div>
         {{/each}}
     </div>
@@ -47,10 +47,10 @@
     <div class="kanban-block" id="inprogress">
         <h3 class="kanban-block-title" id="inprogress-title">In Progress</h3>
         {{#each inprogressTasks}}
-            <div class="kanban-task-block">
+            <div class="kanban-task-block" data-id={{this._id}}>
                 <h3 class="task-name">{{this.name}}</h3>
                 <p class="task-description">{{this.description}}</p>
-                <p class="task-user">{{this.user}}</p>
+                <p class="task-user">Assigned to: {{this.user}}</p>
             </div>
         {{/each}}
     </div>
@@ -58,19 +58,22 @@
     <div class="kanban-block" id="inreview">
         <h3 class="kanban-block-title" id="inprogress-review">In Review</h3>
         {{#each inreviewTasks}}
-            <div class="kanban-task-block">
+            <div class="kanban-task-block" data-id={{this._id}}>
                 <h3 class="task-name">{{this.name}}</h3>
                 <p class="task-description">{{this.description}}</p>
-                <p class="task-user">{{this.user}}</p>
-                <form class="task-vote-form">
-                    <label for="task-{{this.name}}-yes">Sucessfully Completed</label>
-                    <input id="task-{{this.name}}-yes" type="radio" class="kanban-task-vote" name="Yes" value="Yes">
-
-                    <label for="task-{{this.name}}-no">Not Completed</label>
-                    <input id="task-{{this.name}}-no" type="radio" class="kanban-task-vote" name="False" value="No">
-
-                    <input type="submit" value="Submit">
-                </form>
+                <p class="task-user">Assigned to: {{this.user}}</p>
+                <p class="vote-count">Remaining Approvals Needed: {{this.remainingVotesNeeded}}</p>
+                {{#if this.canVote}}
+                    <form class="task-vote-form">
+                        <label for="task-vote">Approve? </label>
+                        <select class="task-vote" name="task-vote" id="task-vote" form="create-task-form">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                        <input type="submit" value="Submit">
+                        <ul class="error-list" hidden></ul>
+                    </form>
+                {{/if}}
             </div>
         {{/each}}
     </div>
