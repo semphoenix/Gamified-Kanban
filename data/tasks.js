@@ -33,6 +33,7 @@ let exportedMethods = {
     // any limit on number of tasks per kanban or per users?
     const newTask = {
       _id: new ObjectId(),
+      kanbanId: kanbanId,
       assignment: userId,
       name: name,
       description: description,
@@ -95,7 +96,7 @@ let exportedMethods = {
     const kanban = await kanbanCollection // get the tasks
       .findOne(
         { tasks: { $elemMatch: { _id: new ObjectId(taskId) } } },
-        { tasks: 1 }
+        { tasks: 1, _id: 1 }
       );
     let tasks = kanban.tasks;
     let task;
@@ -103,8 +104,13 @@ let exportedMethods = {
       if (t._id.toString() == taskId) task = t;
     });
     task.status = newStatus;
+    if(task.status < 2) { // resets votes if it's dragged out of inreview
+      Object.keys(task.votingStatus).forEach(function (user) {
+        task.votingStatus[user] = 0;
+      });
+    }
     const insertInfo = await kanbanCollection.findOneAndUpdate(
-      { _id: kanbanId },
+      { _id: kanban._id },
       { $set: { tasks: tasks } },
       { returnDocument: "after" }
     );
@@ -154,10 +160,17 @@ let exportedMethods = {
     let users = Object.keys(task.votingStatus);
     let acceptedVotes = 0;
     users.forEach((user) => (acceptedVotes += task.votingStatus[user]));
-    if (acceptedVotes > kanban.groupUsers.length / 2) {
+    
+    if (acceptedVotes >= kanban.groupUsers.length / 2) {
       task.status = 3;
       kanban.completedTasks += 1;
-      kanban.groupUsers[userIndex].points += 5;
+      // I changed this because it gave points to the user who casted the final vote, not the person whose task it is
+      for (let i = 0; i < kanban.groupUsers.length; i++) {
+        const user = kanban.groupUsers[i];
+        if (user.userId === task.assignment) {
+          user.points += 5;
+        }
+      }      
     }
 
     const updateInfo = {
@@ -172,7 +185,7 @@ let exportedMethods = {
       { returnDocument: "after" }
     );
     if (res.lastErrorObject.n === 0) throw "Error: castVote failed";
-    return task.votingStatus;
+    return task;
   },
   /**
    * This will be used to retrieve all tasks with certain status in Kanban.

@@ -1,3 +1,4 @@
+import { compareSync } from "bcrypt";
 import { Router } from "express";
 const router = Router();
 import { kanbanFxns, userFxns } from "../data/index.js";
@@ -18,28 +19,44 @@ router
         req.session.selectedKanbanId
       );
 
-      // For selectedKanban, get todoTasks & load kanbans for dropdown
-      const todoTasks = await taskFxns.getSomeTasks(
-        req.session.selectedKanbanId,
-        0
-      );
       console.log(user.groups);
       let kanbans = await kanbanFxns.getAllKanbans(user.groups);
       console.log(kanbans);
+
+      let todoTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 0);
+      let inprogressTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 1);
+      let inreviewTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 2);
+
+      for (const task of todoTasks) {
+        const username = await userFxns.getUsernameById(task.assignment);
+        task.user = username;
+      }
+
+      for (const task of inprogressTasks) {
+        const username = await userFxns.getUsernameById(task.assignment);
+        task.user = username;
+      }
+
+      for (const task of inreviewTasks) {
+        const username = await userFxns.getUsernameById(task.assignment);
+        task.user = username;
+        task.canVote = task.assignment !== req.session.user._id;
+        let remainingVotesNeeded = 0;
+        let users = Object.keys(task.votingStatus);
+        users.forEach((user) => {
+          if (task.votingStatus[user] === 0) remainingVotesNeeded += 1;
+        })
+        remainingVotesNeeded = Math.floor(remainingVotesNeeded/2);
+        task.remainingVotesNeeded = remainingVotesNeeded;
+      }
 
       res.render("kanban", {
         groupName: selectedKanban.groupName,
         kanbanId: selectedKanban._id.toString(),
         groups: kanbans,
         todoTasks: todoTasks,
-        inprogressTasks: await taskFxns.getSomeTasks(
-          req.session.selectedKanbanId,
-          1
-        ),
-        inreviewTasks: await taskFxns.getSomeTasks(
-          req.session.selectedKanbanId,
-          2
-        ),
+        inprogressTasks: inprogressTasks,
+        inreviewTasks: inreviewTasks,
       });
     } catch (e) {
       return res
@@ -259,62 +276,61 @@ router
     }
   })
 
-router.route(":kanbanId/vote/:taskId").patch(async (req, res) => {
+router.route("/vote/:taskId").patch(async (req, res) => {
   // for casting a vote
   let taskId = req.params.taskId;
-  let kanbanId = req.params.kanbanId;
-  let { userId, vote } = req.body;
+  let { vote } = req.body;
+  let userId = req.session.user._id;
   try {
-    vote = validation.checkVote(vote, "vote");
-    userId = validation.checkId(userId, "userId");
+    vote = validation.checkVote(+vote, "vote");
     taskId = validation.checkId(taskId, "taskId");
-    kanbanId = validation.checkId(kanbanId, "kanbanId");
   } catch (e) {
     return res.status(400).render("error", { error: e });
   }
 
   try {
-    await taskFxns.castVote(userId, taskId, vote);
-    const kanban = await kanbanFxns.getKanbanById(kanbanId);
-    let user = req.session.user;
+    const task = await taskFxns.castVote(userId, taskId, vote);
+    let remainingVotesNeeded = 0;
+    let users = Object.keys(task.votingStatus);
+    users.forEach((user) => {
+      if (task.votingStatus[user] === 0) remainingVotesNeeded += 1;
+    })
+    remainingVotesNeeded = Math.floor(remainingVotesNeeded/2);
     // checks to see if the voting status was updated
-    return res.render("kanban", {
-      groupName: kanban.groupName,
-      kanbanId: kanban._id.toString(),
-      groups: user.groups,
-      todoTasks: await taskFxns.getSomeTasks(kanbanId, 0),
-      inprogressTasks: await taskFxns.getSomeTasks(kanbanId, 1),
-      inreviewTasks: await taskFxns.getSomeTasks(kanbanId, 2),
+    return res.status(200).json({
+      completed: task.status === 3,
+      newVoteCount: remainingVotesNeeded
     });
   } catch (e) {
+    console.log(e);
     return res.status(404).render("error", { error: e });
   }
 });
-router.route(":kanbanId/changeStatus/:taskId").patch(async (req, res) => {
+
+router.route("/changeStatus/:taskId").patch(async (req, res) => {
   // for changing status
   let taskId = req.params.taskId;
-  let kanbanId = req.params.kanbanId;
-  let { newStatus } = req.body;
+  console.log(req.body);
+  let { status } = req.body;
+  status = +status;
   try {
     taskId = validation.checkId(taskId, "taskId");
-    kanbanId = req.params.kanbanId;
-    newStatus = validation.checkStatus(newStatus, "status");
+    status = validation.checkStatus(status, "status");
   } catch (e) {
+    console.log(e);
     return res.status(400).render("error", { error: e });
   }
   try {
-    await taskFxns.changeStatus(taskId, newStatus);
-    const kanban = await kanbanFxns.getKanbanById(kanbanId);
-    let user = req.session.user;
-    return res.status(200).render("kanban", {
-      groupName: kanban.groupName,
-      kanbanId: kanban._id.toString(),
-      groups: user.groups,
-      todoTasks: await taskFxns.getSomeTasks(kanbanId, 0),
-      inprogressTasks: await taskFxns.getSomeTasks(kanbanId, 1),
-      inreviewTasks: await taskFxns.getSomeTasks(kanbanId, 2),
+    const task = await taskFxns.changeStatus(taskId, +req.body.status);
+    let userId = req.session.user._id;
+    const canVote = (task.assignment !== userId && task.status === 2 && task.votingStatus[userId] === 0);
+    const users = Object.keys(task.votingStatus);
+    return res.status(200).json({
+      canVote: canVote, 
+      remainingVotesNeeded: Math.floor(users.length/2),
     });
   } catch (e) {
+    console.log(e);
     return res.status(404).render("error", { error: e });
   }
 });
