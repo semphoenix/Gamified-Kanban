@@ -1,6 +1,6 @@
 <div class="kanban-board">
 
-    <header>
+    <header id="kanbanHeader">
         <div id="group-heading">    
             <h1 id="group-heading-text">{{groupName}}</h1>
             <h2 id="group-id">{{kanbanId}}</h2>
@@ -9,32 +9,29 @@
 
     <div class="kanban-block" id="side-column">
         <div id="group-button-block">
-            <form class="choose-group-form" id="kanban-choose-group-form">
-                <label for="choose-group">Groups</label>
-                <select id="choose-group" form="kanban-choose-group-form">
-                    {{#each Groups}}
-                    <option class="choosen-group-option" value="{{this}}">{{this}}</option>
+            <form action="/kanban/kanbans" class="choose-group-form" id="kanban-choose-group-form" method="post">
+                <label for="chooseGroup">Groups</label>
+                <select name="chooseGroup" id="chooseGroup" form="kanban-choose-group-form">
+                    {{#each groups}}
+                    <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
                     {{/each}}
                 </select>
-                <input type="submit" value="submit"/>        
+                <input type="submit" value="submit"/>
             </form>
         </div>
 
         <div id="create-task-button">
-            <button id="task-button">Create new task</button>
-            <!-- Will open create-new-task-block div on click -->
+            <button id="task-button" onclick="displayCreate()">Create new task</button>
+            <!-- Will open create-new-task-block div on click. And it will close it if clicked again -->
         </div>
 
-        <div id="gacha-button">
+        <div class="sideButtons">
             <a href="/gacha"><button id="gacha-button">Gacha</button></a>
-        </div>
-        <div id="completed-task-button">
             <a href="/completedtasks"><button id="completed-tasks-button">Completed Tasks</button></a>
-        </div>
-        <div id="profile-button">
-            <a href="/profile"><button id="profile-button">Profile</button></a>
+            <a href="/user/privateUser"><button id="profile-button">Profile</button></a>
         </div>
     </div>
+    
 
     <div class="kanban-block" id="todo">
         <h3 class="kanban-block-title" id="todo-title">To Do</h3>
@@ -78,28 +75,27 @@
         {{/each}}
     </div>
 
-
-    <div id="create-new-task-block">
+    <div id="create-new-task-block" hidden>
         <p>New Task</p>
-        <form id="create-task-form">
+        <form id="create-task-form" action="/kanban/createTask" method="POST">
             <label class="create-task-form-label" for="task-name">Task</label>
-            <input class="create-task-form-input" type="text" name="task-name" id="task-name" required>
+            <input class="create-task-form-input" type="text" name="taskname" id="task-name">
             
             <label class="create-task-form-label" for="task-description">Description</label>
-            <textarea class="create-task-form-input" name="task-description" id="task-description" required></textarea>
+            <textarea class="create-task-form-input" name="taskdescription" id="task-description"></textarea>
             
             <label class="create-task-form-label" for="task-difficulty">Difficulty</label>
-            <select class="create-task-form-input" name="task-difficulty" id="task-difficulty" form="create-task-form" required>
-                <option value="easy">Easy</option>
-                <option value="medium">Medium</option>
-                <option value="hard">Hard</option>
+            <select class="create-task-form-input" name="taskdifficulty" id="task-difficulty" form="create-task-form">
+                <option value="1">Easy</option>
+                <option value="2">Medium</option>
+                <option value="3">Hard</option>
             </select>
             
             <div class="create-task-buttons">
                 <button type="submit" id="save-button">Submit</button>
-                <button type="button" id="cancel-button" onclick="closeTask()">Close</button>
+                <button type="button" id="cancel-button">Close</button>
             </div>
         </form>
+        <div id="task-error"></div hidden>
     </div>
 </div>
-

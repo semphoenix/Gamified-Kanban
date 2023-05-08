@@ -1,19 +1,29 @@
-<h1>Signup</h1>
-  <form action="/signup" id="signUpForm" method="POST">
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" placeholder="Username" required>
-
-    <label for="username">Age</label>
-    <input type="text" id="age" name="age" placeholder="Age" required>
-
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" placeholder="Password" required>
+<div class="container" id="signUpContainer">
+<h1>Sign up</h1>
+  <form action="/signup" class="signUpForm" method="POST">
+    <div class="input_fields">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Username" required>
+    </div>
     
-    <label for="confirmPassword">Confirm Password</label>
-    <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+
+    <div class="input_fields">
+      <label for="age">Age</label>
+      <input type="text" id="age" name="age" placeholder="Age" required>
+    </div>
+
+    <div class="input_fields">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Password" required>
+    </div>
+    
+    <div class="input_fields">
+      <label for="confirmPassword">Confirm Password</label>
+      <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm Password" required>
+    </div>
     <input type="submit" value="Signup">
   </form>
-<div id="signupError" class="signupError" hidden></div>
+  <div id="signupError" class="signupError" hidden></div>
       {{#if SignupErrors}}
   <ul class="error-list">
     {{#each errors}}
@@ -23,6 +33,8 @@
     {{/each}}
   </ul>
   {{/if}}
-<a href="/login">Back to login!</a>
-  <h2>About</h2>
-  <h2>Tutorial</h2>
+
+  <div class="goToLogin">
+    <a href="/login">Back to login!</a>
+  </div>
+</div>

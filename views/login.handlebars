@@ -1,10 +1,18 @@
+<div class="container" id="loginContainer">
 <h1>Login</h1>
-  <form action="/login" id="loginForm" method="POST">
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" placeholder="Username" required>
+  <form action="/login" class="loginForm" method="POST">
+  
+    <div class="input_fields">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" placeholder="Username" required>
+    </div>
+    
+    
+    <div class="input_fields">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Password" required>
+    </div>
 
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" placeholder="Password" required>
     <input type="submit" value="Login">
   </form>
 <div id="loginError" class="loginError" hidden></div>
@@ -17,6 +25,11 @@
     {{/each}}
   </ul>
   {{/if}}
-<a href="/signup">Click here to signup!</a>
-  <h2>About</h2>
-  <h2>Tutorial</h2>
+
+
+  <div class="goToSignUp">
+    <a href="/signup">Click here to signup!</a>
+  </div>
+</div>
+
+
