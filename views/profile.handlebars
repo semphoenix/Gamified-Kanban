@@ -1,72 +1,92 @@
-<div class="group-button-block">
-    <form action="/user/privateUser" id="profile-choose-group-form" method="post">
-        <label for="chooseGroup">Groups</label>
-        <select name="chooseGroup" id="chooseGroup" form="profile-choose-group-form">
-            {{#each groups}}
-            <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
-            {{/each}}
-        </select>
-        <input type="submit" value="submit"/>        
-    </form>
-</div>
+<div class="profile-container">
+    <main>
 
-<div class="accounts-button">
-    <h2>{{user}}</h2>
-    <a href="/user/accountsPage"><button id="accounts-button">Accounts</button></a>
-</div>
+        <div class="groupColumn">
+            <h1>Groups</h1>
+            <div class="group-button-block">
+                <form action="/user/privateUser" id="profile-choose-group-form" method="post">
+                    <label for="chooseGroup">Group</label>
+                    <select name="chooseGroup" id="chooseGroup" form="profile-choose-group-form">
+                        {{#each groups}}
+                        <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
+                        {{/each}}
+                    </select>
+                    {{!-- <a href="/user/accountsPage"><button id="accounts-button">Accounts</button></a> --}}
+                    <input type="submit" value="submit"/>        
+                </form>
+            </div>
 
-<div class="kanban-button">
-    <h2>{{currentKanban.groupName}}</h2>
-    <a href="/kanban/kanbans"><button id="accounts-button">KanbanPage</button></a>
-</div>
+            <div class="accounts-button">
+                <h3>{{user}}</h2>
+                <a href="/user/accountsPage"><button id="accounts-button">Accounts</button></a>
+            </div>
 
-<main>
-    <h1>Prizes</h1>
-    <div class="prize-block">
-        <form class="prize-form" id="prize-color-form">
-            <label for="choose-color">Color Choices</label>
-            <select name="choose-color" id="choose-color" form="prize-color-form">
-                {{#each prizes.colors}}
-                <option class="prize-color-option" value="{{this}}">{{this}}</option>
-                {{/each}}
-            </select>
-            <button type="submit" value="submit"/>        
-        </form>
-    </div>
+            <div class="kanban-button">
+                <h3>{{currentKanban.groupName}}</h3>
+                <a href="/kanban/kanbans"><button id="accounts-button">KanbanPage</button></a>
+            </div>
 
-    <div class="prize-block">
-        <form class="prize-form" id="prize-border-form">
-            <label for="choose-border">Border Choices</label>
-            <select name="choose-border" id="choose-border" form="prize-border-form">
-                {{#each prizes.borders}}
-                <option class="prize-border-option" value="{{this}}">{{this}}</option>
-                {{/each}}
-            </select>
-            <button type="submit" value="submit"/>        
-        </form>
-    </div>
+            <div class="logout-button" id="logout-button">
+                <button onclick="window.location.href='/logout';">Logout</button>
+            </div>
+        </div>
 
-    <!-- MUST CHANGE TO NOT USE HTML BASED STYLING (check option tag)-->
-    <div id="prize-picture-button-block">
-        <form class="choose-prize-picture-form" id="prize-picture-form">
-            <label for="choose-picture">Picture Choices</label>
-            <select name="choose-picture" id="choose-picture" form="prize-picture-form">
-                {{#each prizes.pictures}}
-                <option class="prize-picture-option" style="background-image:{{this.img_url}}" value="{{this}}">{{this}}</option>
-                {{/each}}
-            </select>
-            <button type="submit" value="submit"/>        
-        </form>
-    </div>
-    <div id="profile-picture">
-        {{#if prizes.selectedPicture}}
-            <img src="../public/assets/default.jpg">
-        {{else}}
-            <img src="../public/assets/{{prizes.selectedPicture}}.jpg">
-        {{/if}}
-    </div>
-</main>
+        
 
-<div class="logout-button">
-    <button onclick="window.location.href='/logout';">Logout</button>
+        <div class="prizeColumn">
+            <h1>Prizes</h1>
+            <div class="prize-block">
+                <form class="prize-form" id="prize-color-form">
+                    <label for="choose-color">Color Choices</label>
+                    <select name="choose-color" id="choose-color" form="prize-color-form">
+                        {{#each prizes.colors}}
+                        <option class="prize-color-option" value="{{this}}">{{this}}</option>
+                        {{/each}}
+                    </select>
+                    <button type="submit" value="submit">Apply</button>         
+                </form>
+            </div>
+
+            <div class="prize-block">
+                <form class="prize-form" id="prize-border-form">
+                    <label for="choose-border">Border Choices</label>
+                    <select name="choose-border" id="choose-border" form="prize-border-form">
+                        {{#each prizes.borders}}
+                        <option class="prize-border-option" value="{{this}}">{{this}}</option>
+                        {{/each}}
+                    </select>
+                    <button type="submit" value="submit">Apply</button>        
+                </form>
+            </div>
+
+            <!-- MUST CHANGE TO NOT USE HTML BASED STYLING (check option tag)-->
+
+            
+            <div class="prize-block">
+                <form class="choose-prize-picture-form" id="prize-picture-form">
+                    <label for="choose-picture">Picture Choices</label>
+                    <select name="choose-picture" id="choose-picture" form="prize-picture-form">
+                        {{#each prizes.pictures}}
+                        <option class="prize-picture-option" value="{{this}}">{{this}}</option>
+                        {{!-- got rid of background-img css, I can't find a good way to add it with handlebars --}}
+                        {{!-- <option class="prize-picture-option" style="background-image:{{this.img_url}}" value="{{this}}">{{this}}</option> --}}
+                        {{/each}}
+                    </select>
+                    <button type="submit" value="submit">Apply</button>      
+                </form>
+            </div>
+
+
+        <div id="profile-picture">
+            {{#if prizes.selectedPicture}}
+                <img src="../public/assets/default.jpg">
+            {{else}}
+                <img src="../public/assets/{{prizes.selectedPicture}}.jpg">
+            {{/if}}
+        </div>
+        </div>
+        
+    </main>
+
+   
 </div>

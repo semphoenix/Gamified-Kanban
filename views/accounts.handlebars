@@ -1,31 +1,27 @@
 <main>
-    
     <h1 id="accounts-title">Accounts Page</h1>
     <div id="accountsHeader">
-        <header>
-            <h2>Username: {{username}}</h2>
-            <nav>
-                <a href="/user/privateUser" id="accounts-profile-link">Profile Page</a>
-            </nav>
-            <h2>Username: {{username}}</h2>
-            {{#if error}}
-            <p class="error" id="accounts-page-error">{{error}}</p>
-            {{/if}}
-        </header>
+        
+        <h2>Username: {{username}}</h2>
+        <nav>
+            <a href="/user/privateUser" id="accounts-profile-link">Profile Page</a>
+        </nav>
+        
     </div>
     
     <div class="join-group-block">
         <h2 id="accounts-join-group-title">Join Group</h2>
-        <form id="accounts-join-group-form" action="/kanban/createKanban/joinGroup" method="POST">
-            <label for="groupId">Group Id</label>
-            <input type="text" id="groupId" name="groupId">
+        <form id="accounts-join-group-form">
+            <label for="join-group-id">Group Id</label>
+            <input type="text" id="join-group-id">
             <button type="submit">Submit</button>
         </form>
     </div>
 
     <div class="create-group-block">
         <h2 id="accounts-create-group-title">Create Group</h2>
-        <form id="accounts-create-group-form" action="/kanban/createKanban/createGroup" method="POST">
+        <form action="/kanban/createKanban" id="accounts-create-group-form" method="POST">
+            {{!-- <h3>Group Name</h3> --}}
             <label for="groupName">Group Name</label>
             <input type="text" id="groupName" name="groupName">
             <button type="submit" id="">Submit</button>
