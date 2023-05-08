@@ -35,8 +35,8 @@
             const draggedTask = ui.draggable;
             const statusName = $(this).attr('id');
             // task was not dragged to a task column
-            if (!statusName in statusNumbers)
-                return; 
+            if (!(statusName in statusNumbers))
+                return;
 
             const statusNum = statusNumbers[statusName]; // get status number
             const taskId = draggedTask.data('id');
