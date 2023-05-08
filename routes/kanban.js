@@ -3,6 +3,7 @@ const router = Router();
 import { kanbanFxns, userFxns } from "../data/index.js";
 import { taskFxns } from "../data/index.js";
 import validation from "../validation.js";
+import xss from 'xss'
 
 router
   .route("/kanbans")
@@ -48,40 +49,30 @@ router
   })
   .post(async (req, res) => {
     // Initializing variables
-    let { userId, name, description, difficulty, status } = "";
-    let content;
+    let {chooseGroup, kanbanId, userId, name, description, difficulty, status } = req.body;
     let postType = "";
 
-    try {
-      content = req.body;
-      console.log(content);
+    try { 
+      console.log(chooseGroup)
       // If no necessary data avaialble through error
-      if (!content) {
+      if (!req.body) {
         throw "Route: Kanbans/ ~ A form submitted with no necessary data";
       }
       // If the post request is for "chooseGroup"
-      else if (
-        !("kanbanId" in content) ||
-        "userId" in content ||
-        "name" in content ||
-        "description" in content ||
-        "difficulty" in content ||
-        "status" in content
-      ) {
+      else if (chooseGroup){
         postType = "Choose Group";
-        content.chooseGroup = validation.checkId(
-          content.chooseGroup,
+        chooseGroup = validation.checkId(
+          chooseGroup,
           "chooseGroup"
         );
       }
       // If the post request if for "createTask"
       else {
         postType = "Create Task";
-        let { userId, name, description, difficulty, status } = req.body;
         kanbanId = validation.checkId(kanbanId, "kanbanId");
         userId = validation.checkId(userId, "userId");
-        name = validation.checkString(name, "name");
-        description = validation.checkString(description, "description");
+        name = validation.checkString(xss(name), "name");
+        description = validation.checkString(xss(description), "description");
         difficulty = validation.checkDifficulty(difficulty, "difficulty");
         status = validation.checkStatus(status, "status");
       }
@@ -92,7 +83,7 @@ router
     try {
       // Process response for "Choose Group" post request
       if (postType === "Choose Group") {
-        req.session.selectedKanbanId = content.chooseGroup;
+        req.session.selectedKanbanId = chooseGroup;
         return res.redirect("/kanban/kanbans");
       }
 
@@ -115,30 +106,34 @@ router
     }
   });
 
-router.route("/createTask").post(async (req, res) => {
-  console.log("/createTask", req.body);
-  let { taskname, taskdescription, taskdifficulty } = req.body;
-  console.log("taskname", taskname);
-  taskname = validation.checkString(taskname, "route /createTask taskname");
-  taskdescription = validation.checkString(
-    taskdescription,
-    "route /createTask taskdescription"
-  );
-  taskdifficulty = validation.checkDifficulty(
-    Number(taskdifficulty),
-    "route /createTask taskdifficulty"
-  );
-  let created = await taskFxns.createTask(
-    req.session.selectedKanbanId,
-    req.session.user._id,
-    taskname,
-    taskdescription,
-    taskdifficulty,
-    0
-  );
-  res.redirect("/kanban/kanbans");
+router
+  .route("/createTask")
+  .post(async (req, res) => {
+    console.log("/createTask", req.body);
+    let { taskname, taskdescription, taskdifficulty } = req.body;
+    console.log("taskname", taskname);
+    taskname = validation.checkString(taskname, "route /createTask taskname");
+    taskdescription = validation.checkString(
+      taskdescription,
+      "route /createTask taskdescription"
+    );
+    taskdifficulty = validation.checkDifficulty(
+      Number(taskdifficulty),
+      "route /createTask taskdifficulty"
+    );
+    let created = await taskFxns.createTask(
+      req.session.selectedKanbanId,
+      req.session.user._id,
+      taskname,
+      taskdescription,
+      taskdifficulty,
+      0
+    );
+    res.redirect("/kanban/kanbans");
 });
-  router.route("/createKanban/joinGroup")
+  
+router
+  .route("/createKanban/joinGroup")
   .post(async (req, res) => {
     let user;
     let kanbanId;
@@ -158,7 +153,7 @@ router.route("/createTask").post(async (req, res) => {
       kanbanId = req.body
       if(!kanbanId || Object.keys(kanbanId).length === 0) throw "There are no fields in the request body"
       if(!kanbanId['groupId']) throw "Incorrect field submitted to form!"
-      kanbanId = validation.checkId(kanbanId.groupId, "Group Id") 
+      kanbanId = validation.checkId(xss(kanbanId.groupId) , "Group Id") 
     } catch (e){
       return res
         .status(400)
@@ -199,7 +194,7 @@ router
     try {
       ownerId = validation.checkId(ownerId, "Owner Id");
       kanbanData.groupName = validation.checkString(
-        kanbanData.groupName,
+        xss(kanbanData.groupName),
         "Group Name"
       );
     } catch (e) {
