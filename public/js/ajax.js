@@ -27,49 +27,57 @@
 
     $(".kanban-block").droppable({
         accept: ".kanban-task-block",
-        drop: async function (event, ui) {
+        drop: function (event, ui) {
             // make sure element is not in the same column
-            if ($(this).attr('id') === originalTaskColumn.attr('id'))
+            const block = $(this);
+
+            if (block.attr('id') === originalTaskColumn.attr('id'))
                 return;
             
             const draggedTask = ui.draggable;
-            const statusName = $(this).attr('id');
+            const statusName = block.attr('id');
             // task was not dragged to a task column
             if (!(statusName in statusNumbers))
                 return;
 
             const statusNum = statusNumbers[statusName]; // get status number
             const taskId = draggedTask.data('id');
-            const result = await $.ajax({
+            $.ajax({
                 method: "PATCH",
                 url: `/kanban/changeStatus/${taskId}`,
                 data: {
                     status: statusNum
                 },
+                async: false,
+                timeout: 3000 // sets a timeout if it takes too long
+            }).done(function(result) {
+                const { canVote, remainingVotesNeeded } = result;
+                const votesNeeded = `<p class="vote-count">Remaining Approvals Needed: ${remainingVotesNeeded}</p>`;
+                if (statusName === "inreview") 
+                    draggedTask.append(votesNeeded);
+                else if (statusName !== "inreview") {
+                    draggedTask.children(".vote-count").remove();
+                    draggedTask.children(".task-vote-form").remove();
+                } 
+
+                const voteForm = `<form class="task-vote-form">
+                    <label for="task-vote">Vote: </label>
+                    <select class="task-vote" name="task-vote" id="task-vote" form="create-task-form">
+                        <option value="1">Approve</option>
+                        <option value="0">Reject</option>
+                    </select>
+                    <input type="submit" value="Submit">
+                    <ul class="error-list" hidden></ul>
+                </form>`;
+                if (canVote)
+                    draggedTask.append(voteForm);
+                
+                block.append(draggedTask);
+                console.log("task has been dragged successfully!");
+            }).fail(function() {
+                alert("drag failed");
             });
-            const { canVote, remainingVotesNeeded } = result;
-            const votesNeeded = `<p class="vote-count">Remaining Approvals Needed: ${remainingVotesNeeded}</p>`;
-            if (statusName === "inreview") 
-                draggedTask.append(votesNeeded);
-            else if (statusName !== "inreview") {
-                draggedTask.children(".vote-count").remove();
-                draggedTask.children(".task-vote-form").remove();
-            } 
 
-            const voteForm = `<form class="task-vote-form">
-                <label for="task-vote">Vote: </label>
-                <select class="task-vote" name="task-vote" id="task-vote" form="create-task-form">
-                    <option value="1">Approve</option>
-                    <option value="0">Reject</option>
-                </select>
-                <input type="submit" value="Submit">
-                <ul class="error-list" hidden></ul>
-            </form>`;
-            if (canVote)
-                draggedTask.append(voteForm);
-
-            $(this).append(draggedTask);
-            console.log("task has been dragged successfully!");
         },
     });
 
@@ -87,6 +95,7 @@
             form.children(".error-list").append(error);
             form.children(".error-list").hidden = false;
         }
+
         $.ajax({
             method: "PATCH",
             url: `/kanban/vote/${taskId}`,
