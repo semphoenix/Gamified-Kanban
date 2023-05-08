@@ -23,7 +23,7 @@
         start: function(event, ui) {
             originalTaskColumn = $(this).parent();
         }
-    })
+    });
 
     $(".kanban-block").droppable({
         accept: ".kanban-task-block",
@@ -61,10 +61,10 @@
                 } 
 
                 const voteForm = `<form class="task-vote-form">
-                    <label for="task-vote">Vote: </label>
+                    <label for="task-vote">Approve? </label>
                     <select class="task-vote" name="task-vote" id="task-vote" form="create-task-form">
-                        <option value="1">Approve</option>
-                        <option value="0">Reject</option>
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
                     </select>
                     <input type="submit" value="Submit">
                     <ul class="error-list" hidden></ul>

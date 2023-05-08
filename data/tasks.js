@@ -165,10 +165,12 @@ let exportedMethods = {
       task.status = 3;
       kanban.completedTasks += 1;
       // I changed this because it gave points to the user who casted the final vote, not the person whose task it is
-      for (let user in kanban.groupUsers) {
-        if(user.userId === task.assignment)
+      for (let i = 0; i < kanban.groupUsers.length; i++) {
+        const user = kanban.groupUsers[i];
+        if (user.userId === task.assignment) {
           user.points += 5;
-      }
+        }
+      }      
     }
 
     const updateInfo = {
