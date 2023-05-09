@@ -208,6 +208,10 @@
     padding-bottom: 2%;
   }
 
+  nav button {
+    width: 90%%;
+  }
+  
   .kanban-board {
     display: flex;
     flex-direction: row;
@@ -743,3 +747,5 @@
   .completed-tasks li.ListedTask-IndividualVotes {
     display: inline-block;
   }
+
+

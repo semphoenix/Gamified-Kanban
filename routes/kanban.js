@@ -19,9 +19,7 @@ router
         req.session.selectedKanbanId
       );
 
-      console.log(user.groups);
       let kanbans = await kanbanFxns.getAllKanbans(user.groups);
-      console.log(kanbans);
 
       let todoTasks = await taskFxns.getSomeTasks(
         req.session.selectedKanbanId,
@@ -81,7 +79,7 @@ router
         req.session.selectedKanbanId
       );
 
-      res.render("kanban", {
+      res.status(200).render("kanban", {
         title: "Kanban Page",
         groupName: selectedKanban.groupName,
         kanbanId: selectedKanban._id.toString(),
@@ -95,6 +93,8 @@ router
       return res.status(404).render("error", {
         title: "Error Page",
         error: "Kanban of that id does not exist!",
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
       });
     }
   })
@@ -133,7 +133,12 @@ router
         status = validation.checkStatus(status, "status");
       }
     } catch (e) {
-      return res.status(400).render("error", { title: "Error Page", error: e });
+      return res.status(400).render("error", {
+        title: "Error Page",
+        error: e,
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
     }
 
     try {
@@ -158,16 +163,19 @@ router
         throw "Route: Kanbans/ ~ Something went wrong with the post request";
       }
     } catch (e) {
-      return res.status(404).json({ title: "Error Page", error: e });
+      return res.status(404).render({
+        title: "Error Page",
+        error: e,
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
     }
   });
 
-router
-  .route("/createTask")
-  .post(async (req, res) => {
-    console.log("/createTask", req.body);
-    let { taskname, taskdescription, taskdifficulty } = req.body;
-    console.log("taskname", taskname);
+
+router.route("/createTask").post(async (req, res) => {
+  let { taskname, taskdescription, taskdifficulty } = req.body;
+  try {
     taskname = validation.checkString(taskname, "route /createTask taskname");
     taskdescription = validation.checkString(
       taskdescription,
@@ -177,6 +185,15 @@ router
       Number(taskdifficulty),
       "route /createTask taskdifficulty"
     );
+  } catch (e) {
+    return res.status(400).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
+  }
+  try {
     let created = await taskFxns.createTask(
       req.session.selectedKanbanId,
       req.session.user._id,
@@ -186,6 +203,14 @@ router
       0
     );
     res.redirect("/kanban/kanbans");
+  } catch (e) {
+    return res.status(404).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
+  }
 });
 
 router.route("/createKanban/joinGroup").post(async (req, res) => {
@@ -199,6 +224,8 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     return res.status(404).render("error", {
       title: "Error Page",
       error: "User is not logged in!?",
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
     });
   }
 
@@ -224,7 +251,12 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     req.session.selectedKanbanId = kanbanId;
     return res.redirect(`/kanban/kanbans/`);
   } catch (e) {
-    return res.status(500).render("error", { title: "Error Page", error: e });
+    return res.status(500).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
   }
 });
 
@@ -238,6 +270,8 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     return res.status(404).render("error", {
       title: "Error Page",
       error: "There are no fields in the request body",
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
     });
   }
   let kanbanData = req.body;
@@ -245,6 +279,8 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     return res.status(400).render("error", {
       title: "Error Page",
       error: "There are no fields in the request body",
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
     });
   }
   try {
@@ -254,7 +290,12 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
       "Group Name"
     );
   } catch (e) {
-    return res.status(400).render("error", { title: "Error Page", error: e });
+    return res.status(400).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
   }
   try {
     const { groupName } = kanbanData;
@@ -263,7 +304,12 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     req.session.selectedKanbanId = newKanban._id;
     return res.redirect(`/kanban/kanbans`);
   } catch (e) {
-    return res.status(500).render("error", { title: "Error Page", error: e });
+    return res.status(500).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
   }
 });
 
@@ -285,7 +331,12 @@ router
         groupName: kanban.groupName,
       });
     } catch (e) {
-      return res.status(404).render("error", { title: "Error Page", error: e });
+      return res.status(404).render("error", {
+        title: "Error Page",
+        error: e,
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
     }
   })
   .post(async (req, res) => {
@@ -329,7 +380,12 @@ router
           points: user.points,
         });
       } catch (e) {
-        res.status(500).render("error", { error: e });
+        res.status(500).render("error", {
+          title: "Error Page",
+          error: e,
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
       }
     }
   });
@@ -390,7 +446,12 @@ router.route("/vote/:taskId").patch(async (req, res) => {
     vote = validation.checkVote(+vote, "vote");
     taskId = validation.checkId(taskId, "taskId");
   } catch (e) {
-    return res.status(400).render("error", { title: "Error Page", error: e });
+    return res.status(400).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
   }
 
   try {
@@ -422,8 +483,12 @@ router.route("/vote/:taskId").patch(async (req, res) => {
       votingStatus: voterUsers,
     });
   } catch (e) {
-    console.log(e);
-    return res.status(404).render("error", { title: "Error Page", error: e });
+    return res.status(404).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
   }
 });
 
