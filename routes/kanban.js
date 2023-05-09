@@ -162,28 +162,30 @@ router
     }
   });
 
-router.route("/createTask").post(async (req, res) => {
-  console.log("/createTask", req.body);
-  let { taskname, taskdescription, taskdifficulty } = req.body;
-  console.log("taskname", taskname);
-  taskname = validation.checkString(taskname, "route /createTask taskname");
-  taskdescription = validation.checkString(
-    taskdescription,
-    "route /createTask taskdescription"
-  );
-  taskdifficulty = validation.checkDifficulty(
-    Number(taskdifficulty),
-    "route /createTask taskdifficulty"
-  );
-  let created = await taskFxns.createTask(
-    req.session.selectedKanbanId,
-    req.session.user._id,
-    taskname,
-    taskdescription,
-    taskdifficulty,
-    0
-  );
-  res.redirect("/kanban/kanbans");
+router
+  .route("/createTask")
+  .post(async (req, res) => {
+    console.log("/createTask", req.body);
+    let { taskname, taskdescription, taskdifficulty } = req.body;
+    console.log("taskname", taskname);
+    taskname = validation.checkString(taskname, "route /createTask taskname");
+    taskdescription = validation.checkString(
+      taskdescription,
+      "route /createTask taskdescription"
+    );
+    taskdifficulty = validation.checkDifficulty(
+      Number(taskdifficulty),
+      "route /createTask taskdifficulty"
+    );
+    let created = await taskFxns.createTask(
+      req.session.selectedKanbanId,
+      req.session.user._id,
+      taskname,
+      taskdescription,
+      taskdifficulty,
+      0
+    );
+    res.redirect("/kanban/kanbans");
 });
 
 router.route("/createKanban/joinGroup").post(async (req, res) => {
@@ -209,8 +211,8 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     if (!kanbanId["groupId"]) throw "Incorrect field submitted to form!";
     kanbanId = validation.checkId(xss(kanbanId.groupId), "Group Id");
   } catch (e) {
-    return res.status(400).render("accounts", {
-      title: "Accounts Page",
+    return res.status(400).render("createKanban", {
+      title: "Create/Join Group Page",
       username: user.username,
       error: e,
     });
@@ -363,6 +365,7 @@ router.route("/completedTasks").get(async (req, res) => {
         voterUsers.push({ user: username, status: votingStatus });
       }
       completedTasks[i]["voterInfo"] = voterUsers;
+      completedTasks[i]["assignedUser"] = (await userFxns.getUserById(completedTasks[i].assignment)).username
       voterUsers = [];
     }
     return res.render("completed", {
