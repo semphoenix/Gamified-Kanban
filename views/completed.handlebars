@@ -2,6 +2,9 @@
     <a href="/kanban/kanbans"><button id="back-to-kanban">Back To Kanban</button></a>
     <header>
         <h1>Completed Tasks</h1>
+        {{#if error}}
+        <p class="error">{{error}}</p>
+        {{/if}}
     </header>
     <div class="completed-tasks">
         <ul class="Tasks" id="TaskList">

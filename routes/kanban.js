@@ -323,7 +323,7 @@ router
           if (completedTasks[i].assignment === voterIds[j]){
             continue
           }
-
+          
           let username = await userFxns.getUsernameById(voterIds[j])
           let votingStatus = ""
           let vote = completedTasks[i].votingStatus[voterIds[j]];
@@ -336,16 +336,14 @@ router
           }
           voterUsers.push({user: username, status: votingStatus})
         }
-        voterUsers.push({ user: username, status: votingStatus });
-      }
-      completedTasks[i]["voterInfo"] = voterUsers;
-      voterUsers = [];
-    }
+        completedTasks[i]["voterInfo"] = voterUsers;
+        voterUsers = [];
+      } 
 
-    return res.render("completed", {
-      title: "Completed Tasks Page",
-      tasks: completedTasks,
-    });
+      return res.render("completed", {
+        title: "Completed Tasks Page",
+        tasks: completedTasks,
+      });
   } catch (e) {
     return res.status(404).render("completed", {
       title: "Completed Tasks Page",
