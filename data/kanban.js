@@ -178,6 +178,8 @@ let exportedMethods = {
    */
 
   async playGame(userId, kanbanId) {
+    userId = validation.checkId(userId, "userId");
+    kanbanId = validation.checkId(kanbanId, "kanbanId");
     let points = await this.getUserPoints(userId, kanbanId);
     let rewards = await this.getUserRewards(userId, kanbanId);
     if (points < 3) throw "Error: Not enough points!";
@@ -186,7 +188,7 @@ let exportedMethods = {
       Object.keys(allRewards)[
         Math.floor(Math.random() * Object.keys(allRewards).length)
       ];
-    if (allRewards[rewardType].length === rewards[rewardType].length-1)
+    if (allRewards[rewardType].length === rewards[rewardType].length - 1)
       throw "Already recieved all rewards of this type!";
 
     let reward;
@@ -214,6 +216,57 @@ let exportedMethods = {
       { returnDocument: "after" }
     );
 
+    return await this.getUserinKanban(userId, kanbanId);
+  },
+  async updateSelectedUserRewards(
+    userId,
+    kanbanId,
+    rewardType,
+    selectReward,
+    reward
+  ) {
+    userId = validation.checkId(userId, "userId");
+    kanbanId = validation.checkId(kanbanId, "kanbanId");
+    rewardType = validation.checkString(rewardType, "rewardType");
+    console.log(rewardType);
+    reward = validation.checkStringV2(reward, "reward");
+    console.log(reward);
+
+    if (
+      rewardType !== "profileRewards" &&
+      rewardType !== "borderRewards" &&
+      rewardType !== "colorRewards"
+    ) {
+      throw "Error: Invalid rewardType";
+    }
+    if (
+      selectReward !== "profileReward" &&
+      selectReward !== "borderReward" &&
+      selectReward !== "colorReward"
+    ) {
+      throw "Error: Invalid selectReward";
+    }
+
+    const validRewards = allRewards[rewardType];
+    if (rewardType === "profileRewards" || rewardType === "colorRewards") {
+      reward = parseInt(reward);
+      if (!validRewards || (!validRewards.includes(reward) && reward !== 0)) {
+        throw "Error: Invalid reward";
+      }
+    } else {
+      if (
+        !validRewards ||
+        (!validRewards.includes(reward) && reward !== "default")
+      ) {
+        throw "Error: Invalid reward";
+      }
+    }
+    let kanbanCollection = await kanbans();
+    const insertInfo = await kanbanCollection.findOneAndUpdate(
+      { _id: new ObjectId(kanbanId), "groupUsers.userId": userId },
+      { $set: { [`groupUsers.$.selectedReward.${selectReward}`]: reward } },
+      { returnDocument: "after" }
+    );
     return await this.getUserinKanban(userId, kanbanId);
   },
 };
