@@ -1,12 +1,17 @@
 <div class="kanban-board">
 
     <header id="kanbanHeader">
-        <div id="kanban-profile-picture">
-            <img src="../public/assets/{{selectedReward.profileReward}}.jpg">
-        </div>
+        
         <div id="group-heading">    
             <h1 id="group-heading-text">{{groupName}}</h1>
             <h2 id="group-id">Group Id: {{kanbanId}}</h2>
+            <div class="logout-button" id="logout-button">
+                <button onclick="window.location.href='/logout';">Logout</button>
+            </div>
+        </div>
+        
+        <div id="kanban-profile-picture">
+            <img src="../public/assets/{{selectedReward.profileReward}}.jpg">
         </div>
     </header>
 
