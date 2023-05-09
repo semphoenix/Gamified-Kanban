@@ -51,18 +51,26 @@
                 async: false,
                 timeout: 3000 // sets a timeout if it takes too long
             }).done(function(result) {
-                const { canVote, remainingVotesNeeded } = result;
-                const votesNeeded = `<p class="vote-count">Remaining Approvals Needed: ${remainingVotesNeeded}</p>`;
-                if (statusName === "inreview") 
-                    draggedTask.append(votesNeeded);
-                else if (statusName !== "inreview") {
+                const { cannotDrag } = result;
+                // reverts to original position if user drags task that isn't their own
+                if (cannotDrag) 
+                    return;
+
+                const { canVote, votingStatus } = result;
+
+                if (statusName !== "inreview") {
                     draggedTask.children(".vote-count").remove();
                     draggedTask.children(".task-vote-form").remove();
                 } 
 
+                const votingStatusList = $(`<ul class="vote-count"></ul>`);
+                votingStatus.forEach((iter) => {
+                    votingStatusList.append(`<li>${iter.user}: ${iter.status}</li>`);
+                });
+
                 const voteForm = `<form class="task-vote-form">
                     <label for="task-vote">Approve? </label>
-                    <select class="task-vote" name="task-vote" id="task-vote" form="create-task-form">
+                    <select class="task-vote" name="task-vote" id="task-vote" form="task-vote-form">
                         <option value="1">Yes</option>
                         <option value="0">No</option>
                     </select>
@@ -71,7 +79,13 @@
                 </form>`;
                 if (canVote)
                     draggedTask.append(voteForm);
-                
+                else if (statusName === "inreview")
+                    draggedTask.append(votingStatusList);
+                else {
+                    draggedTask.children(".vote-count").remove();
+                    draggedTask.children(".task-vote-form").remove();
+                }
+
                 block.append(draggedTask);
                 console.log("task has been dragged successfully!");
             }).fail(function() {
@@ -104,14 +118,22 @@
             }
         })
         .done(function(result) {
-            const { completed, newVoteCount } = result;
-            console.log(completed);
+            const { completed, votingStatus, rejected } = result;
             if (completed) {
                 task.remove();
-                alert("task has been marked complete and will be moved to completed tasks page")
-            } else {
-                task.children(".vote-count").html(`<p class="vote-count">Remaining Approvals Needed: ${newVoteCount}</p>`);
+                alert("task has been marked complete and will be moved to completed tasks page");
+            } else if (rejected) {
+                const todoColumn = $("#todo");
+                todoColumn.append(task);
                 task.children(".task-vote-form").remove();
+                alert("task has been rejected for completion and moved back to todo")
+            } else {
+                const votingStatusList = $("<ul class=vote-count></ul>");
+                votingStatus.forEach((iter) => {
+                    votingStatusList.append(`<li>${iter.user}: ${iter.status}</li>`);
+                });
+                task.children(".task-vote-form").remove();
+                task.append(votingStatusList);
             }
         })
         .fail(function(xhr, status, error) {
