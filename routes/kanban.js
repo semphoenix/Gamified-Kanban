@@ -308,45 +308,43 @@ router
       }
     }
   });
-router.route("/completedTasks").get(async (req, res) => {
-  try {
-    validation.checkId(req.session.selectedKanbanId, "Current Kanban");
-    let completedTasks = await taskFxns.getSomeTasks(
-      req.session.selectedKanbanId,
-      3
-    );
-    let voterUsers = [];
-    let voterIds = [];
 
-    for (let i = 0; i < completedTasks.length; i++) {
-      voterIds = Object.keys(completedTasks[i].votingStatus);
-      for (let j = 0; j < voterIds.length; j++) {
-        // Skip if the user is the same as the kanban
-        if (completedTasks[i].assignment === voterIds[j]) {
-          continue;
+router
+  .route("/completedTasks")
+  .get(async (req, res) => {
+    try{
+      validation.checkId(req.session.selectedKanbanId, "Current Kanban")
+      let completedTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 3)
+      let voterUsers = []
+      let voterIds =  []
+      
+      for(let i = 0; i < completedTasks.length; i++){
+        voterIds = Object.keys(completedTasks[i].votingStatus)
+        for(let j = 0; j < voterIds.length; j++){
+          // Skip if the user is the same as the kanban
+          if (completedTasks[i].assignment === voterIds[j]){
+            continue
+          }
+          
+          let username = await userFxns.getUsernameById(voterIds[j])
+          let votingStatus = ""
+          let vote = completedTasks[i].votingStatus[voterIds[j]];
+          if(vote === 1){
+            votingStatus = "approved";
+          } else if (vote === 0) {
+            votingStatus = "denied";
+          } else {
+            votingStatus = "no vote";
+          }
+          voterUsers.push({user: username, status: votingStatus})
         }
-
-        let username = await userFxns.getUsernameById(voterIds[j]);
-        let votingStatus = "";
-        let vote = completedTasks[i].votingStatus[voterIds[j]];
-        if (vote === 1) {
-          votingStatus = "approved";
-        } else if (vote === 0) {
-          votingStatus = "denied";
-        } else {
-          votingStatus = "no vote";
-        }
-        voterUsers.push({ user: username, status: votingStatus });
-      }
-      voterUsers.push({ user: username, status: votingStatus });
-    }
-    completedTasks[i]["voterInfo"] = voterUsers;
-    voterUsers = [];
-
-    return res.render("completed", {
-      title: "Completed Tasks Page",
-      tasks: completedTasks,
-    });
+        completedTasks[i]["voterInfo"] = voterUsers;
+        voterUsers = [];
+      } 
+      return res.render("completed", {
+        title: "Completed Tasks Page",
+        tasks: completedTasks,
+      });
   } catch (e) {
     return res.status(404).render("completed", {
       title: "Completed Tasks Page",
