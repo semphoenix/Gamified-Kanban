@@ -81,7 +81,7 @@ router
         req.session.selectedKanbanId
       );
 
-      res.render("kanban", {
+      res.status(200).render("kanban", {
         title: "Kanban Page",
         groupName: selectedKanban.groupName,
         kanbanId: selectedKanban._id.toString(),
@@ -163,27 +163,33 @@ router
   });
 
 router.route("/createTask").post(async (req, res) => {
-  console.log("/createTask", req.body);
   let { taskname, taskdescription, taskdifficulty } = req.body;
-  console.log("taskname", taskname);
-  taskname = validation.checkString(taskname, "route /createTask taskname");
-  taskdescription = validation.checkString(
-    taskdescription,
-    "route /createTask taskdescription"
-  );
-  taskdifficulty = validation.checkDifficulty(
-    Number(taskdifficulty),
-    "route /createTask taskdifficulty"
-  );
-  let created = await taskFxns.createTask(
-    req.session.selectedKanbanId,
-    req.session.user._id,
-    taskname,
-    taskdescription,
-    taskdifficulty,
-    0
-  );
-  res.redirect("/kanban/kanbans");
+  try {
+    taskname = validation.checkString(taskname, "route /createTask taskname");
+    taskdescription = validation.checkString(
+      taskdescription,
+      "route /createTask taskdescription"
+    );
+    taskdifficulty = validation.checkDifficulty(
+      Number(taskdifficulty),
+      "route /createTask taskdifficulty"
+    );
+  } catch (e) {
+    return res.status(400).render("error", { title: "Error Page", error: e });
+  }
+  try {
+    let created = await taskFxns.createTask(
+      req.session.selectedKanbanId,
+      req.session.user._id,
+      taskname,
+      taskdescription,
+      taskdifficulty,
+      0
+    );
+    res.redirect("/kanban/kanbans");
+  } catch (e) {
+    return res.status(404).render("error", { title: "Error Page", error: e });
+  }
 });
 
 router.route("/createKanban/joinGroup").post(async (req, res) => {
@@ -419,7 +425,6 @@ router.route("/vote/:taskId").patch(async (req, res) => {
       votingStatus: voterUsers,
     });
   } catch (e) {
-    console.log(e);
     return res.status(404).render("error", { title: "Error Page", error: e });
   }
 });
