@@ -10,21 +10,24 @@
     </div>
     <div class="completed-tasks">
         <ul class="Tasks" id="TaskList">
-            {{#each Tasks}}
+            {{#each tasks}}
             <li class="ListedTask">
                 <div class="ListedTask">
-                    <h3 class="ListedTask-name">{{Tasks.name}}</h3>
-                    <p class="ListedTask-description">{{Tasks.description}}</p>
-                    <p class="ListedTask-assignment">{{Tasks.username}}</p>
-                    <p class="ListedTask-difficulty">Difficulty: {{Tasks.difficulty}}</p>
+                    <h3 class="ListedTask-name">{{this.name}}</h3>
+                    <p class="ListedTask-description">{{this.description}}</p>
+                    <p class="ListedTask-assignment">{{this.username}}</p>
+                    <p class="ListedTask-difficulty">Difficulty: {{this.difficulty}}</p>
                     <div class="ListedTask-Votes">
-                        <ul class="ListedTask-Votes">
+                        {{!-- <ul class="ListedTask-Votes">
                             {{#each Tasks.voting_status}}
                                 <li class="ListedTask-IndividualVotes">User {{Tasks.voting_status.user}}</li>
-                            {{/each}}
+                            {{/each}} --}}
+                        <ul class="VoterInfo">
+                        {{#each voterInfo}}
+                            <li class="VoterUsername">{{this.user}}: {{this.status}}<li>
+                        {{/each}}
                         </ul>
                     </div>
-                    <p class="ListedTask-votingStatus">Votes: {{Tasks.voting_status}}</p>
                 </div>
 
                 {{!-- <div class="ListedTask">

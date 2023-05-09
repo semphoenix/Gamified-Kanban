@@ -45,25 +45,43 @@ router
         const username = await userFxns.getUsernameById(task.assignment);
         task.user = username;
       }
+      
 
       for (const task of inreviewTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
         task.user = username;
-        task.canVote = task.assignment !== req.session.user._id;
-        let remainingVotesNeeded = 0;
-        let users = Object.keys(task.votingStatus);
-        users.forEach((user) => {
-          if (task.votingStatus[user] === 0) remainingVotesNeeded += 1;
-        });
-        remainingVotesNeeded = Math.floor(remainingVotesNeeded / 2);
-        task.remainingVotesNeeded = remainingVotesNeeded;
+        task.canVote = task.assignment !== req.session.user._id && task.votingStatus[req.session.user._id] === -1;
+        let voterIds = Object.keys(task.votingStatus);
+        let voterUsers = [];
+
+        for(let j = 0; j < voterIds.length; j++){
+          // Skip if the user is the same as the kanban
+          if (task.assignment === voterIds[j]){
+            continue;
+          }
+    
+          let username = await userFxns.getUsernameById(voterIds[j]);
+          let votingStatus = "";
+          let vote = task.votingStatus[voterIds[j]];
+          if(vote === 1){
+            votingStatus = "approved";
+          } else if (vote === 0) {
+            votingStatus = "denied";
+          } else {
+            votingStatus = "no vote";
+          }
+          voterUsers.push({user: username, status: votingStatus})
+        }
+        task.votingStatus = voterUsers;
       }
+      
       const selectedKanbanUserProfile = await kanbanFxns.getUserinKanban(
         req.session.user._id,
         req.session.selectedKanbanId
       );
 
       res.render("kanban", {
+        title: "Kanban Page",
         groupName: selectedKanban.groupName,
         kanbanId: selectedKanban._id.toString(),
         groups: kanbans,
@@ -73,9 +91,10 @@ router
         selectedReward: selectedKanbanUserProfile.selectedReward,
       });
     } catch (e) {
-      return res
-        .status(404)
-        .render("error", { error: "Kanban of that id does not exist!" });
+      return res.status(404).render("error", {
+        title: "Error Page",
+        error: "Kanban of that id does not exist!",
+      });
     }
   })
   .post(async (req, res) => {
@@ -113,7 +132,7 @@ router
         status = validation.checkStatus(status, "status");
       }
     } catch (e) {
-      return res.status(400).render("error", { error: e });
+      return res.status(400).render("error", { title: "Error Page", error: e });
     }
 
     try {
@@ -138,7 +157,7 @@ router
         throw "Route: Kanbans/ ~ Something went wrong with the post request";
       }
     } catch (e) {
-      return res.status(404).json({ error: e });
+      return res.status(404).json({ title: "Error Page", error: e });
     }
   });
 
@@ -174,9 +193,10 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     user = req.session.user;
     user._id = validation.checkId(req.session.user._id);
   } catch (e) {
-    return res
-      .status(404)
-      .render("error", { error: "User is not logged in!?" });
+    return res.status(404).render("error", {
+      title: "Error Page",
+      error: "User is not logged in!?",
+    });
   }
 
   try {
@@ -188,9 +208,11 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     if (!kanbanId["groupId"]) throw "Incorrect field submitted to form!";
     kanbanId = validation.checkId(xss(kanbanId.groupId), "Group Id");
   } catch (e) {
-    return res
-      .status(400)
-      .render("accounts", { username: user.username, error: e });
+    return res.status(400).render("accounts", {
+      title: "Accounts Page",
+      username: user.username,
+      error: e,
+    });
   }
 
   try {
@@ -199,7 +221,7 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     req.session.selectedKanbanId = kanbanId;
     return res.redirect(`/kanban/kanbans/`);
   } catch (e) {
-    return res.status(500).render("error", { error: e });
+    return res.status(500).render("error", { title: "Error Page", error: e });
   }
 });
 
@@ -210,15 +232,17 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     user = req.session.user;
     ownerId = user._id.toString();
   } catch (e) {
-    return res
-      .status(404)
-      .render("error", { error: "There are no fields in the request body" });
+    return res.status(404).render("error", {
+      title: "Error Page",
+      error: "There are no fields in the request body",
+    });
   }
   let kanbanData = req.body;
   if (!kanbanData || Object.keys(kanbanData).length === 0) {
-    return res
-      .status(400)
-      .render("error", { error: "There are no fields in the request body" });
+    return res.status(400).render("error", {
+      title: "Error Page",
+      error: "There are no fields in the request body",
+    });
   }
   try {
     ownerId = validation.checkId(ownerId, "Owner Id");
@@ -227,7 +251,7 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
       "Group Name"
     );
   } catch (e) {
-    return res.status(400).render("error", { error: e });
+    return res.status(400).render("error", { title: "Error Page", error: e });
   }
   try {
     const { groupName } = kanbanData;
@@ -236,7 +260,7 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     req.session.selectedKanbanId = newKanban._id;
     return res.redirect(`/kanban/kanbans`);
   } catch (e) {
-    return res.status(500).render("error", { error: e });
+    return res.status(500).render("error", { title: "Error Page", error: e });
   }
 });
 
@@ -249,9 +273,9 @@ router
         req.session.user._id,
         req.session.selectedKanbanId
       );
-      return res.render("gatcha", { points: points });
+      return res.render("gatcha", { title: "Gatcha Page", points: points });
     } catch (e) {
-      return res.status(404).render("error", { error: e });
+      return res.status(404).render("error", { title: "Error Page", error: e });
     }
   })
   .post(async (req, res) => {
@@ -261,7 +285,10 @@ router
         req.session.user._id,
         req.session.selectedKanbanId
       );
-      return res.render("gatcha", { points: updated_user.points }); // TODO: Change to render the gatcha page with new amount of points
+      return res.render("gatcha", {
+        title: "Gatcha Page",
+        points: updated_user.points,
+      }); // TODO: Change to render the gatcha page with new amount of points
     } catch (e) {
       let user;
       try {
@@ -270,25 +297,61 @@ router
           req.session.selectedKanbanId
         );
 
-        return res
-          .status(404)
-          .render("gatcha", { error: e, points: user.points });
+        return res.status(404).render("gatcha", {
+          title: "Gatcha Page",
+          error: e,
+          points: user.points,
+        });
       } catch (e) {
         res.status(500).render("error", { error: e });
       }
     }
   });
+router
+  .route("/completedTasks")
+  .get(async (req, res) => {
+    try{
+      validation.checkId(req.session.selectedKanbanId, "Current Kanban")
+      let completedTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 3)
+      let voterUsers = []
+      let voterIds =  []
+      
+      for(let i = 0; i < completedTasks.length; i++){
+        voterIds = Object.keys(completedTasks[i].votingStatus)
+        for(let j = 0; j < voterIds.length; j++){
+          // Skip if the user is the same as the kanban
+          if (completedTasks[i].assignment === voterIds[j]){
+            continue
+          }
 
-router.route("/completedTasks").get(async (req, res) => {
-  try {
-    validation.checkId(req.sesssion.selectedKanbanId, "Current Kanban");
-    let completedTasks = await kanbanFxns.getSomeTasks(
-      req.session.selectedKanbanId,
-      2
-    );
-    return res.render("completed", { tasks: completedTasks });
+          let username = await userFxns.getUsernameById(voterIds[j])
+          let votingStatus = ""
+          let vote = completedTasks[i].votingStatus[voterIds[j]];
+          if(vote === 1){
+            votingStatus = "approved";
+          } else if (vote === 0) {
+            votingStatus = "denied";
+          } else {
+            votingStatus = "no vote";
+          }
+          voterUsers.push({user: username, status: votingStatus})
+        }
+        voterUsers.push({ user: username, status: votingStatus });
+      }
+      completedTasks[i]["voterInfo"] = voterUsers;
+      voterUsers = [];
+    }
+
+    return res.render("completed", {
+      title: "Completed Tasks Page",
+      tasks: completedTasks,
+    });
   } catch (e) {
-    return res.status(404).render("completed", { tasks: [], error: e });
+    return res.status(404).render("completed", {
+      title: "Completed Tasks Page",
+      tasks: [],
+      error: e,
+    });
   }
 });
 
@@ -301,25 +364,40 @@ router.route("/vote/:taskId").patch(async (req, res) => {
     vote = validation.checkVote(+vote, "vote");
     taskId = validation.checkId(taskId, "taskId");
   } catch (e) {
-    return res.status(400).render("error", { error: e });
+    return res.status(400).render("error", { title: "Error Page", error: e });
   }
 
   try {
     const task = await taskFxns.castVote(userId, taskId, vote);
-    let remainingVotesNeeded = 0;
-    let users = Object.keys(task.votingStatus);
-    users.forEach((user) => {
-      if (task.votingStatus[user] === 0) remainingVotesNeeded += 1;
-    });
-    remainingVotesNeeded = Math.floor(remainingVotesNeeded / 2);
+    let voterIds = Object.keys(task.votingStatus);
+    let voterUsers = [];
+    for(let j = 0; j < voterIds.length; j++){
+      // Skip if the user is the same as the kanban
+      if (task.assignment === voterIds[j]){
+        continue;
+      }
+
+      let username = await userFxns.getUsernameById(voterIds[j]);
+      let votingStatus = "";
+      let vote = task.votingStatus[voterIds[j]];
+      if(vote === 1){
+        votingStatus = "approved";
+      } else if (vote === 0) {
+        votingStatus = "denied";
+      } else {
+        votingStatus = "no vote";
+      }
+      voterUsers.push({user: username, status: votingStatus})
+    }
     // checks to see if the voting status was updated
     return res.status(200).json({
       completed: task.status === 3,
-      newVoteCount: remainingVotesNeeded,
+      rejected: task.status === 0,
+      votingStatus: voterUsers
     });
   } catch (e) {
     console.log(e);
-    return res.status(404).render("error", { error: e });
+    return res.status(404).render("error", { title: "Error Page", error: e });
   }
 });
 
@@ -334,8 +412,15 @@ router.route("/changeStatus/:taskId").patch(async (req, res) => {
     status = validation.checkStatus(status, "status");
   } catch (e) {
     console.log(e);
-    return res.status(400).render("error", { error: e });
+    return res.status(400).render("error", { title: "Error Page", error: e });
   }
+
+  // checks if user is dragging task that isn't theirs
+  const taskBeforeChange = await taskFxns.getTask(taskId);
+  if (taskBeforeChange.assignment !== req.session.user._id) {
+    return res.status(200).json({cannotDrag: true});
+  }  
+
   try {
     const task = await taskFxns.changeStatus(taskId, +req.body.status);
     let userId = req.session.user._id;
@@ -343,14 +428,35 @@ router.route("/changeStatus/:taskId").patch(async (req, res) => {
       task.assignment !== userId &&
       task.status === 2 &&
       task.votingStatus[userId] === 0;
-    const users = Object.keys(task.votingStatus);
+    
+    let voterIds = Object.keys(task.votingStatus);
+    let voterUsers = [];
+    for(let j = 0; j < voterIds.length; j++) {
+      // Skip if the user is the same as the kanban
+      if (task.assignment === voterIds[j]){
+        continue;
+      }
+  
+      let username = await userFxns.getUsernameById(voterIds[j]);
+      let votingStatus = "";
+      let vote = task.votingStatus[voterIds[j]];
+      if(vote === 1){
+        votingStatus = "approved";
+      } else if (vote === 0) {
+        votingStatus = "denied";
+      } else {
+        votingStatus = "no vote";
+      }
+      voterUsers.push({user: username, status: votingStatus})
+    }
+  
     return res.status(200).json({
       canVote: canVote,
-      remainingVotesNeeded: Math.floor(users.length / 2),
+      votingStatus: voterUsers,
     });
   } catch (e) {
     console.log(e);
-    return res.status(404).render("error", { error: e });
+    return res.status(404).render("error", { title: "Error Page", error: e });
   }
 });
 
