@@ -17,37 +17,15 @@
                     <p class="ListedTask-description">{{this.description}}</p>
                     <p class="ListedTask-assignment">{{this.username}}</p>
                     <p class="ListedTask-difficulty">Difficulty: {{this.difficulty}}</p>
-                    <div class="ListedTask-Votes">
-                        {{!-- <ul class="ListedTask-Votes">
-                            {{#each Tasks.voting_status}}
-                                <li class="ListedTask-IndividualVotes">User {{Tasks.voting_status.user}}</li>
-                            {{/each}} --}}
-                        <ul class="VoterInfo">
-                        {{#each voterInfo}}
-                            <li class="VoterUsername">{{this.user}}: {{this.status}}<li>
-                        {{/each}}
-                        </ul>
-                    </div>
-                </div>
 
-                {{!-- <div class="ListedTask">
-                    <h3 class="ListedTask-name">cringe</h3>
-                    <p class="ListedTask-description">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas molestie augue nec dolor bibendum, a luctus urna dignissim. Nulla vel quam euismod, eleifend ex sed, dapibus justo. Vestibulum vel odio imperdiet, consequat nulla ac, dapibus nulla. Sed sed sem quis massa rhoncus venenatis. Donec venenatis varius ex. In consectetur euismod nibh, a elementum ex luctus quis. Nam tincidunt eros vitae elit eleifend, in tincidunt libero hendrerit. Maecenas volutpat, lectus id fringilla congue, quam nulla gravida velit, in ultrices elit elit vel elit. Suspendisse potenti. Sed auctor malesuada mi, nec imperdiet ex dictum ac. Proin lobortis tellus non tellus pharetra bibendum. Sed non metus id dolor laoreet malesuada. Donec vel bibendum dolor.</p>
-                    <p class="ListedTask-assignment">cringe</p>
-                    <p class="ListedTask-difficulty">Difficulty: cringe</p>
                     <div class="ListedTask-Votes">
-                        <p>placeholder</p>
-                        <ul class="ListedTask-Votes">
-                            {{#each Tasks.voting_status}}
-                                <li class="ListedTask-IndividualVotes">User {{Tasks.voting_status.user}}</li>
+                        <ul class="VoterInfo">
+                            {{#each voterInfo}}
+                                <li class="VoterUsername">{{this.user}}: {{this.status}}</li>
                             {{/each}}
                         </ul>
                     </div>
-                    <p class="ListedTask-votingStatus">Votes: {{Tasks.voting_status}}</p>
-                </div> --}}
-
-                
-
+                </div>
             </li>
             {{/each}}
         </ul>

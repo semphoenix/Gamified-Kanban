@@ -98,6 +98,7 @@ let exportedMethods = {
    * @returns user.completedTasks
    */
   async addCompletedTask(userId) {
+    userId = validation.checkId(userId);
     let user = await this.getUserById(userId);
     user.completedTasks = user.completedTasks + 1;
     const updateInfo = {
@@ -117,6 +118,7 @@ let exportedMethods = {
    * @return array of kanban objects that user is in
    */
   async getAllUserGroups(userId) {
+    userId = validation.checkId(userId);
     let user = await this.getUserById(userId);
     const kanbanCollection = await kanbans();
     let kanbans_list = [];
@@ -130,11 +132,13 @@ let exportedMethods = {
   },
 
   async getNumRewards(userId) {
+    userId = validation.checkId(userId);
     let user = await this.getUserById(userId);
     return user.totalRewards;
   },
 
   async getNumCompletedTasks(userId) {
+    userId = validation.checkId(userId);
     let user = await this.getUserById(userId);
     return user.completedTasks;
   },

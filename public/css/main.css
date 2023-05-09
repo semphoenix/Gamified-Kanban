@@ -693,7 +693,7 @@
   .completed-tasks p.ListedTask-description,
   .completed-tasks p.ListedTask-assignment,
   .completed-tasks p.ListedTask-difficulty,
-  .completed-tasks p.ListedTask-votingStatus {
+  .completed-tasks div.ListedTask-Votes {
     display: table-cell;
     padding: 5px;
     border-right: 1px solid #ccc;
@@ -727,7 +727,7 @@
     border-right: 1px solid #ccc;
   }
 
-  .completed-tasks ul.ListedTask-Votes {
+  .completed-tasks ul.VoterInfo {
     list-style-type: none;
     padding: 0;
     margin: 0;
