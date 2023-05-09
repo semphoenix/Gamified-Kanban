@@ -60,7 +60,12 @@ router
       req.session.selectedKanbanId = content.chooseGroup;
       return res.redirect("/user/privateUser");
     } catch (e) {
-      res.status(400).render("error", { title: "Error Page", error: e });
+      res.status(400).render("error", {
+        title: "Error Page",
+        error: e,
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
     }
   });
 
@@ -81,7 +86,12 @@ router.route("/privateUser/selectPicture").post(async (req, res) => {
     return res.redirect("/user/privateUser");
   } catch (e) {
     console.log(e);
-    res.status(400).render("error", { title: "Error Page", error: e });
+    res.status(400).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
   }
 });
 router.route("/privateUser/selectBorder").post(async (req, res) => {
@@ -100,7 +110,12 @@ router.route("/privateUser/selectBorder").post(async (req, res) => {
     );
     return res.redirect("/user/privateUser");
   } catch (e) {
-    res.status(400).render("error", { title: "Error Page", error: e });
+    res.status(400).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
   }
 });
 router.route("/privateUser/selectColor").post(async (req, res) => {
@@ -119,10 +134,14 @@ router.route("/privateUser/selectColor").post(async (req, res) => {
     );
     return res.redirect("/user/privateUser");
   } catch (e) {
-    res.status(400).render("error", { title: "Error Page", error: e });
+    res.status(400).render("error", {
+      title: "Error Page",
+      error: e,
+      buttonTitle: "Back to accounts page",
+      link: "/user/accountsPage",
+    });
   }
 });
-
 router
   .route("/accountsPage")
   .get(async (req, res) => {
