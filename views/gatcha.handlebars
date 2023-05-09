@@ -1,16 +1,61 @@
-<div class="container">
-    <a href="/kanban/kanbans"><button id="back-to-kanban">Back To Kanban</button></a>
+<main>
+    <div id="gatchaHeader">
+        <h1 id="completedTasks">Gatcha Page</h1>
+        
+
+        <nav>
+            <a href="/kanban/kanbans"><button id="back-to-kanban">Back To Kanban</button></a>
+        </nav>
+    </div>
+    
+    <h2>Group: {{groupName}}</h2>
+
 
     <div class="points-section">
         <p id="points-total">Points: {{points}}</p>
         {{#if error}}
-        <p class="error-tag" id="gatcha-error-tag">{{error}}</p>
+        <p class="error-list" id="gatcha-error-tag">{{error}}</p>
         {{/if}}
     </div>
 
-    <div class="game-container">
-        <form id="pull-reward" action="/kanban/gatcha" method="POST">
-            <input type="submit" value="PLAY"/>        
-        </form>
-    </div>
-</div>
+    <div class="gacha-game">
+        <div class="game-container">
+            <form id="pull-reward" action="/kanban/gatcha" method="POST">
+                <input type="submit" value="PLAY"/>        
+            </form>
+        </div>
+            
+            
+            <div class="reward-container">
+                <p>Reward</p>
+            </div>
+    <div>
+
+
+</main>
+
+
+{{!-- <main>
+      <div class="parentPrize">
+        <div class="prizes">
+            <label for="prizeForm">Prizes</p>
+            <form name="prizeForm" action="/submit" method="POST">
+                <div class="prize-selection">
+             
+                    <select name="chooseprize" id="chooseprize">
+                    <option>{{this}}</option>
+                    </select>
+                
+                </div>
+                <input type="submit" value="submit"/>
+            </form>
+            </div>
+
+
+        <div class="pull-prize">
+            <button id="pull-prize-button" onclick="pullPrize()">PULL</span></a>
+        <div class="points-section">
+      </div>
+      
+</main> --}}
+
