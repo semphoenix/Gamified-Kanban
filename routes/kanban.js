@@ -307,6 +307,7 @@ router
       }
     }
   });
+
 router
   .route("/completedTasks")
   .get(async (req, res) => {
@@ -340,13 +341,12 @@ router
       }
       completedTasks[i]["voterInfo"] = voterUsers;
       voterUsers = [];
-    }
 
-    return res.render("completed", {
-      title: "Completed Tasks Page",
-      tasks: completedTasks,
-    });
-  } catch (e) {
+      return res.render("completed", {
+        title: "Completed Tasks Page",
+        tasks: completedTasks,
+      });
+    } catch (e) {
     return res.status(404).render("completed", {
       title: "Completed Tasks Page",
       tasks: [],
