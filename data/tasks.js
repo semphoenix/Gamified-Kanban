@@ -59,6 +59,7 @@ let exportedMethods = {
    * @returns task object
    */
   async getTask(taskId) {
+    taskId = validation.checkId(taskId);
     let kanbanCollection = await kanbans();
     const kanban = await kanbanCollection.findOne({
       tasks: { $elemMatch: { _id: new ObjectId(taskId) } },
@@ -75,6 +76,7 @@ let exportedMethods = {
    * @returns kanban tasks as strings
    */
   async getAllTasks(kanbanId) {
+    kanbanId = validation.checkId(kanbanId);
     let kanban = await kanbanFxns.getKanbanById(kanbanId);
     if (kanban === null) throw "Error getAllTasks: No kanban with that id";
     kanban.tasks = kanban.tasks.map((t) => {
@@ -104,7 +106,8 @@ let exportedMethods = {
       if (t._id.toString() == taskId) task = t;
     });
     task.status = newStatus;
-    if(task.status < 2) { // resets votes if it's dragged out of inreview
+    if (task.status < 2) {
+      // resets votes if it's dragged out of inreview
       Object.keys(task.votingStatus).forEach(function (user) {
         task.votingStatus[user] = -1;
       });
@@ -206,11 +209,12 @@ let exportedMethods = {
   /**
    * This will be used to retrieve all tasks with certain status in Kanban.
    * @param {ObjectId} kanbanId
-   * @param {ObjectId} status
+   * @param {Integer} status
    * @returns all tasks with certain status
    */
   async getSomeTasks(kanbanId, status) {
     kanbanId = validation.checkId(kanbanId, "kanbanId");
+    status = validation.checkStatus(status, "status");
     const kanban = await kanbanFxns.getKanbanById(kanbanId);
     if (!kanban) throw "Error: kanban not found";
     let someTasks = [];
