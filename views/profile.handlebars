@@ -37,10 +37,10 @@
         <div class="prizeColumn">
             <h1>Prizes</h1>
             <div class="prize-block">
-                <form class="prize-form" id="prize-color-form">
-                    <label for="choose-color">Color Choices</label>
-                    <select name="choose-color" id="choose-color" form="prize-color-form">
-                        {{#each prizes.colors}}
+                <form action="/user/privateUser/selectColor" class="prize-form" id="prize-color-form" method="POST">
+                    <label for="chooseColor">Color Choices</label>
+                    <select name="chooseColor" id="choose-color" form="prize-color-form">
+                        {{#each prizes.colorRewards}}
                         <option class="prize-color-option" value="{{this}}">{{this}}</option>
                         {{/each}}
                     </select>
@@ -49,10 +49,10 @@
             </div>
 
             <div class="prize-block">
-                <form class="prize-form" id="prize-border-form">
-                    <label for="choose-border">Border Choices</label>
-                    <select name="choose-border" id="choose-border" form="prize-border-form">
-                        {{#each prizes.borders}}
+                <form action="/user/privateUser/selectBorder" class="prize-form" id="prize-border-form" method="POST">
+                    <label for="chooseBorder">Border Choices</label>
+                    <select name="chooseBorder" id="choose-border" form="prize-border-form">
+                        {{#each prizes.borderRewards}}
                         <option class="prize-border-option" value="{{this}}">{{this}}</option>
                         {{/each}}
                     </select>
@@ -64,10 +64,10 @@
 
             
             <div class="prize-block">
-                <form class="choose-prize-picture-form" id="prize-picture-form">
-                    <label for="choose-picture">Picture Choices</label>
-                    <select name="choose-picture" id="choose-picture" form="prize-picture-form">
-                        {{#each prizes.pictures}}
+                <form action="/user/privateUser/selectPicture" class="choose-prize-picture-form" id="prize-picture-form" method="POST">
+                    <label for="choosePicture">Picture Choices</label>
+                    <select name="choosePicture" id="choose-picture" form="prize-picture-form">
+                        {{#each prizes.profileRewards}}
                         <option class="prize-picture-option" value="{{this}}">{{this}}</option>
                         {{!-- got rid of background-img css, I can't find a good way to add it with handlebars --}}
                         {{!-- <option class="prize-picture-option" style="background-image:{{this.img_url}}" value="{{this}}">{{this}}</option> --}}
