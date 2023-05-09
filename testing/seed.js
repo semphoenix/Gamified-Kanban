@@ -75,6 +75,19 @@ const VALOR_GYM3 = await tasks.createTask(
   0
 );
 
+const VALOR_GYM4 = await tasks.createTask(  TEAM_VALOR._id.toString(),
+AIDEN._id.toString(), "Capture Gym D", "Capture Gym D by 5:00pm", 3, 0);
+const VALOR_GYM5 = await tasks.createTask(  TEAM_VALOR._id.toString(),
+AIDEN._id.toString(), "Capture Gym E", "Capture Gym E by 10:00am", 1, 0);
+const VALOR_GYM6 = await tasks.createTask(  TEAM_VALOR._id.toString(),
+ASH._id.toString(), "Capture Gym F", "Capture Gym F by 11:00am", 2, 0);
+const VALOR_GYM7 = await tasks.createTask(  TEAM_VALOR._id.toString(),
+ASH._id.toString(), "Capture Gym G", "Capture Gym G by 4:00pm", 1, 0);
+const VALOR_GYM8 = await tasks.createTask(  TEAM_VALOR._id.toString(),
+PATRICK._id.toString(), "Capture Gym H", "Capture Gym H by 8:00am", 3, 0);
+const VALOR_GYM9 = await tasks.createTask(  TEAM_VALOR._id.toString(),
+PATRICK._id.toString(), "Capture Gym I", "Capture Gym I by 7:00pm", 2, 0);
+
 const MYSTIC_GYM1 = await tasks.createTask(
   TEAM_MYSTIC._id.toString(),
   EMMA._id.toString(),
@@ -125,5 +138,13 @@ const INSTICNT_GYM3 = await tasks.createTask(
   0
 );
 
+await tasks.changeStatus(VALOR_GYM3._id.toString(), 2);
+await tasks.castVote(PATRICK._id.toString(), VALOR_GYM3._id.toString(), 1);
+await tasks.castVote(ASH._id.toString(), VALOR_GYM3._id.toString(), 1);
+await tasks.changeStatus(MYSTIC_GYM2._id.toString(), 1);
+await tasks.changeStatus(MYSTIC_GYM1._id.toString(), 1);
+await tasks.changeStatus(MYSTIC_GYM3._id.toString(), 2);
+await tasks.castVote(EMMA._id.toString(), MYSTIC_GYM3._id.toString(), 1);
+await tasks.castVote(ASH._id.toString(), MYSTIC_GYM3._id.toString(), 1);
 await closeConnection();
 console.log("Database Sucessfully Seeded!");

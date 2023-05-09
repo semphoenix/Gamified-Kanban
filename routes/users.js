@@ -19,9 +19,9 @@ router
       const user = await userFxns.getUserById(req.session.user._id);
 
       // Make sure user is part of a group
-      if (user.groups.length === 0)
-        throw "Route: privateUser ~ User should be part of a group before getting here!";
-
+      if (user.groups.length === 0){
+        return res.status(500).render("error", {error: "Route: privateUser ~ User should be part of a group before getting here!", buttonTitle: "Back to Accounts", link:"/user/createKanban"})
+      }
       // Check the cookie for SelectedKanbanId & default to first group if not found
       if (!req.session.selectedKanbanId)
         req.session.selectedKanbanId = user.groups[0];
