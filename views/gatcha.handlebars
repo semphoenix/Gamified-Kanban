@@ -1,16 +1,38 @@
-<div class="container">
-    <a href="/kanban/kanbans"><button id="back-to-kanban">Back To Kanban</button></a>
+<main>
+    <div id="gatchaHeader">
+        <h1 id="completedTasks">Gatcha Page</h1>
+        <nav>
+                <button id="accounts-button" onclick="location.href='/kanban/kanbans'" type="button">Kanban Page</button>
+                <div class="logout-button" id="logout-button">
+                    <button onclick="window.location.href='/logout';">Logout</button>
+                </div>
+        </nav>
+    </div>
+    
+    <h2>Group: {{groupName}}</h2>
+
 
     <div class="points-section">
         <p id="points-total">Points: {{points}}</p>
         {{#if error}}
-        <p class="error-tag" id="gatcha-error-tag">{{error}}</p>
+        <p class="error-list" id="gatcha-error-tag">{{error}}</p>
         {{/if}}
     </div>
 
-    <div class="game-container">
-        <form id="pull-reward" action="/kanban/gatcha" method="POST">
-            <input type="submit" value="PLAY"/>        
-        </form>
-    </div>
-</div>
+    <div class="gacha-game">
+        <div class="game-container">
+            <form id="pull-reward" action="/kanban/gatcha" method="POST">
+                <input type="submit" value="PLAY"/>        
+            </form>
+        </div>
+            
+            
+            <div class="reward-container">
+                <p>You got {{reward}}!</p>
+            </div>
+    <div>
+
+
+</main>
+
+

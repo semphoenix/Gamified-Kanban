@@ -276,7 +276,14 @@ router
         req.session.user._id,
         req.session.selectedKanbanId
       );
-      return res.render("gatcha", { title: "Gatcha Page", points: points });
+      const kanban = await kanbanFxns.getKanbanById(
+        req.session.selectedKanbanId
+      );
+      return res.render("gatcha", {
+        title: "Gatcha Page",
+        points: points,
+        groupName: kanban.groupName,
+      });
     } catch (e) {
       return res.status(404).render("error", { title: "Error Page", error: e });
     }
@@ -284,13 +291,26 @@ router
   .post(async (req, res) => {
     try {
       validation.checkId(req.session.selectedKanbanId, "Current Kanban");
-      let updated_user = await kanbanFxns.playGame(
+      let reward = await kanbanFxns.playGame(
+        req.session.user._id,
+        req.session.selectedKanbanId
+      );
+      let user = kanbanFxns.getUserinKanban(
+        req.session.user._id,
+        req.session.selectedKanbanId
+      );
+      const kanban = await kanbanFxns.getKanbanById(
+        req.session.selectedKanbanId
+      );
+      const points = await kanbanFxns.getUserPoints(
         req.session.user._id,
         req.session.selectedKanbanId
       );
       return res.render("gatcha", {
         title: "Gatcha Page",
-        points: updated_user.points,
+        groupName: kanban.groupName,
+        points: points,
+        reward: reward,
       }); // TODO: Change to render the gatcha page with new amount of points
     } catch (e) {
       let user;
@@ -299,9 +319,12 @@ router
           req.session.user._id,
           req.session.selectedKanbanId
         );
-
+        const kanban = await kanbanFxns.getKanbanById(
+          req.session.selectedKanbanId
+        );
         return res.status(404).render("gatcha", {
           title: "Gatcha Page",
+          groupName: kanban.groupName,
           error: e,
           points: user.points,
         });
@@ -311,42 +334,43 @@ router
     }
   });
 
-router
-  .route("/completedTasks")
-  .get(async (req, res) => {
-    try{
-      validation.checkId(req.session.selectedKanbanId, "Current Kanban")
-      let completedTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 3)
-      let voterUsers = []
-      let voterIds =  []
-      
-      for(let i = 0; i < completedTasks.length; i++){
-        voterIds = Object.keys(completedTasks[i].votingStatus)
-        for(let j = 0; j < voterIds.length; j++){
-          // Skip if the user is the same as the kanban
-          if (completedTasks[i].assignment === voterIds[j]){
-            continue
-          }
-          
-          let username = await userFxns.getUsernameById(voterIds[j])
-          let votingStatus = ""
-          let vote = completedTasks[i].votingStatus[voterIds[j]];
-          if(vote === 1){
-            votingStatus = "approved";
-          } else if (vote === 0) {
-            votingStatus = "denied";
-          } else {
-            votingStatus = "no vote";
-          }
-          voterUsers.push({user: username, status: votingStatus})
+router.route("/completedTasks").get(async (req, res) => {
+  try {
+    validation.checkId(req.session.selectedKanbanId, "Current Kanban");
+    let completedTasks = await taskFxns.getSomeTasks(
+      req.session.selectedKanbanId,
+      3
+    );
+    let voterUsers = [];
+    let voterIds = [];
+
+    for (let i = 0; i < completedTasks.length; i++) {
+      voterIds = Object.keys(completedTasks[i].votingStatus);
+      for (let j = 0; j < voterIds.length; j++) {
+        // Skip if the user is the same as the kanban
+        if (completedTasks[i].assignment === voterIds[j]) {
+          continue;
         }
-        completedTasks[i]["voterInfo"] = voterUsers;
-        voterUsers = [];
-      } 
-      return res.render("completed", {
-        title: "Completed Tasks Page",
-        tasks: completedTasks,
-      });
+
+        let username = await userFxns.getUsernameById(voterIds[j]);
+        let votingStatus = "";
+        let vote = completedTasks[i].votingStatus[voterIds[j]];
+        if (vote === 1) {
+          votingStatus = "approved";
+        } else if (vote === 0) {
+          votingStatus = "denied";
+        } else {
+          votingStatus = "no vote";
+        }
+        voterUsers.push({ user: username, status: votingStatus });
+      }
+      completedTasks[i]["voterInfo"] = voterUsers;
+      voterUsers = [];
+    }
+    return res.render("completed", {
+      title: "Completed Tasks Page",
+      tasks: completedTasks,
+    });
   } catch (e) {
     return res.status(404).render("completed", {
       title: "Completed Tasks Page",

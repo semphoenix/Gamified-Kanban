@@ -1,12 +1,17 @@
 <div class="kanban-board">
 
     <header id="kanbanHeader">
-        <div id="kanban-profile-picture">
-            <img src="../public/assets/{{selectedReward.profileReward}}.jpg">
-        </div>
+        
         <div id="group-heading">    
             <h1 id="group-heading-text">{{groupName}}</h1>
             <h2 id="group-id">Group Id: {{kanbanId}}</h2>
+            <div class="logout-button" id="logout-button">
+                <button onclick="window.location.href='/logout';">Logout</button>
+            </div>
+        </div>
+        
+        <div id="kanban-profile-picture">
+            <img src="../public/assets/{{selectedReward.profileReward}}.jpg">
         </div>
     </header>
 
@@ -29,9 +34,12 @@
         </div>
 
         <div class="sideButtons">
-            <a href="/kanban/gatcha"><button id="gacha-button">Gacha</button></a>
+            <button id="kanban-button" onclick="location.href='/kanban/gatcha'" type="button">Gacha</button>
+            <button id="kanban-button" onclick="location.href='/kanban/completedTasks'" type="button">Completed Tasks</button>
+            <button id="kanban-button" onclick="location.href='/user/privateUser'" type="button">Profile</button>
+            {{!-- <a href="/kanban/gatcha"><button id="gacha-button">Gacha</button></a>
             <a href="/kanban/completedTasks"><button id="completed-tasks-button">Completed Tasks</button></a>
-            <a href="/user/privateUser"><button id="profile-button">Profile</button></a>
+            <a href="/user/privateUser"><button id="profile-button">Profile</button></a> --}}
         </div>
     </div>
     
