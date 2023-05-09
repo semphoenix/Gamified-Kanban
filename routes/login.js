@@ -1,5 +1,6 @@
 import { Router } from "express";
 const router = Router();
+import xss from "xss";
 import { userFxns } from "../data/index.js";
 import validation from "../validation.js";
 
@@ -7,9 +8,11 @@ router
   .route("/login")
   .get(async (req, res) => {
     try {
-      res.status(200).render("login");
+      res.status(200).render("login", { title: "Login Page" });
     } catch (e) {
-      res.status(500).render("error", { error: e, status: "500" });
+      res
+        .status(500)
+        .render("error", { title: "Error Page", error: e, status: "500" });
     }
   })
   .post(async (req, res) => {
@@ -17,17 +20,24 @@ router
     let errors = [];
     // if there's a problem with input, will be added to errors
     try {
-      userData.username = validation.checkString(userData.username, "Username");
+      userData.username = validation.checkString(
+        xss(userData.username),
+        "Username"
+      );
     } catch (e) {
       errors.push(e);
     }
     try {
-      userData.password = validation.checkString(userData.password, "Password");
+      userData.password = validation.checkString(
+        xss(userData.password),
+        "Password"
+      );
     } catch (e) {
       errors.push(e);
     }
     if (errors.length > 0) {
       res.status(400).render("login", {
+        title: "Login Page",
         errors: errors,
         loginErrors: true,
         user: userData,
@@ -45,6 +55,7 @@ router
     } catch (e) {
       errors.push("Invalid Credentials");
       res.status(400).render("login", {
+        title: "Login Page",
         errors: errors,
         LoginErrors: true,
       });
@@ -56,9 +67,9 @@ router
   .route("/signup")
   .get(async (req, res) => {
     try {
-      res.status(200).render("signup");
+      res.status(200).render("signup", { title: "Signup Page" });
     } catch (e) {
-      res.status(500).render({ error: e, status: "500" });
+      res.status(500).render({ title: "Error Page", error: e, status: "500" });
     }
   })
   .post(async (req, res) => {
@@ -68,14 +79,17 @@ router
     let errors = [];
     // if there's a problem with input, will be added to errors
     try {
-      userData.username = validation.checkString(userData.username, "Username");
+      userData.username = validation.checkString(
+        xss(userData.username),
+        "Username"
+      );
       userForm["username"] = userData.username;
     } catch (e) {
       errors.push(e);
     }
     try {
       userData.password = validation.checkPassword(
-        userData.password,
+        xss(userData.password),
         "Password"
       );
     } catch (e) {
@@ -96,6 +110,7 @@ router
     }
     if (errors.length > 0) {
       res.status(400).render("signup", {
+        title: "Signup Page",
         errors: errors,
         SignupErrors: true,
         user: userForm,
@@ -114,6 +129,7 @@ router
     } catch (e) {
       errors.push(e);
       res.status(400).render("signup", {
+        title: "Signup Page",
         errors: errors,
         SignupErrors: true,
         user: userForm,

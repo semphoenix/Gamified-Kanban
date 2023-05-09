@@ -1,3 +1,6 @@
 <main>
     <p>Error: {{error}}</p>
+    {{#if buttonTitle}}
+        <a href={{link}}><button id="error-button">{{buttonTitle}}</button></a>
+    {{/if}}
 </main>

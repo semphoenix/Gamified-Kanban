@@ -21,11 +21,11 @@ let exportedMethods = {
     description = validation.checkString(description, "description");
     difficulty = validation.checkDifficulty(difficulty, "difficulty");
     status = validation.checkStatus(status, "status");
-    // voting status -- init each to 0
+    // voting status -- init each to -1
     let kanban = await kanbanFxns.getKanbanById(kanbanId);
     const votingStatus = kanban.groupUsers.reduce((uid, obj) => {
       Object.keys(obj).forEach((key) => {
-        if (key === "userId") uid[obj[key]] = 0;
+        if (key === "userId") uid[obj[key]] = -1; // -1 means user hasn't voted yet
       });
       return uid;
     }, {});
@@ -33,6 +33,7 @@ let exportedMethods = {
     // any limit on number of tasks per kanban or per users?
     const newTask = {
       _id: new ObjectId(),
+      kanbanId: kanbanId,
       assignment: userId,
       name: name,
       description: description,
@@ -95,7 +96,7 @@ let exportedMethods = {
     const kanban = await kanbanCollection // get the tasks
       .findOne(
         { tasks: { $elemMatch: { _id: new ObjectId(taskId) } } },
-        { tasks: 1 }
+        { tasks: 1, _id: 1 }
       );
     let tasks = kanban.tasks;
     let task;
@@ -103,8 +104,13 @@ let exportedMethods = {
       if (t._id.toString() == taskId) task = t;
     });
     task.status = newStatus;
+    if(task.status < 2) { // resets votes if it's dragged out of inreview
+      Object.keys(task.votingStatus).forEach(function (user) {
+        task.votingStatus[user] = -1;
+      });
+    }
     const insertInfo = await kanbanCollection.findOneAndUpdate(
-      { _id: kanbanId },
+      { _id: kanban._id },
       { $set: { tasks: tasks } },
       { returnDocument: "after" }
     );
@@ -153,11 +159,34 @@ let exportedMethods = {
     // checks to see if majority approved task
     let users = Object.keys(task.votingStatus);
     let acceptedVotes = 0;
-    users.forEach((user) => (acceptedVotes += task.votingStatus[user]));
-    if (acceptedVotes > kanban.groupUsers.length / 2) {
+    let rejectedVotes = 0;
+    let noVotes = 0;
+    users.forEach((user) => {
+      vote = task.votingStatus[user];
+      if (vote === 1) acceptedVotes++;
+      else if (vote === 0) rejectedVotes++;
+      else noVotes++;
+    });
+    
+    // novotes is at least 1 because of the user whose task it is doesn't vote
+    let draw = (noVotes === 1 && acceptedVotes === rejectedVotes);
+
+    if (acceptedVotes > kanban.groupUsers.length/2 || draw) {
       task.status = 3;
       kanban.completedTasks += 1;
-      kanban.groupUsers[userIndex].points += 5;
+      // I changed this because it gave points to the user who casted the final vote, not the person whose task it is
+      for (let i = 0; i < kanban.groupUsers.length; i++) {
+        const user = kanban.groupUsers[i];
+        if (user.userId === task.assignment) {
+          user.points += 5;
+        }
+      }      
+    } else if(rejectedVotes > kanban.groupUsers.length/2) {
+      task.status = 0;
+      // resets the votes again since it's being moved back to todo
+      users.forEach((user) => {
+        task.votingStatus[user] = -1;
+      });
     }
 
     const updateInfo = {
@@ -172,7 +201,7 @@ let exportedMethods = {
       { returnDocument: "after" }
     );
     if (res.lastErrorObject.n === 0) throw "Error: castVote failed";
-    return task.votingStatus;
+    return task;
   },
   /**
    * This will be used to retrieve all tasks with certain status in Kanban.
