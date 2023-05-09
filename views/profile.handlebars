@@ -1,26 +1,33 @@
-<div class="group-button-block">
-    <form action="/user/privateUser" id="profile-choose-group-form" method="post">
-        <label for="chooseGroup">Groups</label>
-        <select name="chooseGroup" id="chooseGroup" form="profile-choose-group-form">
-            {{#each groups}}
-            <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
-            {{/each}}
-        </select>
-        <input type="submit" value="submit"/>        
-    </form>
-</div>
+<div class="profile-container">
+        <div class="groupColumn">
+            <h1>Groups</h1>
+            <div class="group-button-block">
+                <form action="/user/privateUser" id="profile-choose-group-form" method="post">
+                    <label for="chooseGroup">Group</label>
+                    <select name="chooseGroup" id="chooseGroup" form="profile-choose-group-form">
+                        {{#each groups}}
+                        <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
+                        {{/each}}
+                    </select>
+                    {{!-- <a href="/user/accountsPage"><button id="accounts-button">Accounts</button></a> --}}
+                    <input type="submit" value="submit"/>        
+                </form>
+            </div>
 
-<div class="accounts-button">
-    <h2>{{user}}</h2>
-    <a href="/user/accountsPage"><button id="accounts-button">Accounts</button></a>
-</div>
+            <div class="accounts-button">
+                <h3>{{user}}</h2>
+                <a href="/user/accountsPage"><button id="accounts-button">Accounts</button></a>
+            </div>
 
-<div class="kanban-button">
-    <h2>{{currentKanban.groupName}}</h2>
-    <a href="/kanban/kanbans"><button id="accounts-button">KanbanPage</button></a>
-</div>
+            <div class="kanban-button">
+                <h3>{{currentKanban.groupName}}</h3>
+                <a href="/kanban/kanbans"><button id="accounts-button">KanbanPage</button></a>
+            </div>
 
-<main>
+            <div class="logout-button" id="logout-button">
+                <button onclick="window.location.href='/logout';">Logout</button>
+            </div>
+        </div>
     <h1>Prizes</h1>
     <div class="prize-block">
         <form class="prize-form" id="prize-color-form">
@@ -61,8 +68,6 @@
     <div id="profile-picture">
             <img src="../public/assets/{{selectedReward.profileReward}}.jpg">
     </div>
-</main>
 
-<div class="logout-button">
-    <button onclick="window.location.href='/logout';">Logout</button>
+   
 </div>

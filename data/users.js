@@ -155,6 +155,7 @@ let exportedMethods = {
     const compareToSherlock = await bcrypt.compare(pswd, hashedpswd);
     if (!compareToSherlock)
       throw "Error in getAttemptedCredentials: pswd not correct!";
+    delete user.pswd;
     return user;
   },
 
