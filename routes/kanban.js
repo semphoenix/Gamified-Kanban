@@ -4,7 +4,7 @@ const router = Router();
 import { kanbanFxns, userFxns } from "../data/index.js";
 import { taskFxns } from "../data/index.js";
 import validation from "../validation.js";
-import xss from 'xss'
+import xss from "xss";
 
 router
   .route("/kanbans")
@@ -23,9 +23,18 @@ router
       let kanbans = await kanbanFxns.getAllKanbans(user.groups);
       console.log(kanbans);
 
-      let todoTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 0);
-      let inprogressTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 1);
-      let inreviewTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 2);
+      let todoTasks = await taskFxns.getSomeTasks(
+        req.session.selectedKanbanId,
+        0
+      );
+      let inprogressTasks = await taskFxns.getSomeTasks(
+        req.session.selectedKanbanId,
+        1
+      );
+      let inreviewTasks = await taskFxns.getSomeTasks(
+        req.session.selectedKanbanId,
+        2
+      );
 
       for (const task of todoTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
@@ -45,8 +54,8 @@ router
         let users = Object.keys(task.votingStatus);
         users.forEach((user) => {
           if (task.votingStatus[user] === 0) remainingVotesNeeded += 1;
-        })
-        remainingVotesNeeded = Math.floor(remainingVotesNeeded/2);
+        });
+        remainingVotesNeeded = Math.floor(remainingVotesNeeded / 2);
         task.remainingVotesNeeded = remainingVotesNeeded;
       }
 
@@ -66,22 +75,27 @@ router
   })
   .post(async (req, res) => {
     // Initializing variables
-    let {chooseGroup, kanbanId, userId, name, description, difficulty, status } = req.body;
+    let {
+      chooseGroup,
+      kanbanId,
+      userId,
+      name,
+      description,
+      difficulty,
+      status,
+    } = req.body;
     let postType = "";
 
-    try { 
-      console.log(chooseGroup)
+    try {
+      console.log(chooseGroup);
       // If no necessary data avaialble through error
       if (!req.body) {
         throw "Route: Kanbans/ ~ A form submitted with no necessary data";
       }
       // If the post request is for "chooseGroup"
-      else if (chooseGroup){
+      else if (chooseGroup) {
         postType = "Choose Group";
-        chooseGroup = validation.checkId(
-          chooseGroup,
-          "chooseGroup"
-        );
+        chooseGroup = validation.checkId(chooseGroup, "chooseGroup");
       }
       // If the post request if for "createTask"
       else {
@@ -123,109 +137,102 @@ router
     }
   });
 
-router
-  .route("/createTask")
-  .post(async (req, res) => {
-    console.log("/createTask", req.body);
-    let { taskname, taskdescription, taskdifficulty } = req.body;
-    console.log("taskname", taskname);
-    taskname = validation.checkString(taskname, "route /createTask taskname");
-    taskdescription = validation.checkString(
-      taskdescription,
-      "route /createTask taskdescription"
-    );
-    taskdifficulty = validation.checkDifficulty(
-      Number(taskdifficulty),
-      "route /createTask taskdifficulty"
-    );
-    let created = await taskFxns.createTask(
-      req.session.selectedKanbanId,
-      req.session.user._id,
-      taskname,
-      taskdescription,
-      taskdifficulty,
-      0
-    );
-    res.redirect("/kanban/kanbans");
+router.route("/createTask").post(async (req, res) => {
+  console.log("/createTask", req.body);
+  let { taskname, taskdescription, taskdifficulty } = req.body;
+  console.log("taskname", taskname);
+  taskname = validation.checkString(taskname, "route /createTask taskname");
+  taskdescription = validation.checkString(
+    taskdescription,
+    "route /createTask taskdescription"
+  );
+  taskdifficulty = validation.checkDifficulty(
+    Number(taskdifficulty),
+    "route /createTask taskdifficulty"
+  );
+  let created = await taskFxns.createTask(
+    req.session.selectedKanbanId,
+    req.session.user._id,
+    taskname,
+    taskdescription,
+    taskdifficulty,
+    0
+  );
+  res.redirect("/kanban/kanbans");
 });
-  
-router
-  .route("/createKanban/joinGroup")
-  .post(async (req, res) => {
-    let user;
-    let kanbanId;
 
-    try{
-      user = req.session.user
-      user._id = validation.checkId(req.session.user._id)
-    } catch (e){
-      return res 
-        .status(404)
-        .render("error", {error: "User is not logged in!?"})
-    }
+router.route("/createKanban/joinGroup").post(async (req, res) => {
+  let user;
+  let kanbanId;
 
-    try{
-      // Check the error code here
-      if(user.groups.length >= 5) throw "User is already part of 5 groups!"
-      kanbanId = req.body
-      if(!kanbanId || Object.keys(kanbanId).length === 0) throw "There are no fields in the request body"
-      if(!kanbanId['groupId']) throw "Incorrect field submitted to form!"
-      kanbanId = validation.checkId(xss(kanbanId.groupId) , "Group Id") 
-    } catch (e){
-      return res
-        .status(400)
-        .render("accounts", {username: user.username, error: e});
-    }
+  try {
+    user = req.session.user;
+    user._id = validation.checkId(req.session.user._id);
+  } catch (e) {
+    return res
+      .status(404)
+      .render("error", { error: "User is not logged in!?" });
+  }
 
-    try{
-      const updatedKanband = await kanbanFxns.addUsertoKanban(user._id, kanbanId)
-      req.session.user = await userFxns.getUserById(user._id);
-      req.session.selectedKanbanId = kanbanId
-      return res.redirect(`/kanban/kanbans/`)
-    } catch(e){
-      return res
-        .status(500)
-        .render('error', {error: e})
-    }
-  })
+  try {
+    // Check the error code here
+    if (user.groups.length >= 5) throw "User is already part of 5 groups!";
+    kanbanId = req.body;
+    if (!kanbanId || Object.keys(kanbanId).length === 0)
+      throw "There are no fields in the request body";
+    if (!kanbanId["groupId"]) throw "Incorrect field submitted to form!";
+    kanbanId = validation.checkId(xss(kanbanId.groupId), "Group Id");
+  } catch (e) {
+    return res
+      .status(400)
+      .render("accounts", { username: user.username, error: e });
+  }
 
-router
-  .route("/createKanban/createGroup")
-  .post(async (req, res) => {
-    let user;
-    let ownerId;
-    try {
-      user = req.session.user;
-      ownerId = user._id.toString();
-    } catch (e) {
-      return res
-        .status(404)
-        .render("error", { error: "There are no fields in the request body" });
-    }
-    let kanbanData = req.body;
-    if (!kanbanData || Object.keys(kanbanData).length === 0) {
-      return res
-        .status(400)
-        .render("error", { error: "There are no fields in the request body" });
-    }
-    try {
-      ownerId = validation.checkId(ownerId, "Owner Id");
-      kanbanData.groupName = validation.checkString(
-        xss(kanbanData.groupName),
-        "Group Name"
-      );
-    } catch (e) {
-      return res.status(400).render("error", { error: e });
-    }
-    try {
-      const { groupName } = kanbanData;
-      const newKanban = await kanbanFxns.createKanban(ownerId, groupName);
-      req.session.user = await userFxns.getUserById(user._id);
-      req.session.selectedKanbanId = newKanban._id
-      return res.redirect(`/kanban/kanbans`);
-    } catch (e) {
-      return res.status(500).render("error", { error: e });
-    }
+  try {
+    const updatedKanband = await kanbanFxns.addUsertoKanban(user._id, kanbanId);
+    req.session.user = await userFxns.getUserById(user._id);
+    req.session.selectedKanbanId = kanbanId;
+    return res.redirect(`/kanban/kanbans/`);
+  } catch (e) {
+    return res.status(500).render("error", { error: e });
+  }
+});
+
+router.route("/createKanban/createGroup").post(async (req, res) => {
+  let user;
+  let ownerId;
+  try {
+    user = req.session.user;
+    ownerId = user._id.toString();
+  } catch (e) {
+    return res
+      .status(404)
+      .render("error", { error: "There are no fields in the request body" });
+  }
+  let kanbanData = req.body;
+  if (!kanbanData || Object.keys(kanbanData).length === 0) {
+    return res
+      .status(400)
+      .render("error", { error: "There are no fields in the request body" });
+  }
+  try {
+    ownerId = validation.checkId(ownerId, "Owner Id");
+    kanbanData.groupName = validation.checkString(
+      xss(kanbanData.groupName),
+      "Group Name"
+    );
+  } catch (e) {
+    return res.status(400).render("error", { error: e });
+  }
+  try {
+    const { groupName } = kanbanData;
+    const newKanban = await kanbanFxns.createKanban(ownerId, groupName);
+    req.session.user = await userFxns.getUserById(user._id);
+    req.session.selectedKanbanId = newKanban._id;
+    return res.redirect(`/kanban/kanbans`);
+  } catch (e) {
+    return res.status(500).render("error", { error: e });
+  }
 });
 
 router
@@ -257,24 +264,28 @@ router
           req.session.user._id,
           req.session.selectedKanbanId
         );
+
+        return res
+          .status(404)
+          .render("gatcha", { error: e, points: user.points });
       } catch (e) {
         res.status(500).render("error", { error: e });
       }
-      return res.status(404).render({ error: e, points: user.points });
     }
   });
 
-router
-  .route("/completedTasks")
-  .get(async (req, res) => {
-    try{
-      validation.checkId(req.sesssion.selectedKanbanId, "Current Kanban")
-      let completedTasks = await kanbanFxns.getSomeTasks(req.session.selectedKanbanId, 2)
-      return res.render("completed", {tasks: completedTasks})
-    } catch (e){
-      return res.status(404).render("completed", {tasks: [], error: e})
-    }
-  })
+router.route("/completedTasks").get(async (req, res) => {
+  try {
+    validation.checkId(req.sesssion.selectedKanbanId, "Current Kanban");
+    let completedTasks = await kanbanFxns.getSomeTasks(
+      req.session.selectedKanbanId,
+      2
+    );
+    return res.render("completed", { tasks: completedTasks });
+  } catch (e) {
+    return res.status(404).render("completed", { tasks: [], error: e });
+  }
+});
 
 router.route("/vote/:taskId").patch(async (req, res) => {
   // for casting a vote
@@ -294,12 +305,12 @@ router.route("/vote/:taskId").patch(async (req, res) => {
     let users = Object.keys(task.votingStatus);
     users.forEach((user) => {
       if (task.votingStatus[user] === 0) remainingVotesNeeded += 1;
-    })
-    remainingVotesNeeded = Math.floor(remainingVotesNeeded/2);
+    });
+    remainingVotesNeeded = Math.floor(remainingVotesNeeded / 2);
     // checks to see if the voting status was updated
     return res.status(200).json({
       completed: task.status === 3,
-      newVoteCount: remainingVotesNeeded
+      newVoteCount: remainingVotesNeeded,
     });
   } catch (e) {
     console.log(e);
@@ -323,11 +334,14 @@ router.route("/changeStatus/:taskId").patch(async (req, res) => {
   try {
     const task = await taskFxns.changeStatus(taskId, +req.body.status);
     let userId = req.session.user._id;
-    const canVote = (task.assignment !== userId && task.status === 2 && task.votingStatus[userId] === 0);
+    const canVote =
+      task.assignment !== userId &&
+      task.status === 2 &&
+      task.votingStatus[userId] === 0;
     const users = Object.keys(task.votingStatus);
     return res.status(200).json({
-      canVote: canVote, 
-      remainingVotesNeeded: Math.floor(users.length/2),
+      canVote: canVote,
+      remainingVotesNeeded: Math.floor(users.length / 2),
     });
   } catch (e) {
     console.log(e);
