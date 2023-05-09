@@ -21,11 +21,11 @@ let exportedMethods = {
     description = validation.checkString(description, "description");
     difficulty = validation.checkDifficulty(difficulty, "difficulty");
     status = validation.checkStatus(status, "status");
-    // voting status -- init each to 0
+    // voting status -- init each to -1
     let kanban = await kanbanFxns.getKanbanById(kanbanId);
     const votingStatus = kanban.groupUsers.reduce((uid, obj) => {
       Object.keys(obj).forEach((key) => {
-        if (key === "userId") uid[obj[key]] = 0;
+        if (key === "userId") uid[obj[key]] = -1; // -1 means user hasn't voted yet
       });
       return uid;
     }, {});
@@ -106,7 +106,7 @@ let exportedMethods = {
     task.status = newStatus;
     if(task.status < 2) { // resets votes if it's dragged out of inreview
       Object.keys(task.votingStatus).forEach(function (user) {
-        task.votingStatus[user] = 0;
+        task.votingStatus[user] = -1;
       });
     }
     const insertInfo = await kanbanCollection.findOneAndUpdate(
@@ -159,9 +159,19 @@ let exportedMethods = {
     // checks to see if majority approved task
     let users = Object.keys(task.votingStatus);
     let acceptedVotes = 0;
-    users.forEach((user) => (acceptedVotes += task.votingStatus[user]));
+    let rejectedVotes = 0;
+    let noVotes = 0;
+    users.forEach((user) => {
+      vote = task.votingStatus[user];
+      if (vote === 1) acceptedVotes++;
+      else if (vote === 0) rejectedVotes++;
+      else noVotes++;
+    });
     
-    if (acceptedVotes >= kanban.groupUsers.length / 2) {
+    // novotes is at least 1 because of the user whose task it is doesn't vote
+    let draw = (noVotes === 1 && acceptedVotes === rejectedVotes);
+
+    if (acceptedVotes > kanban.groupUsers.length/2 || draw) {
       task.status = 3;
       kanban.completedTasks += 1;
       // I changed this because it gave points to the user who casted the final vote, not the person whose task it is
@@ -171,6 +181,12 @@ let exportedMethods = {
           user.points += 5;
         }
       }      
+    } else if(rejectedVotes > kanban.groupUsers.length/2) {
+      task.status = 0;
+      // resets the votes again since it's being moved back to todo
+      users.forEach((user) => {
+        task.votingStatus[user] = -1;
+      });
     }
 
     const updateInfo = {

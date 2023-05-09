@@ -65,17 +65,22 @@
                 <h3 class="task-name">{{this.name}}</h3>
                 <p class="task-description">{{this.description}}</p>
                 <p class="task-user">Assigned to: {{this.user}}</p>
-                <p class="vote-count">Remaining Approvals Needed: {{this.remainingVotesNeeded}}</p>
                 {{#if this.canVote}}
                     <form class="task-vote-form">
                         <label for="task-vote">Approve? </label>
-                        <select class="task-vote" name="task-vote" id="task-vote" form="create-task-form">
+                        <select class="task-vote" name="task-vote" id="task-vote" form="task-vote-form">
                             <option value="1">Yes</option>
                             <option value="0">No</option>
                         </select>
                         <input type="submit" value="Submit">
                         <ul class="error-list" hidden></ul>
                     </form>
+                {{else}}
+                    <ul class="vote-count">
+                        {{#each this.votingStatus}}
+                            <li>{{this.user}}: {{this.status}}</li>
+                        {{/each}}
+                    </ul>
                 {{/if}}
             </div>
         {{/each}}

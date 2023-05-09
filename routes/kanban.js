@@ -45,19 +45,36 @@ router
         const username = await userFxns.getUsernameById(task.assignment);
         task.user = username;
       }
+      
 
       for (const task of inreviewTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
         task.user = username;
-        task.canVote = task.assignment !== req.session.user._id;
-        let remainingVotesNeeded = 0;
-        let users = Object.keys(task.votingStatus);
-        users.forEach((user) => {
-          if (task.votingStatus[user] === 0) remainingVotesNeeded += 1;
-        });
-        remainingVotesNeeded = Math.floor(remainingVotesNeeded / 2);
-        task.remainingVotesNeeded = remainingVotesNeeded;
+        task.canVote = task.assignment !== req.session.user._id && task.votingStatus[req.session.user._id] === -1;
+        let voterIds = Object.keys(task.votingStatus);
+        let voterUsers = [];
+
+        for(let j = 0; j < voterIds.length; j++){
+          // Skip if the user is the same as the kanban
+          if (task.assignment === voterIds[j]){
+            continue;
+          }
+    
+          let username = await userFxns.getUsernameById(voterIds[j]);
+          let votingStatus = "";
+          let vote = task.votingStatus[voterIds[j]];
+          if(vote === 1){
+            votingStatus = "approved";
+          } else if (vote === 0) {
+            votingStatus = "denied";
+          } else {
+            votingStatus = "no vote";
+          }
+          voterUsers.push({user: username, status: votingStatus})
+        }
+        task.votingStatus = voterUsers;
       }
+      
       const selectedKanbanUserProfile = await kanbanFxns.getUserinKanban(
         req.session.user._id,
         req.session.selectedKanbanId
@@ -290,31 +307,34 @@ router
       }
     }
   });
+router
+  .route("/completedTasks")
+  .get(async (req, res) => {
+    try{
+      validation.checkId(req.session.selectedKanbanId, "Current Kanban")
+      let completedTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 3)
+      let voterUsers = []
+      let voterIds =  []
+      
+      for(let i = 0; i < completedTasks.length; i++){
+        voterIds = Object.keys(completedTasks[i].votingStatus)
+        for(let j = 0; j < voterIds.length; j++){
+          // Skip if the user is the same as the kanban
+          if (completedTasks[i].assignment === voterIds[j]){
+            continue
+          }
 
-router.route("/completedTasks").get(async (req, res) => {
-  try {
-    validation.checkId(req.session.selectedKanbanId, "Current Kanban");
-    let completedTasks = await taskFxns.getSomeTasks(
-      req.session.selectedKanbanId,
-      3
-    );
-    let voterUsers = [];
-    let voterIds = [];
-
-    for (let i = 0; i < completedTasks.length; i++) {
-      voterIds = Object.keys(completedTasks[i].votingStatus);
-      for (let j = 0; j < voterIds.length; j++) {
-        // Skip if the user is the same as the kanban
-        if (completedTasks[i].assignment === voterIds[j]) {
-          continue;
-        }
-
-        let username = await userFxns.getUsernameById(voterIds[j]);
-        let votingStatus = "";
-        if (completedTasks[i].votingStatus[voterIds[j]] === 1) {
-          votingStatus = "approved";
-        } else {
-          votingStatus = "denied";
+          let username = await userFxns.getUsernameById(voterIds[j])
+          let votingStatus = ""
+          let vote = completedTasks[i].votingStatus[voterIds[j]];
+          if(vote === 1){
+            votingStatus = "approved";
+          } else if (vote === 0) {
+            votingStatus = "denied";
+          } else {
+            votingStatus = "no vote";
+          }
+          voterUsers.push({user: username, status: votingStatus})
         }
         voterUsers.push({ user: username, status: votingStatus });
       }
@@ -349,16 +369,31 @@ router.route("/vote/:taskId").patch(async (req, res) => {
 
   try {
     const task = await taskFxns.castVote(userId, taskId, vote);
-    let remainingVotesNeeded = 0;
-    let users = Object.keys(task.votingStatus);
-    users.forEach((user) => {
-      if (task.votingStatus[user] === 0) remainingVotesNeeded += 1;
-    });
-    remainingVotesNeeded = Math.floor(remainingVotesNeeded / 2);
+    let voterIds = Object.keys(task.votingStatus);
+    let voterUsers = [];
+    for(let j = 0; j < voterIds.length; j++){
+      // Skip if the user is the same as the kanban
+      if (task.assignment === voterIds[j]){
+        continue;
+      }
+
+      let username = await userFxns.getUsernameById(voterIds[j]);
+      let votingStatus = "";
+      let vote = task.votingStatus[voterIds[j]];
+      if(vote === 1){
+        votingStatus = "approved";
+      } else if (vote === 0) {
+        votingStatus = "denied";
+      } else {
+        votingStatus = "no vote";
+      }
+      voterUsers.push({user: username, status: votingStatus})
+    }
     // checks to see if the voting status was updated
     return res.status(200).json({
       completed: task.status === 3,
-      newVoteCount: remainingVotesNeeded,
+      rejected: task.status === 0,
+      votingStatus: voterUsers
     });
   } catch (e) {
     console.log(e);
@@ -379,6 +414,13 @@ router.route("/changeStatus/:taskId").patch(async (req, res) => {
     console.log(e);
     return res.status(400).render("error", { title: "Error Page", error: e });
   }
+
+  // checks if user is dragging task that isn't theirs
+  const taskBeforeChange = await taskFxns.getTask(taskId);
+  if (taskBeforeChange.assignment !== req.session.user._id) {
+    return res.status(200).json({cannotDrag: true});
+  }  
+
   try {
     const task = await taskFxns.changeStatus(taskId, +req.body.status);
     let userId = req.session.user._id;
@@ -386,10 +428,31 @@ router.route("/changeStatus/:taskId").patch(async (req, res) => {
       task.assignment !== userId &&
       task.status === 2 &&
       task.votingStatus[userId] === 0;
-    const users = Object.keys(task.votingStatus);
+    
+    let voterIds = Object.keys(task.votingStatus);
+    let voterUsers = [];
+    for(let j = 0; j < voterIds.length; j++) {
+      // Skip if the user is the same as the kanban
+      if (task.assignment === voterIds[j]){
+        continue;
+      }
+  
+      let username = await userFxns.getUsernameById(voterIds[j]);
+      let votingStatus = "";
+      let vote = task.votingStatus[voterIds[j]];
+      if(vote === 1){
+        votingStatus = "approved";
+      } else if (vote === 0) {
+        votingStatus = "denied";
+      } else {
+        votingStatus = "no vote";
+      }
+      voterUsers.push({user: username, status: votingStatus})
+    }
+  
     return res.status(200).json({
       canVote: canVote,
-      remainingVotesNeeded: Math.floor(users.length / 2),
+      votingStatus: voterUsers,
     });
   } catch (e) {
     console.log(e);
