@@ -9,7 +9,6 @@
                         <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
                         {{/each}}
                     </select>
-                    {{!-- <a href="/user/accountsPage"><button id="accounts-button">Accounts</button></a> --}}
                     <input type="submit" value="submit"/>        
                 </form>
             </div>
@@ -21,7 +20,7 @@
 
             <div class="kanban-button">
                 <h3>{{currentKanban.groupName}}</h3>
-                <a href="/kanban/kanbans"><button id="accounts-button">KanbanPage</button></a>
+                <a href="/kanban/kanbans"><button id="kanban-button">KanbanPage</button></a>
             </div>
 
             <div class="logout-button" id="logout-button">
@@ -53,7 +52,7 @@
         </form>
     </div>
 
-    <!-- MUST CHANGE TO NOT USE HTML BASED STYLING (check option tag)-->
+    <!-- MUST CHANGE TO NOT USE HTML BASED STYLING (check option tag)-->    
     <div id="prize-picture-button-block">
         <form action="/user/privateUser/selectPicture" method="post" class="choose-prize-picture-form" id="prize-picture-form">
             <label for="choosePicture">Picture Choices</label>
@@ -66,7 +65,7 @@
         </form>
     </div>
     <div id="profile-picture">
-            <img src="../public/assets/{{selectedReward.profileReward}}.jpg">
+            <img src="../public/assets/{{selectedReward.profileReward}}.jpg" alt="Profile Picture">
     </div>
 
    
