@@ -1,15 +1,25 @@
 <main>
-    <header>
+    
+    <div id="accountsHeader">
         <h1 class="page-title">Accounts Page</h1>
+       
         <nav>
-            <button id="profile-page" onclick="location.href='/user/privateUser/'" type="button">Profile Page</button>
+            <button id="accounts-button" onclick="location.href='/user/privateUser/'" type="button">Profile Page</button>
+            <button id="accounts-button" onclick="location.href='/user/createKanban'" type="button">Create/Join Kanban</button>
         </nav>
-    </header>
+    </div>
 
-    <p class="description">Keep track of your achievements through all your groups, with the Accounts page!</p>
-    <h2 class="accounts-total-rewards">TOTAL REWARDS: {{totalRewards}}</h1>
-    <h2 class="accounts-total-tasks">TOTAL COMPLETED TASKS: {{totalCompletedTasks}}</h2>
-    {{#if error}}
-        <p class="error"> Error: {{error}} </p>
-    {{/if}}
+
+    <div class="accounts-block">
+        <p>Keep track of your achievements through all your groups, with the Accounts page!</p> 
+        <h2 class="accounts-total-rewards">Total Rewards: {{totalRewards}}</h1>
+        <h2 class="accounts-total-tasks">Total Completed Tasks: {{totalCompletedTasks}}</h2>
+        {{#if error}}
+            <p class="error"> Error: {{error}} </p>
+        {{/if}}
+    </div>
+
+    <div class="logout-button" id="logout-button">
+        <button onclick="window.location.href='/logout';">Logout</button>
+    </div>
 </main>

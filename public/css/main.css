@@ -208,6 +208,10 @@
     padding-bottom: 2%;
   }
 
+  nav button {
+    width: 90%%;
+  }
+  
   .kanban-board {
     display: flex;
     flex-direction: row;
@@ -493,11 +497,18 @@
 
   .reward-container {
     margin-left: 30%;
-    background-color: #fff;
+    /* background-color: #fff; */
     border: 2px solid black;
-    color: white;
     height: 30vh;
     width: 30vh;
+  }
+
+  .reward-container p {
+    color: black;
+    font-size: 5vh;
+    text-align: center;
+    margin: auto;
+    padding-top: 20%;
   }
 
 
@@ -736,3 +747,5 @@
   .completed-tasks li.ListedTask-IndividualVotes {
     display: inline-block;
   }
+
+

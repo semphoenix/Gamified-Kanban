@@ -1,7 +1,6 @@
 <main>
-    <h1 id="accounts-title">Accounts Page</h1>
+    <h1 id="accounts-title">Create or Join a Kanban Group</h1>
     <div id="accountsHeader">
-        <header>
             <h2>Username: {{username}}</h2>
             <nav>
                 <a href="/user/privateUser" id="accounts-profile-link">Profile Page</a>
@@ -9,14 +8,15 @@
             {{#if error}}
             <p class="error" id="accounts-page-error">{{error}}</p>
             {{/if}}
-        </header>
     </div>
+
+    
     
     <div class="join-group-block">
         <h2 id="accounts-join-group-title">Join Group</h2>
         <form id="accounts-join-group-form" action="/kanban/createKanban/joinGroup" method="POST">
             <label for="groupId">Group Id</label>
-            <input type="text" id="groupId" name="groupId">
+            <input type="text" id="groupId" name="groupId" placeholder="Kanban Id can be located on the group Kanban Board">
             <button type="submit">Submit</button>
         </form>
     </div>
@@ -27,7 +27,12 @@
             {{!-- <h3>Group Name</h3> --}}
             <label for="groupName">Group Name</label>
             <input type="text" id="groupName" name="groupName">
-            <button type="submit">Submit</button>
+            <button type="submit" id="">Submit</button>
         </form>
     </div>
+
+    <div class="logout-button" id="logout-button">
+        <button onclick="window.location.href='/logout';">Logout</button>
+    </div>
 </main>
+
