@@ -268,11 +268,30 @@ router
   .route("/completedTasks")
   .get(async (req, res) => {
     try{
-      validation.checkId(req.sesssion.selectedKanbanId, "Current Kanban")
-      let completedTasks = await kanbanFxns.getSomeTasks(req.session.selectedKanbanId, 2)
+        validation.checkId(req.session.selectedKanbanId, "Current Kanban")
+      let completedTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 3)
+      let voterUsers = []
+      let voterIds =  []
+      
+      for(let i = 0; i < completedTasks.length; i++){
+        voterIds = Object.keys(completedTasks[i].votingStatus)
+        for(let j = 0; j < voterIds.length; j++){
+          let username = await userFxns.getUsernameById(voterIds[j])
+          let votingStatus = ""
+          if(completedTasks[i].votingStatus[voterIds[j]] === 1){
+            votingStatus = "approved"
+          } else {
+            votingStatus = "denied"
+          }
+          voterUsers.push({user: username, status: votingStatus})
+        }
+        completedTasks[i]["voterInfo"] = voterUsers
+        voterUsers = []
+      }
+    
       return res.render("completed", {tasks: completedTasks})
     } catch (e){
-      return res.status(404).render("completed", {tasks: [], error: e})
+      return res.status(404).render("completed", {tasks: [], error: e}) 
     }
   })
 
