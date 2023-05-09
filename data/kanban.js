@@ -215,8 +215,8 @@ let exportedMethods = {
       },
       { returnDocument: "after" }
     );
-
-    return await this.getUserinKanban(userId, kanbanId);
+    let rewardStatement = `${rewardType}: ${reward}`;
+    return rewardStatement;
   },
   async updateSelectedUserRewards(
     userId,
