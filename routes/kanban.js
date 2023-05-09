@@ -276,6 +276,11 @@ router
       for(let i = 0; i < completedTasks.length; i++){
         voterIds = Object.keys(completedTasks[i].votingStatus)
         for(let j = 0; j < voterIds.length; j++){
+          // Skip if the user is the same as the kanban
+          if (completedTasks[i].assignment === voterIds[j]){
+            continue
+          }
+
           let username = await userFxns.getUsernameById(voterIds[j])
           let votingStatus = ""
           if(completedTasks[i].votingStatus[voterIds[j]] === 1){
