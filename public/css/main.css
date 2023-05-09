@@ -130,7 +130,7 @@
 
   #accounts-profile-link {
     padding: 1vh;
-    background-color: #007bff;
+    background-color: #0072ee;
     color: #fff;
     text-decoration: none;
     border-radius: 4px;
@@ -170,12 +170,12 @@
   }
 
   #accounts-join-group-form input[type="text"]:focus, #accounts-create-group-form input[type="text"]:focus {
-    border-color: #007bff;
+    border-color: #0072ee;
   }
 
   #accounts-join-group-form button[type="submit"], #accounts-create-group-form button[type="submit"] {
     padding: 10px;
-    background-color: #007bff;
+    background-color: #0072ee;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -254,7 +254,7 @@
   #group-id {
     font-size: 1.2rem;
     margin: 0;
-    color: gray;
+    color: #707070;
   }
   
   
@@ -294,7 +294,7 @@
     margin-bottom: 1vh;
     padding: 1vh 2vh;
     font-size: 2vh;
-    background-color: #ff8800;
+    background-color: #e37800;
     color: white;
     border: none;
     border-radius: 5px;
@@ -336,12 +336,12 @@
 
   .create-task-form-input:focus {
     outline: none;
-    border-color: #ff8800;
+    border-color: #e37800;
   }
   #create-task-form button {
     padding: 10px 20px;
     font-size: 1.2rem;
-    background-color: #ff8800;
+    background-color: #e37800;
     color: white;
     border: none;
     border-radius: 5px;
@@ -417,7 +417,7 @@
 
   #kanban-button {
     width: 90%;
-    background-color: #4CAF50;
+    background-color: #3aa93f;
     margin-left: 1vh;
     color: #fff;
     padding: 1vh 2vh;
@@ -434,7 +434,7 @@
     padding: 10px;
     font-size: 16px;
     color: white;
-    background-color: #4CAF50;
+    background-color: #3aa93f;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -515,7 +515,7 @@
     padding: 10px;
     font-size: 16px;
     color: white;
-    background-color: #4CAF50;
+    background-color: #3aa93f;
     border: none;
     border-radius: 5px;
     cursor: pointer;
