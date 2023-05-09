@@ -71,24 +71,23 @@
 
     // accesses the tag for the server side errors
 
-
-    const loginErrorDiv = document.getElementById("loginError");
     const loginForm = document.getElementById("loginForm");
+    const loginErrorDiv = document.getElementById("loginError");
   
     if (loginForm) {
         loginForm.addEventListener("submit", (event) => {
-            let username = document.getElementById("username");
-            let password = document.getElementById("password");
-            event.preventDefault();
-            loginErrorDiv.hidden = true;
-            try {
-              checkString(username.value, "username");
-              checkPassword(password.value, "password");
-              event.target.submit();
-            } catch (e) {
-              loginErrorDiv.innerHTML = `<ul class="error-list"><li>${e}</li></ul>`;
-              loginErrorDiv.hidden = false;
-            }
+          let username = document.getElementById("username");
+          let password = document.getElementById("password");
+          event.preventDefault();
+          loginErrorDiv.hidden = true;
+          try {
+            checkString(username.value, "username");
+            checkPassword(password.value, "password");
+            event.target.submit();
+          } catch (e) {
+            loginErrorDiv.innerHTML = `<ul class="error-list"><li>${e}</li></ul>`;
+            loginErrorDiv.hidden = false;
+          }
         });
     }
   
@@ -124,9 +123,13 @@
     
     // div which holds the task form
     const taskFormDiv = document.getElementById("create-new-task-block");
-    createTask.addEventListener("click", (event) => {
-      taskFormDiv.hidden = false;
-    });
+    
+    if (createTask) {
+      createTask.addEventListener("click", (event) => {
+        console.log("this button works!");
+        taskFormDiv.hidden = false;
+      });
+    }
 
     // cancel button for closing the task form
     const cancelButton = document.getElementById("cancel-button");
