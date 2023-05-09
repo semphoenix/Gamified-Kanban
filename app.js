@@ -76,6 +76,13 @@ app.use("/signup", async (req, res, next) => {
   }
   next();
 });
+app.use("/logout", async (req, res, next) => {
+  if (!isAuth) {
+    res.redirect(`/login`);
+    return;
+  }
+  next();
+});
 app.use("/user", async (req, res, next) => {
   if (req.path === "/user") {
     if (!isAuth) {
@@ -117,21 +124,49 @@ app.use("/user/privateUser", async (req, res, next) => {
   }
   next();
 });
-// app.use("/user/publicUser/:id", async (req, res, next) => {
-//   if (!isAuth) {
-//     return res.redirect("/login");
-//   } else if (id === req.params.id) {
-//     return res.redirect(`/user/:privateUser${id}`); //Should user be able to access their public page??
-//   }
-//   next();
-// });
+app.use("/user/privateUser/selectPicture", async (req, res, next) => {
+  // Have to check if you can access page
+
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  let user = await userFxns.getUserById(id);
+  if (user.groups === 0) {
+    return res.redirect(`/user/accountsPage`); //This should be error: not in a kanban OR we could just render a empty profile
+  }
+  next();
+});
+app.use("/user/privateUser/selectBorder", async (req, res, next) => {
+  // Have to check if you can access page
+
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  let user = await userFxns.getUserById(id);
+  if (user.groups === 0) {
+    return res.redirect(`/user/accountsPage`); //This should be error: not in a kanban OR we could just render a empty profile
+  }
+  next();
+});
+app.use("/user/privateUser/selectColor", async (req, res, next) => {
+  // Have to check if you can access page
+
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  let user = await userFxns.getUserById(id);
+  if (user.groups === 0) {
+    return res.redirect(`/user/accountsPage`); //This should be error: not in a kanban OR we could just render a empty profile
+  }
+  next();
+});
 app.use("/user/accountsPage/", async (req, res, next) => {
   if (!isAuth) {
     return res.redirect("/login");
-  // } else if (id !== req.params.id) {
-  //   return res.render("error", {
-  //     error: "Not authorized to use user's profile",
-  //   });
+    // } else if (id !== req.params.id) {
+    //   return res.render("error", {
+    //     error: "Not authorized to use user's profile",
+    //   });
   }
   next();
 });
@@ -152,7 +187,8 @@ app.use("/kanban/kanbans", async (req, res, next) => {
     return res.redirect("/login");
   }
   try {
-    if(!req.session.selectedKanbanId) throw "Error: cookie does not contian Kanban!"
+    if (!req.session.selectedKanbanId)
+      throw "Error: cookie does not contian Kanban!";
     const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
     let usersInKanban = kanban.groupUsers.map((obj) => {
       return obj.userId;
@@ -171,6 +207,123 @@ app.use("/kanban/createKanban", async (req, res, next) => {
   if (!isAuth) {
     return res.redirect("/login");
   }
+  next();
+});
+app.use("/kanban/createKanban/createGroup", async (req, res, next) => {
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  next();
+});
+app.use("/kanban/createKanban/joinGroup", async (req, res, next) => {
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  next();
+});
+app.use("/kanban/createTask", async (req, res, next) => {
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  try {
+    if (!req.session.selectedKanbanId)
+      throw "Error: cookie does not contian Kanban!";
+    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
+    let usersInKanban = kanban.groupUsers.map((obj) => {
+      return obj.userId;
+    });
+    if (!usersInKanban.includes(id)) {
+      return res.render("error", {
+        error: "User cannot access this kanban ",
+      }); //Or should this just be error
+    }
+  } catch (e) {
+    return res.render("error", { error: e }); //Or should this just be error
+  } //Or should this just be error}
+  next();
+});
+app.use("/kanban/gatcha", async (req, res, next) => {
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  try {
+    if (!req.session.selectedKanbanId)
+      throw "Error: cookie does not contian Kanban!";
+    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
+    let usersInKanban = kanban.groupUsers.map((obj) => {
+      return obj.userId;
+    });
+    if (!usersInKanban.includes(id)) {
+      return res.render("error", {
+        error: "User cannot access this kanban ",
+      }); //Or should this just be error
+    }
+  } catch (e) {
+    return res.render("error", { error: e }); //Or should this just be error
+  } //Or should this just be error}
+  next();
+});
+app.use("/kanban/completedTasks", async (req, res, next) => {
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  try {
+    if (!req.session.selectedKanbanId)
+      throw "Error: cookie does not contian Kanban!";
+    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
+    let usersInKanban = kanban.groupUsers.map((obj) => {
+      return obj.userId;
+    });
+    if (!usersInKanban.includes(id)) {
+      return res.render("error", {
+        error: "User cannot access this kanban ",
+      }); //Or should this just be error
+    }
+  } catch (e) {
+    return res.render("error", { error: e }); //Or should this just be error
+  } //Or should this just be error}
+  next();
+});
+app.use("/kanban/vote/:taskId", async (req, res, next) => {
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  try {
+    if (!req.session.selectedKanbanId)
+      throw "Error: cookie does not contian Kanban!";
+    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
+    let usersInKanban = kanban.groupUsers.map((obj) => {
+      return obj.userId;
+    });
+    if (!usersInKanban.includes(id)) {
+      return res.render("error", {
+        error: "User cannot access this kanban ",
+      }); //Or should this just be error
+    }
+  } catch (e) {
+    return res.render("error", { error: e }); //Or should this just be error
+  } //Or should this just be error}
+  next();
+});
+app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
+  if (!isAuth) {
+    return res.redirect("/login");
+  }
+  try {
+    if (!req.session.selectedKanbanId)
+      throw "Error: cookie does not contian Kanban!";
+    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
+    let usersInKanban = kanban.groupUsers.map((obj) => {
+      return obj.userId;
+    });
+    if (!usersInKanban.includes(id)) {
+      return res.render("error", {
+        error: "User cannot access this kanban ",
+      }); //Or should this just be error
+    }
+  } catch (e) {
+    return res.render("error", { error: e }); //Or should this just be error
+  } //Or should this just be error}
   next();
 });
 app.use("/error", async (req, res, next) => {
