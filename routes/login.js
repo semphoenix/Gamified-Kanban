@@ -115,6 +115,7 @@ router
         SignupErrors: true,
         user: userForm,
       });
+      console.log(errors);
       return;
     }
     try {
