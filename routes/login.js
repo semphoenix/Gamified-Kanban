@@ -51,7 +51,7 @@ router
       );
       req.session.user = user;
       console.log("Logging in");
-      res.status(302).redirect(`/user/accountsPage`);
+      res.status(302).redirect(`/user/createKanban`);
     } catch (e) {
       errors.push("Invalid Credentials");
       res.status(400).render("login", {

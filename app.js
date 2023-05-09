@@ -56,7 +56,7 @@ app.use("/", async (req, res, next) => {
   }
   console.log(req.path);
   if (req.path === "/") {
-    if (isAuth) return res.redirect(`/user/accountsPage`);
+    if (isAuth) return res.redirect(`/user/createKanban`);
     else return res.redirect("/login");
   }
   next();
@@ -64,7 +64,7 @@ app.use("/", async (req, res, next) => {
 
 app.use("/login", async (req, res, next) => {
   if (isAuth) {
-    res.redirect(`/user/accountsPage`);
+    res.redirect(`/user/createKanban`);
     return;
   }
   next();
@@ -72,7 +72,7 @@ app.use("/login", async (req, res, next) => {
 
 app.use("/signup", async (req, res, next) => {
   if (isAuth) {
-    res.redirect(`/user/accountsPage`);
+    res.redirect(`/user/createKanban`);
     return;
   }
   next();
@@ -91,7 +91,7 @@ app.use("/user", async (req, res, next) => {
     if (!isAuth) {
       return res.redirect("/login");
     } else if (isAuth) {
-      return res.redirect(`/user/accountsPage`);
+      return res.redirect(`/user/createKanban`);
     }
   }
   next();
@@ -110,7 +110,7 @@ app.use("/user/privateUser", async (req, res, next) => {
         title: "Error Page",
         error: "You must be in at least one kanban to access profiles page",
         buttonTitle: "Back to accounts page",
-        link: "/user/accountsPage",
+        link: "/user/createKanban",
       });
     }
   }
@@ -131,7 +131,7 @@ app.use("/user/privateUser/selectPicture", async (req, res, next) => {
           title: "Error Page",
           error: "You must be in at least one kanban to access profiles page",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       }
     } catch (e) {
@@ -158,7 +158,7 @@ app.use("/user/privateUser/selectBorder", async (req, res, next) => {
           title: "Error Page",
           error: "You must be in at least one kanban to access profiles page",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       }
     } catch (e) {
@@ -185,7 +185,7 @@ app.use("/user/privateUser/selectColor", async (req, res, next) => {
           title: "Error Page",
           error: "You must be in at least one kanban to access profiles page",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       }
     } catch (e) {
@@ -194,7 +194,7 @@ app.use("/user/privateUser/selectColor", async (req, res, next) => {
   }
   next();
 });
-app.use("/user/accountsPage", async (req, res, next) => {
+app.use("/user/createKanban", async (req, res, next) => {
   console.log("Accounts Middleware");
   console.log(req.path);
   if (req.path === "/") {
@@ -209,7 +209,7 @@ app.use("/kanban", async (req, res, next) => {
     if (!isAuth) {
       return res.redirect("/login");
     } else if (isAuth) {
-      return res.redirect(`/accountsPage`);
+      return res.redirect(`/createKanban`);
     }
   }
   next();
@@ -225,7 +225,7 @@ app.use("/kanban/kanbans", async (req, res, next) => {
           title: "Error Page",
           error: "There is no kanban in cookie!",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       const kanban = await kanbanFxns.getKanbanById(
         req.session.selectedKanbanId
@@ -238,7 +238,7 @@ app.use("/kanban/kanbans", async (req, res, next) => {
           title: "Error Page",
           error: "Cannot access this kanban",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       }
     } catch (e) {
@@ -247,7 +247,7 @@ app.use("/kanban/kanbans", async (req, res, next) => {
   }
   next();
 });
-app.use("/kanban/createKanban", async (req, res, next) => {
+app.use("/user/createKanban", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
       return res.redirect("/login");
@@ -255,7 +255,7 @@ app.use("/kanban/createKanban", async (req, res, next) => {
   }
   next();
 });
-app.use("/kanban/createKanban/createGroup", async (req, res, next) => {
+app.use("/user/createKanban/createGroup", async (req, res, next) => {
   if (req.path === "/") {
     console.log("CreateGroup Middleware");
     if (!isAuth) {
@@ -269,7 +269,7 @@ app.use("/kanban/createKanban/createGroup", async (req, res, next) => {
           title: "Error Page",
           error: "User is already in 5 kanbans",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
     } catch (e) {
       return res.status(500).render("error", { title: "Error Page", error: e });
@@ -277,7 +277,7 @@ app.use("/kanban/createKanban/createGroup", async (req, res, next) => {
   }
   next();
 });
-app.use("/kanban/createKanban/joinGroup", async (req, res, next) => {
+app.use("/user/createKanban/joinGroup", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
       return res.redirect("/login");
@@ -289,7 +289,7 @@ app.use("/kanban/createKanban/joinGroup", async (req, res, next) => {
           title: "Error Page",
           error: "User is already in 5 kanbans",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
     } catch (e) {
       return res.status(500).render("error", { title: "Error Page", error: e });
@@ -308,7 +308,7 @@ app.use("/kanban/createTask", async (req, res, next) => {
           title: "Error Page",
           error: "There is no kanban in cookie!",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       const kanban = await kanbanFxns.getKanbanById(
         req.session.selectedKanbanId
@@ -321,7 +321,7 @@ app.use("/kanban/createTask", async (req, res, next) => {
           title: "Error Page",
           error: "Cannot access this kanban",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       }
     } catch (e) {
@@ -341,7 +341,7 @@ app.use("/kanban/gatcha", async (req, res, next) => {
           title: "Error Page",
           error: "There is no kanban in cookie!",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       const kanban = await kanbanFxns.getKanbanById(
         req.session.selectedKanbanId
@@ -354,7 +354,7 @@ app.use("/kanban/gatcha", async (req, res, next) => {
           title: "Error Page",
           error: "Cannot access this kanban",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       }
     } catch (e) {
@@ -374,7 +374,7 @@ app.use("/kanban/completedTasks", async (req, res, next) => {
           title: "Error Page",
           error: "There is no kanban in cookie!",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       const kanban = await kanbanFxns.getKanbanById(
         req.session.selectedKanbanId
@@ -387,7 +387,7 @@ app.use("/kanban/completedTasks", async (req, res, next) => {
           title: "Error Page",
           error: "Cannot access this kanban",
           buttonTitle: "Back to accounts page",
-          link: "/user/accountsPage",
+          link: "/user/createKanban",
         });
       }
     } catch (e) {
@@ -402,7 +402,7 @@ app.use("/kanban/vote", async (req, res, next) => {
       return res.redirect("/login");
     }
     if (isAuth) {
-      return res.redirect("/user/accountsPage");
+      return res.redirect("/user/createKanban");
     }
   }
   next();
@@ -417,7 +417,7 @@ app.use("/kanban/vote/:taskId", async (req, res, next) => {
         title: "Error Page",
         error: "There is no kanban in cookie!",
         buttonTitle: "Back to accounts page",
-        link: "/user/accountsPage",
+        link: "/user/createKanban",
       });
     const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
     let usersInKanban = kanban.groupUsers.map((obj) => {
@@ -428,7 +428,7 @@ app.use("/kanban/vote/:taskId", async (req, res, next) => {
         title: "Error Page",
         error: "Cannot access this kanban",
         buttonTitle: "Back to accounts page",
-        link: "/user/accountsPage",
+        link: "/user/createKanban",
       });
     }
   } catch (e) {
@@ -443,7 +443,7 @@ app.use("/kanban/changeStatus", async (req, res, next) => {
       return res.redirect("/login");
     }
     if (isAuth) {
-      return res.redirect("/user/accountsPage");
+      return res.redirect("/user/createKanban");
     }
   }
   next();
@@ -458,7 +458,7 @@ app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
         title: "Error Page",
         error: "There is no kanban in cookie!",
         buttonTitle: "Back to accounts page",
-        link: "/user/accountsPage",
+        link: "/user/createKanban",
       });
     const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
     let usersInKanban = kanban.groupUsers.map((obj) => {
@@ -469,7 +469,7 @@ app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
         title: "Error Page",
         error: "Cannot access this kanban",
         buttonTitle: "Back to accounts page",
-        link: "/user/accountsPage",
+        link: "/user/createKanban",
       });
     }
   } catch (e) {

@@ -142,37 +142,48 @@ router.route("/privateUser/selectColor").post(async (req, res) => {
     });
   }
 });
+router
+  .route("/accountsPage")
+  .get(async (req, res) => {
+    try{  
+      validation.checkId(req.session.selectedKanbanId, "Current Kanban")
+      validation.checkQuantity(req.session.user.completedTasks, "Total Task Count")
+      validation.checkQuantity(req.session.user.totalRewards, "Total Reward Count")
+      return res.render("accounts", {
+        title: "Accounts Page",
+        totalCompletedTasks: req.session.user.completedTasks, 
+        totalRewards: req.session.user.totalRewards
+      })
+    } catch(e){
+      return res.status(400).render("error", {
+        title: "Accounts Page",
+        error: e, 
+        totalCompletedTasks: req.session.user.completedTasks, 
+        totalRewards: req.session.user.totalRewards
+      })
+    }
+  })
 
-router.route("/accountsPage").get(async (req, res) => {
-  try {
-    if (!req.session.user)
-      throw "Router: /acccountsPage ~ User param not attached to session cookie!";
-    req.session.user._id = validation.checkId(req.session.user._id, "User Id");
-  } catch (e) {
-    return res.status(400).render("error", {
-      title: "Error Page",
-      error: e,
-      buttonTitle: "Back to accounts page",
-      link: "/user/accountsPage",
-    });
-  }
+router
+  .route("/createKanban")
+  .get(async (req, res) => {
+    try {
+      if (!req.session.user)
+        throw "Router: /createKanban ~ User param not attached to session cookie!";
+      req.session.user._id = validation.checkId(req.session.user._id, "User Id");
+    } catch (e) {
+      return res.status(400).render("error", { title: "Error Page", error: e });
+    }
 
-  try {
-    const user = await userFxns.getUserById(req.session.user._id); //Not used
-    res.render("accounts", {
-      title: "Accounts Page",
-      userId: req.session.user._id,
-      username: user.username,
-    }); //Change this to render when we have pages
-  } catch (e) {
-    res
-      .status(500)
-      .render("error", {
-        title: "Error Page",
-        error: e,
-        buttonTitle: "Back to accounts page",
-        link: "/user/accountsPage",
-      });
-  }
-});
+    try {
+      const user = await userFxns.getUserById(req.session.user._id); //Not used
+      res.render("createKanban", {
+        title: "Create/Join Group Page",
+        userId: req.session.user._id,
+        username: user.username,
+      }); //Change this to render when we have pages
+    } catch (e) {
+      res.status(500).render("error", { title: "Error Page", error: e });
+    }
+  });
 export default router;

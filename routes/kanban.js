@@ -172,6 +172,7 @@ router
     }
   });
 
+
 router.route("/createTask").post(async (req, res) => {
   let { taskname, taskdescription, taskdifficulty } = req.body;
   try {
@@ -237,8 +238,8 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     if (!kanbanId["groupId"]) throw "Incorrect field submitted to form!";
     kanbanId = validation.checkId(xss(kanbanId.groupId), "Group Id");
   } catch (e) {
-    return res.status(400).render("accounts", {
-      title: "Accounts Page",
+    return res.status(400).render("createKanban", {
+      title: "Create/Join Group Page",
       username: user.username,
       error: e,
     });
@@ -420,6 +421,7 @@ router.route("/completedTasks").get(async (req, res) => {
         voterUsers.push({ user: username, status: votingStatus });
       }
       completedTasks[i]["voterInfo"] = voterUsers;
+      completedTasks[i]["assignedUser"] = (await userFxns.getUserById(completedTasks[i].assignment)).username
       voterUsers = [];
     }
     return res.render("completed", {
