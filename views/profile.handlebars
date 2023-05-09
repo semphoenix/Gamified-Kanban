@@ -29,7 +29,7 @@
         </div>
     <h1>Prizes</h1>
     <div class="prize-block">
-        <form class="prize-form" id="prize-color-form">
+        <form action="/user/privateUser/selectColor" method="post" class="prize-form" id="prize-color-form">
             <label for="chooseColor">Color Choices</label>
             <select name="chooseColor" id="chooseColor" form="prize-color-form">
                 {{#each prizes.colorRewards}}
@@ -41,7 +41,7 @@
     </div>
 
     <div class="prize-block">
-        <form class="prize-form" id="prize-border-form">
+        <form action="/user/privateUser/selectBorder" method="post" class="prize-form" id="prize-border-form">
             <label for="chooseBorder">Border Choices</label>
             <select name="chooseBorder" id="chooseBorder" form="prize-border-form">
                 {{#each prizes.borderRewards}}
