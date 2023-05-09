@@ -174,7 +174,7 @@ router
     } catch (e){
       return res
         .status(400)
-        .render("accounts", {username: user.username, error: e});
+        .render("createKanban", {username: user.username, error: e});
     }
 
     try{
