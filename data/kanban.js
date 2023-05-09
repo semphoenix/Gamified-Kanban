@@ -76,6 +76,12 @@ let exportedMethods = {
     });
     if (usersInKanban.includes(userId))
       throw "Error: addKanbantoUser: user is already in kanban";
+
+    let tasks = kanban.tasks;
+    tasks.map((task) => {
+      task.votingStatus[userId] = -1; // allows new user to vote on tasks
+    })
+    
     let newUser = {
       _id: new ObjectId(),
       userId: userId,
