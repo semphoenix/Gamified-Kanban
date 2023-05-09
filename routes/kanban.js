@@ -58,6 +58,10 @@ router
         remainingVotesNeeded = Math.floor(remainingVotesNeeded / 2);
         task.remainingVotesNeeded = remainingVotesNeeded;
       }
+      const selectedKanbanUserProfile = await kanbanFxns.getUserinKanban(
+        req.session.user._id,
+        req.session.selectedKanbanId
+      );
 
       res.render("kanban", {
         groupName: selectedKanban.groupName,
@@ -66,6 +70,7 @@ router
         todoTasks: todoTasks,
         inprogressTasks: inprogressTasks,
         inreviewTasks: inreviewTasks,
+        selectedReward: selectedKanbanUserProfile.selectedReward,
       });
     } catch (e) {
       return res
