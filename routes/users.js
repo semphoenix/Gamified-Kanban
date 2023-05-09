@@ -12,6 +12,10 @@ router
       // Check the cookie for user info
       if (!req.session.user)
         throw "Route: privateUser ~ User does not have authenticated cookie!";
+      req.session.user._id = validation.checkId(
+        req.session.user._id,
+        "User Id"
+      );
       const user = await userFxns.getUserById(req.session.user._id);
 
       // Make sure user is part of a group
@@ -21,7 +25,10 @@ router
       // Check the cookie for SelectedKanbanId & default to first group if not found
       if (!req.session.selectedKanbanId)
         req.session.selectedKanbanId = user.groups[0];
-
+      req.session.selectedKanbanId = validation.checkId(
+        req.session.selectedKanbanId,
+        "Kanban Id"
+      );
       // Get Kanban information using group & session id
       const kanbans = await kanbanFxns.getAllKanbans(user.groups);
       const selectedKanban = await kanbanFxns.getKanbanById(
@@ -41,7 +48,7 @@ router
         selectedReward: selectedKanbanUserProfile.selectedReward,
       });
     } catch (e) {
-      res.status(500).json({ error: e });
+      res.status(500).render("error", { title: "Error Page", error: e });
     }
   })
   // Used to change the selectedKanbanId & reset the page
@@ -52,7 +59,7 @@ router
       req.session.selectedKanbanId = content.chooseGroup;
       return res.redirect("/user/privateUser");
     } catch (e) {
-      res.status(400).json({ error: e });
+      res.status(400).render("error", { title: "Error Page", error: e });
     }
   });
 
@@ -73,7 +80,7 @@ router.route("/privateUser/selectPicture").post(async (req, res) => {
     return res.redirect("/user/privateUser");
   } catch (e) {
     console.log(e);
-    res.status(400).json({ error: e });
+    res.status(400).render("error", { title: "Error Page", error: e });
   }
 });
 router.route("/privateUser/selectBorder").post(async (req, res) => {
@@ -89,7 +96,7 @@ router.route("/privateUser/selectBorder").post(async (req, res) => {
     );
     return res.redirect("/user/privateUser");
   } catch (e) {
-    res.status(400).json({ error: e });
+    res.status(400).render("error", { title: "Error Page", error: e });
   }
 });
 router.route("/privateUser/selectColor").post(async (req, res) => {
@@ -105,7 +112,7 @@ router.route("/privateUser/selectColor").post(async (req, res) => {
     );
     return res.redirect("/user/privateUser");
   } catch (e) {
-    res.status(400).json({ error: e });
+    res.status(400).render("error", { title: "Error Page", error: e });
   }
 });
 
@@ -115,7 +122,7 @@ router.route("/accountsPage").get(async (req, res) => {
       throw "Router: /acccountsPage ~ User param not attached to session cookie!";
     req.session.user._id = validation.checkId(req.session.user._id, "User Id");
   } catch (e) {
-    return res.status(400).json({ error: e });
+    return res.status(400).render("error", { title: "Error Page", error: e });
   }
 
   try {
@@ -126,7 +133,7 @@ router.route("/accountsPage").get(async (req, res) => {
       username: user.username,
     }); //Change this to render when we have pages
   } catch (e) {
-    res.status(500).json({ error: e });
+    res.status(500).render("error", { title: "Error Page", error: e });
   }
 });
 export default router;
