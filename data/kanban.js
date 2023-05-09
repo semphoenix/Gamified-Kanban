@@ -76,6 +76,12 @@ let exportedMethods = {
     });
     if (usersInKanban.includes(userId))
       throw "Error: addKanbantoUser: user is already in kanban";
+    
+    let tasks = kanban.tasks;
+    tasks.map((task) => {
+      task.votingStatus[userId] = -1; // allows new user to vote on tasks
+    })
+    
     let newUser = {
       _id: new ObjectId(),
       userId: userId,
@@ -100,6 +106,7 @@ let exportedMethods = {
       groupUsers: kanban.groupUsers,
       userColors: kanban.userColors,
       availColors: availColors,
+      tasks: kanban.tasks
     };
     let kanbanCollection = await kanbans();
     const insertInfo = await kanbanCollection.findOneAndUpdate(

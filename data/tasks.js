@@ -1,7 +1,8 @@
 import kanbanFxns from "./kanban.js";
 import validation from "../validation.js";
-import { kanbans } from "../config/mongoCollections.js";
+import { kanbans, users } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
+import { userFxns } from "./index.js";
 
 let exportedMethods = {
   /**
@@ -23,6 +24,13 @@ let exportedMethods = {
     status = validation.checkStatus(status, "status");
     // voting status -- init each to -1
     let kanban = await kanbanFxns.getKanbanById(kanbanId);
+    
+    if (!kanban)
+      throw "error: kanban with that id doesn't exist";
+
+    if (kanban.groupUsers.length < 2)
+      throw "error: must have at least 2 users in kanban before you can create tasks";
+    
     const votingStatus = kanban.groupUsers.reduce((uid, obj) => {
       Object.keys(obj).forEach((key) => {
         if (key === "userId") uid[obj[key]] = -1; // -1 means user hasn't voted yet
@@ -170,11 +178,8 @@ let exportedMethods = {
       else if (vote === 0) rejectedVotes++;
       else noVotes++;
     });
-    
-    // novotes is at least 1 because of the user whose task it is doesn't vote
-    let draw = (noVotes === 1 && acceptedVotes === rejectedVotes);
 
-    if (acceptedVotes > kanban.groupUsers.length/2 || draw) {
+    if (acceptedVotes > kanban.groupUsers.length/2 - 1) {
       task.status = 3;
       kanban.completedTasks += 1;
       // I changed this because it gave points to the user who casted the final vote, not the person whose task it is
@@ -183,14 +188,19 @@ let exportedMethods = {
         if (user.userId === task.assignment) {
           user.points += 5;
         }
-      }      
-    } else if(rejectedVotes > kanban.groupUsers.length/2) {
+      } 
+      // increments the completed task
+      await userFxns.addCompletedTask(task.assignment);
+
+    } else if(rejectedVotes > kanban.groupUsers.length/2 - 1) {
       task.status = 0;
       // resets the votes again since it's being moved back to todo
       users.forEach((user) => {
         task.votingStatus[user] = -1;
       });
     }
+
+    
 
     const updateInfo = {
       tasks: kanban.tasks,
