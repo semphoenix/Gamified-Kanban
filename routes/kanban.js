@@ -365,6 +365,7 @@ router.route("/completedTasks").get(async (req, res) => {
         voterUsers.push({ user: username, status: votingStatus });
       }
       completedTasks[i]["voterInfo"] = voterUsers;
+      completedTasks[i]["assignedUser"] = (await userFxns.getUserById(completedTasks[i].assignment)).username
       voterUsers = [];
     }
     return res.render("completed", {
