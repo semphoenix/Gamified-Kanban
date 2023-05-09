@@ -64,6 +64,7 @@ router
       );
 
       res.render("kanban", {
+        title: "Kanban Page",
         groupName: selectedKanban.groupName,
         kanbanId: selectedKanban._id.toString(),
         groups: kanbans,
@@ -73,9 +74,10 @@ router
         selectedReward: selectedKanbanUserProfile.selectedReward,
       });
     } catch (e) {
-      return res
-        .status(404)
-        .render("error", { error: "Kanban of that id does not exist!" });
+      return res.status(404).render("error", {
+        title: "Error Page",
+        error: "Kanban of that id does not exist!",
+      });
     }
   })
   .post(async (req, res) => {
@@ -113,7 +115,7 @@ router
         status = validation.checkStatus(status, "status");
       }
     } catch (e) {
-      return res.status(400).render("error", { error: e });
+      return res.status(400).render("error", { title: "Error Page", error: e });
     }
 
     try {
@@ -138,7 +140,7 @@ router
         throw "Route: Kanbans/ ~ Something went wrong with the post request";
       }
     } catch (e) {
-      return res.status(404).json({ error: e });
+      return res.status(404).json({ title: "Error Page", error: e });
     }
   });
 
@@ -174,9 +176,10 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     user = req.session.user;
     user._id = validation.checkId(req.session.user._id);
   } catch (e) {
-    return res
-      .status(404)
-      .render("error", { error: "User is not logged in!?" });
+    return res.status(404).render("error", {
+      title: "Error Page",
+      error: "User is not logged in!?",
+    });
   }
 
   try {
@@ -188,9 +191,11 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     if (!kanbanId["groupId"]) throw "Incorrect field submitted to form!";
     kanbanId = validation.checkId(xss(kanbanId.groupId), "Group Id");
   } catch (e) {
-    return res
-      .status(400)
-      .render("accounts", { username: user.username, error: e });
+    return res.status(400).render("accounts", {
+      title: "Accounts Page",
+      username: user.username,
+      error: e,
+    });
   }
 
   try {
@@ -199,7 +204,7 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     req.session.selectedKanbanId = kanbanId;
     return res.redirect(`/kanban/kanbans/`);
   } catch (e) {
-    return res.status(500).render("error", { error: e });
+    return res.status(500).render("error", { title: "Error Page", error: e });
   }
 });
 
@@ -210,15 +215,17 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     user = req.session.user;
     ownerId = user._id.toString();
   } catch (e) {
-    return res
-      .status(404)
-      .render("error", { error: "There are no fields in the request body" });
+    return res.status(404).render("error", {
+      title: "Error Page",
+      error: "There are no fields in the request body",
+    });
   }
   let kanbanData = req.body;
   if (!kanbanData || Object.keys(kanbanData).length === 0) {
-    return res
-      .status(400)
-      .render("error", { error: "There are no fields in the request body" });
+    return res.status(400).render("error", {
+      title: "Error Page",
+      error: "There are no fields in the request body",
+    });
   }
   try {
     ownerId = validation.checkId(ownerId, "Owner Id");
@@ -227,7 +234,7 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
       "Group Name"
     );
   } catch (e) {
-    return res.status(400).render("error", { error: e });
+    return res.status(400).render("error", { title: "Error Page", error: e });
   }
   try {
     const { groupName } = kanbanData;
@@ -236,7 +243,7 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     req.session.selectedKanbanId = newKanban._id;
     return res.redirect(`/kanban/kanbans`);
   } catch (e) {
-    return res.status(500).render("error", { error: e });
+    return res.status(500).render("error", { title: "Error Page", error: e });
   }
 });
 
@@ -249,9 +256,9 @@ router
         req.session.user._id,
         req.session.selectedKanbanId
       );
-      return res.render("gatcha", { points: points });
+      return res.render("gatcha", { title: "Gatcha Page", points: points });
     } catch (e) {
-      return res.status(404).render("error", { error: e });
+      return res.status(404).render("error", { title: "Error Page", error: e });
     }
   })
   .post(async (req, res) => {
@@ -261,7 +268,10 @@ router
         req.session.user._id,
         req.session.selectedKanbanId
       );
-      return res.render("gatcha", { points: updated_user.points }); // TODO: Change to render the gatcha page with new amount of points
+      return res.render("gatcha", {
+        title: "Gatcha Page",
+        points: updated_user.points,
+      }); // TODO: Change to render the gatcha page with new amount of points
     } catch (e) {
       let user;
       try {
@@ -270,51 +280,60 @@ router
           req.session.selectedKanbanId
         );
 
-        return res
-          .status(404)
-          .render("gatcha", { error: e, points: user.points });
+        return res.status(404).render("gatcha", {
+          title: "Gatcha Page",
+          error: e,
+          points: user.points,
+        });
       } catch (e) {
         res.status(500).render("error", { error: e });
       }
     }
   });
 
-router
-  .route("/completedTasks")
-  .get(async (req, res) => {
-    try{
-        validation.checkId(req.session.selectedKanbanId, "Current Kanban")
-      let completedTasks = await taskFxns.getSomeTasks(req.session.selectedKanbanId, 3)
-      let voterUsers = []
-      let voterIds =  []
-      
-      for(let i = 0; i < completedTasks.length; i++){
-        voterIds = Object.keys(completedTasks[i].votingStatus)
-        for(let j = 0; j < voterIds.length; j++){
-          // Skip if the user is the same as the kanban
-          if (completedTasks[i].assignment === voterIds[j]){
-            continue
-          }
+router.route("/completedTasks").get(async (req, res) => {
+  try {
+    validation.checkId(req.session.selectedKanbanId, "Current Kanban");
+    let completedTasks = await taskFxns.getSomeTasks(
+      req.session.selectedKanbanId,
+      3
+    );
+    let voterUsers = [];
+    let voterIds = [];
 
-          let username = await userFxns.getUsernameById(voterIds[j])
-          let votingStatus = ""
-          if(completedTasks[i].votingStatus[voterIds[j]] === 1){
-            votingStatus = "approved"
-          } else {
-            votingStatus = "denied"
-          }
-          voterUsers.push({user: username, status: votingStatus})
+    for (let i = 0; i < completedTasks.length; i++) {
+      voterIds = Object.keys(completedTasks[i].votingStatus);
+      for (let j = 0; j < voterIds.length; j++) {
+        // Skip if the user is the same as the kanban
+        if (completedTasks[i].assignment === voterIds[j]) {
+          continue;
         }
-        completedTasks[i]["voterInfo"] = voterUsers
-        voterUsers = []
-      }
-    
-      return res.render("completed", {tasks: completedTasks})
-    } catch (e){
-      return res.status(404).render("completed", {tasks: [], error: e}) 
-    }
-  })
 
+        let username = await userFxns.getUsernameById(voterIds[j]);
+        let votingStatus = "";
+        if (completedTasks[i].votingStatus[voterIds[j]] === 1) {
+          votingStatus = "approved";
+        } else {
+          votingStatus = "denied";
+        }
+        voterUsers.push({ user: username, status: votingStatus });
+      }
+      completedTasks[i]["voterInfo"] = voterUsers;
+      voterUsers = [];
+    }
+
+    return res.render("completed", {
+      title: "Completed Tasks Page",
+      tasks: completedTasks,
+    });
+  } catch (e) {
+    return res.status(404).render("completed", {
+      title: "Completed Tasks Page",
+      tasks: [],
+      error: e,
+    });
+  }
+});
 
 router.route("/vote/:taskId").patch(async (req, res) => {
   // for casting a vote
@@ -325,7 +344,7 @@ router.route("/vote/:taskId").patch(async (req, res) => {
     vote = validation.checkVote(+vote, "vote");
     taskId = validation.checkId(taskId, "taskId");
   } catch (e) {
-    return res.status(400).render("error", { error: e });
+    return res.status(400).render("error", { title: "Error Page", error: e });
   }
 
   try {
@@ -343,7 +362,7 @@ router.route("/vote/:taskId").patch(async (req, res) => {
     });
   } catch (e) {
     console.log(e);
-    return res.status(404).render("error", { error: e });
+    return res.status(404).render("error", { title: "Error Page", error: e });
   }
 });
 
@@ -358,7 +377,7 @@ router.route("/changeStatus/:taskId").patch(async (req, res) => {
     status = validation.checkStatus(status, "status");
   } catch (e) {
     console.log(e);
-    return res.status(400).render("error", { error: e });
+    return res.status(400).render("error", { title: "Error Page", error: e });
   }
   try {
     const task = await taskFxns.changeStatus(taskId, +req.body.status);
@@ -374,7 +393,7 @@ router.route("/changeStatus/:taskId").patch(async (req, res) => {
     });
   } catch (e) {
     console.log(e);
-    return res.status(404).render("error", { error: e });
+    return res.status(404).render("error", { title: "Error Page", error: e });
   }
 });
 

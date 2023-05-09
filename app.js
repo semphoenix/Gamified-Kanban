@@ -47,13 +47,14 @@ app.use(
 
 let isAuth;
 let id;
-app.use(async (req, res, next) => {
+app.use("/", async (req, res, next) => {
   if (req.session.user) {
     isAuth = true;
     id = req.session.user._id.toString();
   } else {
     isAuth = false;
   }
+  console.log(req.path);
   if (req.path === "/") {
     if (isAuth) return res.redirect(`/user/accountsPage`);
     else return res.redirect("/login");
@@ -84,7 +85,9 @@ app.use("/logout", async (req, res, next) => {
   next();
 });
 app.use("/user", async (req, res, next) => {
-  if (req.path === "/user") {
+  console.log("User Middleware");
+  console.log(req.path);
+  if (req.path === "/") {
     if (!isAuth) {
       return res.redirect("/login");
     } else if (isAuth) {
@@ -94,194 +97,314 @@ app.use("/user", async (req, res, next) => {
   next();
 });
 app.use("/user/privateUser", async (req, res, next) => {
-  if (req.path === "/user/privateUser") {
+  // Have to check if you can access page
+  console.log("Private User Middleware");
+  console.log(req.path);
+  if (req.path === "/") {
     if (!isAuth) {
       return res.redirect("/login");
-    } else if (isAuth) {
-      return res.redirect(`/user/privateUser`);
     }
-  }
-
-  next();
-});
-// app.use("/user/publicUser", async (req, res, next) => {
-//   if (!isAuth) {
-//     return res.redirect("/login");
-//   } else if (isAuth) {
-//     return res.redirect(`/user/privateUser/:${id}`);
-//   }
-//   next();
-// });
-app.use("/user/privateUser", async (req, res, next) => {
-  // Have to check if you can access page
-
-  if (!isAuth) {
-    return res.redirect("/login");
-  }
-  let user = await userFxns.getUserById(id);
-  if (user.groups === 0) {
-    return res.redirect(`/user/accountsPage`); //This should be error: not in a kanban OR we could just render a empty profile
+    let user = await userFxns.getUserById(id);
+    if (user.groups === 0) {
+      return res.render("error", {
+        title: "Error Page",
+        error: "You must be in at least one kanban to access profiles page",
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
+    }
   }
   next();
 });
 app.use("/user/privateUser/selectPicture", async (req, res, next) => {
   // Have to check if you can access page
-
-  if (!isAuth) {
-    return res.redirect("/login");
-  }
-  let user = await userFxns.getUserById(id);
-  if (user.groups === 0) {
-    return res.redirect(`/user/accountsPage`); //This should be error: not in a kanban OR we could just render a empty profile
+  console.log("SelectPicture Middleware");
+  console.log(req.path);
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
+    try {
+      let user = await userFxns.getUserById(id);
+      if (user.groups === 0) {
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "You must be in at least one kanban to access profiles page",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      }
+    } catch (e) {
+      return res.status(500).render("error", {
+        title: "Error Page",
+        error: "Internal Server Error",
+      });
+    }
   }
   next();
 });
 app.use("/user/privateUser/selectBorder", async (req, res, next) => {
   // Have to check if you can access page
-
-  if (!isAuth) {
-    return res.redirect("/login");
-  }
-  let user = await userFxns.getUserById(id);
-  if (user.groups === 0) {
-    return res.redirect(`/user/accountsPage`); //This should be error: not in a kanban OR we could just render a empty profile
+  console.log("SelectBorder Middleware");
+  console.log(req.path);
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
+    try {
+      let user = await userFxns.getUserById(id);
+      if (user.groups === 0) {
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "You must be in at least one kanban to access profiles page",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      }
+    } catch (e) {
+      return res.status(500).render("error", {
+        title: "Error Page",
+        error: "Internal Server Error",
+      });
+    }
   }
   next();
 });
 app.use("/user/privateUser/selectColor", async (req, res, next) => {
   // Have to check if you can access page
-
-  if (!isAuth) {
-    return res.redirect("/login");
-  }
-  let user = await userFxns.getUserById(id);
-  if (user.groups === 0) {
-    return res.redirect(`/user/accountsPage`); //This should be error: not in a kanban OR we could just render a empty profile
+  console.log("SelectColor Middleware");
+  console.log(req.path);
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
+    try {
+      let user = await userFxns.getUserById(id);
+      if (user.groups === 0) {
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "You must be in at least one kanban to access profiles page",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      }
+    } catch (e) {
+      return res.status(500).render("error", { title: "Error Page", error: e });
+    }
   }
   next();
 });
-app.use("/user/accountsPage/", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
-    // } else if (id !== req.params.id) {
-    //   return res.render("error", {
-    //     error: "Not authorized to use user's profile",
-    //   });
+app.use("/user/accountsPage", async (req, res, next) => {
+  console.log("Accounts Middleware");
+  console.log(req.path);
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
   }
   next();
 });
 app.use("/kanban", async (req, res, next) => {
-  if (req.path === "/kanban") {
+  if (req.path === "/") {
     if (!isAuth) {
       return res.redirect("/login");
     } else if (isAuth) {
-      return res.redirect(`/accountsPage`); //Or should this just be error
+      return res.redirect(`/accountsPage`);
     }
   }
   next();
 });
 app.use("/kanban/kanbans", async (req, res, next) => {
-  console.log("req.params: ", req.params);
-  console.log("isAuth: ", isAuth);
-  if (!isAuth) {
-    return res.redirect("/login");
-  }
-  try {
-    if (!req.session.selectedKanbanId)
-      throw "Error: cookie does not contian Kanban!";
-    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
-    let usersInKanban = kanban.groupUsers.map((obj) => {
-      return obj.userId;
-    });
-    if (!usersInKanban.includes(id)) {
-      return res.render("error", {
-        error: "User cannot access this kanban ",
-      }); //Or should this just be error
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
     }
-  } catch (e) {
-    return res.render("error", { error: e }); //Or should this just be error
-  } //Or should this just be error}
+    try {
+      if (!req.session.selectedKanbanId)
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "There is no kanban in cookie!",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      const kanban = await kanbanFxns.getKanbanById(
+        req.session.selectedKanbanId
+      );
+      let usersInKanban = kanban.groupUsers.map((obj) => {
+        return obj.userId;
+      });
+      if (!usersInKanban.includes(id)) {
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "Cannot access this kanban",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      }
+    } catch (e) {
+      return res.status(500).render("error", { title: "Error Page", error: e });
+    }
+  }
   next();
 });
 app.use("/kanban/createKanban", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
   }
   next();
 });
 app.use("/kanban/createKanban/createGroup", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
+  if (req.path === "/") {
+    console.log("CreateGroup Middleware");
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
+    try {
+      const user = await userFxns.getUserById(id);
+      console.log(user.groups);
+      if (user.groups.length >= 5)
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "User is already in 5 kanbans",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+    } catch (e) {
+      return res.status(500).render("error", { title: "Error Page", error: e });
+    }
   }
   next();
 });
 app.use("/kanban/createKanban/joinGroup", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
+    try {
+      const user = await userFxns.getUserById(id);
+      if (user.groups.length >= 5)
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "User is already in 5 kanbans",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+    } catch (e) {
+      return res.status(500).render("error", { title: "Error Page", error: e });
+    }
   }
   next();
 });
 app.use("/kanban/createTask", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
-  }
-  try {
-    if (!req.session.selectedKanbanId)
-      throw "Error: cookie does not contian Kanban!";
-    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
-    let usersInKanban = kanban.groupUsers.map((obj) => {
-      return obj.userId;
-    });
-    if (!usersInKanban.includes(id)) {
-      return res.render("error", {
-        error: "User cannot access this kanban ",
-      }); //Or should this just be error
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
     }
-  } catch (e) {
-    return res.render("error", { error: e }); //Or should this just be error
-  } //Or should this just be error}
+    try {
+      if (!req.session.selectedKanbanId)
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "There is no kanban in cookie!",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      const kanban = await kanbanFxns.getKanbanById(
+        req.session.selectedKanbanId
+      );
+      let usersInKanban = kanban.groupUsers.map((obj) => {
+        return obj.userId;
+      });
+      if (!usersInKanban.includes(id)) {
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "Cannot access this kanban",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      }
+    } catch (e) {
+      return res.status(500).render("error", { title: "Error Page", error: e });
+    }
+  }
   next();
 });
 app.use("/kanban/gatcha", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
-  }
-  try {
-    if (!req.session.selectedKanbanId)
-      throw "Error: cookie does not contian Kanban!";
-    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
-    let usersInKanban = kanban.groupUsers.map((obj) => {
-      return obj.userId;
-    });
-    if (!usersInKanban.includes(id)) {
-      return res.render("error", {
-        error: "User cannot access this kanban ",
-      }); //Or should this just be error
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
     }
-  } catch (e) {
-    return res.render("error", { error: e }); //Or should this just be error
-  } //Or should this just be error}
+    try {
+      if (!req.session.selectedKanbanId)
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "There is no kanban in cookie!",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      const kanban = await kanbanFxns.getKanbanById(
+        req.session.selectedKanbanId
+      );
+      let usersInKanban = kanban.groupUsers.map((obj) => {
+        return obj.userId;
+      });
+      if (!usersInKanban.includes(id)) {
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "Cannot access this kanban",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      }
+    } catch (e) {
+      return res.status(500).render("error", { title: "Error Page", error: e });
+    }
+  }
   next();
 });
 app.use("/kanban/completedTasks", async (req, res, next) => {
-  if (!isAuth) {
-    return res.redirect("/login");
-  }
-  try {
-    if (!req.session.selectedKanbanId)
-      throw "Error: cookie does not contian Kanban!";
-    const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
-    let usersInKanban = kanban.groupUsers.map((obj) => {
-      return obj.userId;
-    });
-    if (!usersInKanban.includes(id)) {
-      return res.render("error", {
-        error: "User cannot access this kanban ",
-      }); //Or should this just be error
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
     }
-  } catch (e) {
-    return res.render("error", { error: e }); //Or should this just be error
-  } //Or should this just be error}
+    try {
+      if (!req.session.selectedKanbanId)
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "There is no kanban in cookie!",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      const kanban = await kanbanFxns.getKanbanById(
+        req.session.selectedKanbanId
+      );
+      let usersInKanban = kanban.groupUsers.map((obj) => {
+        return obj.userId;
+      });
+      if (!usersInKanban.includes(id)) {
+        return res.status(403).render("error", {
+          title: "Error Page",
+          error: "Cannot access this kanban",
+          buttonTitle: "Back to accounts page",
+          link: "/user/accountsPage",
+        });
+      }
+    } catch (e) {
+      return res.status(500).render("error", { title: "Error Page", error: e });
+    }
+  }
+  next();
+});
+app.use("/kanban/vote", async (req, res, next) => {
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
+    if (isAuth) {
+      return res.redirect("/user/accountsPage");
+    }
+  }
   next();
 });
 app.use("/kanban/vote/:taskId", async (req, res, next) => {
@@ -290,19 +413,39 @@ app.use("/kanban/vote/:taskId", async (req, res, next) => {
   }
   try {
     if (!req.session.selectedKanbanId)
-      throw "Error: cookie does not contian Kanban!";
+      return res.status(403).render("error", {
+        title: "Error Page",
+        error: "There is no kanban in cookie!",
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
     const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
     let usersInKanban = kanban.groupUsers.map((obj) => {
       return obj.userId;
     });
     if (!usersInKanban.includes(id)) {
-      return res.render("error", {
-        error: "User cannot access this kanban ",
-      }); //Or should this just be error
+      return res.status(403).render("error", {
+        title: "Error Page",
+        error: "Cannot access this kanban",
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
     }
   } catch (e) {
-    return res.render("error", { error: e }); //Or should this just be error
-  } //Or should this just be error}
+    return res.status(500).render("error", { title: "Error Page", error: e });
+  }
+  next();
+});
+app.use("/kanban/changeStatus", async (req, res, next) => {
+  console.log("ChangeStatus Middleware");
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/login");
+    }
+    if (isAuth) {
+      return res.redirect("/user/accountsPage");
+    }
+  }
   next();
 });
 app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
@@ -311,19 +454,27 @@ app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
   }
   try {
     if (!req.session.selectedKanbanId)
-      throw "Error: cookie does not contian Kanban!";
+      return res.status(403).render("error", {
+        title: "Error Page",
+        error: "There is no kanban in cookie!",
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
     const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
     let usersInKanban = kanban.groupUsers.map((obj) => {
       return obj.userId;
     });
     if (!usersInKanban.includes(id)) {
-      return res.render("error", {
-        error: "User cannot access this kanban ",
-      }); //Or should this just be error
+      return res.status(403).render("error", {
+        title: "Error Page",
+        error: "Cannot access this kanban",
+        buttonTitle: "Back to accounts page",
+        link: "/user/accountsPage",
+      });
     }
   } catch (e) {
-    return res.render("error", { error: e }); //Or should this just be error
-  } //Or should this just be error}
+    return res.status(500).render("error", { title: "Error Page", error: e });
+  }
   next();
 });
 app.use("/error", async (req, res, next) => {

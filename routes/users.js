@@ -32,6 +32,7 @@ router
         req.session.selectedKanbanId
       );
       res.render("profile", {
+        title: "Profile Page",
         groups: kanbans,
         currentKanban: selectedKanban,
         user: user.username,
@@ -120,6 +121,7 @@ router.route("/accountsPage").get(async (req, res) => {
   try {
     const user = await userFxns.getUserById(req.session.user._id); //Not used
     res.render("accounts", {
+      title: "Accounts Page",
       userId: req.session.user._id,
       username: user.username,
     }); //Change this to render when we have pages
