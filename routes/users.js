@@ -38,6 +38,7 @@ router
         req.session.user._id,
         req.session.selectedKanbanId
       );
+      console.log(selectedKanbanUserProfile.rewards);
       res.render("profile", {
         title: "Profile Page",
         groups: kanbans,
@@ -86,7 +87,10 @@ router.route("/privateUser/selectPicture").post(async (req, res) => {
 router.route("/privateUser/selectBorder").post(async (req, res) => {
   try {
     let content = req.body;
-    content.chooseBorder = validation.checkStringV2(content.chooseBorder);
+    content.chooseBorder = validation.checkStringV2(
+      content.chooseBorder,
+      "Border"
+    );
     let updatedInfo = await kanbanFxns.updateSelectedUserRewards(
       req.session.user._id,
       req.session.selectedKanbanId,
@@ -102,7 +106,10 @@ router.route("/privateUser/selectBorder").post(async (req, res) => {
 router.route("/privateUser/selectColor").post(async (req, res) => {
   try {
     let content = req.body;
-    content.chooseColor = validation.checkStringV2(content.chooseColor);
+    content.chooseColor = validation.checkStringV2(
+      content.chooseColor,
+      "Color"
+    );
     let updatedInfo = await kanbanFxns.updateSelectedUserRewards(
       req.session.user._id,
       req.session.selectedKanbanId,
