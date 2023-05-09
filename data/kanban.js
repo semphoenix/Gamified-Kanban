@@ -1,4 +1,5 @@
 import { kanbans } from "../config/mongoCollections.js";
+import { users } from "../config/mongoCollections.js";
 import userData from "./users.js";
 import { ObjectId } from "mongodb";
 import validation from "../validation.js";
@@ -211,6 +212,19 @@ let exportedMethods = {
         $set: {
           "groupUsers.$.rewards": rewards,
           "groupUsers.$.points": points,
+        },
+      },
+      { returnDocument: "after" }
+    );
+    let userCollection = await users();
+    const user = await userCollection.findOne({
+      _id: new ObjectId(userId),
+    });
+    const insertInfoUser = await userCollection.findOneAndUpdate(
+      { _id: new ObjectId(userId) },
+      {
+        $set: {
+          totalRewards: user.totalRewards + 1,
         },
       },
       { returnDocument: "after" }

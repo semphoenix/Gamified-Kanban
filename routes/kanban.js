@@ -300,10 +300,14 @@ router
       const kanban = await kanbanFxns.getKanbanById(
         req.session.selectedKanbanId
       );
+      const points = await kanbanFxns.getUserPoints(
+        req.session.user._id,
+        req.session.selectedKanbanId
+      );
       return res.render("gatcha", {
         title: "Gatcha Page",
         groupName: kanban.groupName,
-        points: user.points,
+        points: points,
         reward: reward,
       }); // TODO: Change to render the gatcha page with new amount of points
     } catch (e) {
