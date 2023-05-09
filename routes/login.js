@@ -1,5 +1,6 @@
 import { Router } from "express";
 const router = Router();
+import xss from 'xss'
 import { userFxns } from "../data/index.js";
 import validation from "../validation.js";
 
@@ -17,12 +18,12 @@ router
     let errors = [];
     // if there's a problem with input, will be added to errors
     try {
-      userData.username = validation.checkString(userData.username, "Username");
+      userData.username = validation.checkString(xss(userData.username), "Username");
     } catch (e) {
       errors.push(e);
     }
     try {
-      userData.password = validation.checkString(userData.password, "Password");
+      userData.password = validation.checkString(xss(userData.password), "Password");
     } catch (e) {
       errors.push(e);
     }
@@ -68,14 +69,14 @@ router
     let errors = [];
     // if there's a problem with input, will be added to errors
     try {
-      userData.username = validation.checkString(userData.username, "Username");
+      userData.username = validation.checkString(xss(userData.username), "Username");
       userForm["username"] = userData.username;
     } catch (e) {
       errors.push(e);
     }
     try {
       userData.password = validation.checkPassword(
-        userData.password,
+        xss(userData.password),
         "Password"
       );
     } catch (e) {
