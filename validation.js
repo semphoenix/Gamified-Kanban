@@ -119,6 +119,13 @@ const exportedMethods = {
 
     return arr;
   },
+
+  checkQuantity(num, varName){
+    if(num === undefined) throw `Error: ${varName} undefined!`
+    if(typeof(num) != "number") throw `Error: ${varName} is not a number!`
+    if(num < 0) throw `Error: ${varName} should not be negative!`
+    return num
+  }
 };
 
 export default exportedMethods;

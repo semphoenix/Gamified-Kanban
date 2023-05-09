@@ -162,28 +162,30 @@ router
     }
   });
 
-router.route("/createTask").post(async (req, res) => {
-  console.log("/createTask", req.body);
-  let { taskname, taskdescription, taskdifficulty } = req.body;
-  console.log("taskname", taskname);
-  taskname = validation.checkString(taskname, "route /createTask taskname");
-  taskdescription = validation.checkString(
-    taskdescription,
-    "route /createTask taskdescription"
-  );
-  taskdifficulty = validation.checkDifficulty(
-    Number(taskdifficulty),
-    "route /createTask taskdifficulty"
-  );
-  let created = await taskFxns.createTask(
-    req.session.selectedKanbanId,
-    req.session.user._id,
-    taskname,
-    taskdescription,
-    taskdifficulty,
-    0
-  );
-  res.redirect("/kanban/kanbans");
+router
+  .route("/createTask")
+  .post(async (req, res) => {
+    console.log("/createTask", req.body);
+    let { taskname, taskdescription, taskdifficulty } = req.body;
+    console.log("taskname", taskname);
+    taskname = validation.checkString(taskname, "route /createTask taskname");
+    taskdescription = validation.checkString(
+      taskdescription,
+      "route /createTask taskdescription"
+    );
+    taskdifficulty = validation.checkDifficulty(
+      Number(taskdifficulty),
+      "route /createTask taskdifficulty"
+    );
+    let created = await taskFxns.createTask(
+      req.session.selectedKanbanId,
+      req.session.user._id,
+      taskname,
+      taskdescription,
+      taskdifficulty,
+      0
+    );
+    res.redirect("/kanban/kanbans");
 });
 
 router.route("/createKanban/joinGroup").post(async (req, res) => {
@@ -210,7 +212,7 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     kanbanId = validation.checkId(xss(kanbanId.groupId), "Group Id");
   } catch (e) {
     return res.status(400).render("createKanban", {
-      title: "Accounts Page",
+      title: "Create/Join Group Page",
       username: user.username,
       error: e,
     });
@@ -264,19 +266,6 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     return res.status(500).render("error", { title: "Error Page", error: e });
   }
 });
-
-router
-  .route("/accounts")
-  .get(async (req, res) => {
-    try{
-      validation.checkId(req.session.selectedKanbanId, "Current Kanban")
-      validation.checkNumber(req.session.user.totalTasks, "Total Task Count")
-      validation.checkNumber(req.session.user.totalRewards, "Total Reward Count")
-      return res.render("accounts", {totalCompletedTasks: req.session.user.totalTasks, totalRewards: req.session.user.totalRewards})
-    } catch(e){
-      return res.status(400).render("error", {error: e, totalCompletedTasks: req.session.user.totalTasks, totalRewards: req.session.user.totalRewards})
-    }
-  })
 
 router
   .route("/gatcha")

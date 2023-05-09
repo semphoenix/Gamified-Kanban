@@ -104,7 +104,7 @@ let myMiddleWares = () => {
     }
     next();
   });
-  app.use("/kanban/createKanban", async (req, res, next) => {
+  app.use("/user/createKanban", async (req, res, next) => {
     if (!isAuth) {
       return res.redirect("/login");
     }
