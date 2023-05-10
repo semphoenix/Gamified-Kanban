@@ -20,6 +20,7 @@ router
       );
 
       let kanbans = await kanbanFxns.getAllKanbans(user.groups);
+      const userColors = selectedKanban.userColors; // gets the user colors to apply to the kanban page
 
       let todoTasks = await taskFxns.getSomeTasks(
         req.session.selectedKanbanId,
@@ -37,16 +38,19 @@ router
       for (const task of todoTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
         task.user = username;
+        task.color = userColors[task.assignment];
       }
 
       for (const task of inprogressTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
         task.user = username;
+        task.color = userColors[task.assignment];
       }
 
       for (const task of inreviewTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
         task.user = username;
+        task.color = userColors[task.assignment];
         task.canVote =
           task.assignment !== req.session.user._id &&
           task.votingStatus[req.session.user._id] === -1;

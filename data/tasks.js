@@ -1,4 +1,5 @@
 import kanbanFxns from "./kanban.js";
+import { userFxns } from "./index.js";
 import validation from "../validation.js";
 import { kanbans } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
@@ -184,7 +185,10 @@ let exportedMethods = {
         if (user.userId === task.assignment) {
           user.points += 5;
         }
-      }      
+      }   
+      // increments the completed task
+      await userFxns.addCompletedTask(task.assignment);
+      
     } else if(rejectedVotes > num_to_accept) {
       task.status = 0;
       // resets the votes again since it's being moved back to todo
