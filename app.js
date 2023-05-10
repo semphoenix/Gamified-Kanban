@@ -56,11 +56,17 @@ app.use("/", async (req, res, next) => {
   }
   if (req.path === "/") {
     if (isAuth) return res.redirect(`/user/createKanban`);
-    else return res.redirect("/login");
+    else return res.redirect("/landingPage");
   }
   next();
 });
-
+app.use("/landingPage", async (req, res, next) => {
+  if (isAuth) {
+    res.redirect(`/user/createKanban`);
+    return;
+  }
+  next();
+});
 app.use("/login", async (req, res, next) => {
   if (isAuth) {
     res.redirect(`/user/createKanban`);
@@ -78,7 +84,7 @@ app.use("/signup", async (req, res, next) => {
 });
 app.use("/logout", async (req, res, next) => {
   if (!isAuth) {
-    res.redirect(`/login`);
+    res.redirect(`/landingPage`);
     return;
   }
   next();
@@ -86,7 +92,7 @@ app.use("/logout", async (req, res, next) => {
 app.use("/user", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     } else if (isAuth) {
       return res.redirect(`/user/createKanban`);
     }
@@ -96,7 +102,7 @@ app.use("/user", async (req, res, next) => {
 app.use("/user/accountsPage", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
   }
   next();
@@ -105,7 +111,7 @@ app.use("/user/privateUser", async (req, res, next) => {
   // Have to check if you can access page
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     let user = await userFxns.getUserById(id);
     if (user.groups === 0) {
@@ -123,7 +129,7 @@ app.use("/user/privateUser/selectPicture", async (req, res, next) => {
   // Have to check if you can access page
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       let user = await userFxns.getUserById(id);
@@ -148,7 +154,7 @@ app.use("/user/privateUser/selectBorder", async (req, res, next) => {
   // Have to check if you can access page
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       let user = await userFxns.getUserById(id);
@@ -173,7 +179,7 @@ app.use("/user/privateUser/selectColor", async (req, res, next) => {
   // Have to check if you can access page
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       let user = await userFxns.getUserById(id);
@@ -194,7 +200,7 @@ app.use("/user/privateUser/selectColor", async (req, res, next) => {
 app.use("/user/createKanban", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
   }
   next();
@@ -202,7 +208,7 @@ app.use("/user/createKanban", async (req, res, next) => {
 app.use("/kanban", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     } else if (isAuth) {
       return res.redirect(`/createKanban`);
     }
@@ -212,7 +218,7 @@ app.use("/kanban", async (req, res, next) => {
 app.use("/kanban/kanbans", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       if (!req.session.selectedKanbanId)
@@ -245,7 +251,7 @@ app.use("/kanban/kanbans", async (req, res, next) => {
 app.use("/user/createKanban", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
   }
   next();
@@ -253,7 +259,7 @@ app.use("/user/createKanban", async (req, res, next) => {
 app.use("/user/createKanban/createGroup", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       const user = await userFxns.getUserById(id);
@@ -274,7 +280,7 @@ app.use("/user/createKanban/createGroup", async (req, res, next) => {
 app.use("/user/createKanban/joinGroup", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       const user = await userFxns.getUserById(id);
@@ -294,7 +300,7 @@ app.use("/user/createKanban/joinGroup", async (req, res, next) => {
 app.use("/kanban/createTask", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       if (!req.session.selectedKanbanId)
@@ -327,7 +333,7 @@ app.use("/kanban/createTask", async (req, res, next) => {
 app.use("/kanban/gatcha", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       if (!req.session.selectedKanbanId)
@@ -360,7 +366,7 @@ app.use("/kanban/gatcha", async (req, res, next) => {
 app.use("/kanban/completedTasks", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       if (!req.session.selectedKanbanId)
@@ -393,7 +399,7 @@ app.use("/kanban/completedTasks", async (req, res, next) => {
 app.use("/kanban/vote", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     if (isAuth) {
       return res.redirect("/user/createKanban");
@@ -403,7 +409,7 @@ app.use("/kanban/vote", async (req, res, next) => {
 });
 app.use("/kanban/vote/:taskId", async (req, res, next) => {
   if (!isAuth) {
-    return res.redirect("/login");
+    return res.redirect("/landingPage");
   }
   try {
     if (!req.session.selectedKanbanId)
@@ -431,10 +437,9 @@ app.use("/kanban/vote/:taskId", async (req, res, next) => {
   next();
 });
 app.use("/kanban/changeStatus", async (req, res, next) => {
-  console.log("ChangeStatus Middleware");
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     if (isAuth) {
       return res.redirect("/user/createKanban");
@@ -444,7 +449,7 @@ app.use("/kanban/changeStatus", async (req, res, next) => {
 });
 app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
   if (!isAuth) {
-    return res.redirect("/login");
+    return res.redirect("/landingPage");
   }
   try {
     if (!req.session.selectedKanbanId)
@@ -473,7 +478,7 @@ app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
 });
 app.use("/error", async (req, res, next) => {
   if (!isAuth) {
-    return res.redirect("/login");
+    return res.redirect("/landingPage");
   }
   next();
 });
