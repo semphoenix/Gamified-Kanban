@@ -6,8 +6,8 @@ import validation from "../validation.js";
 var colors = ["red", "blue", "orange", "green", "purple"];
 let allRewards = {
   profileRewards: [1, 2, 3, 4, 5],
-  borderRewards: ["red", "blue", "orange", "green", "purple"],
-  colorRewards: [-2, -1, 1, 2],
+  borderRewards: ["red", "blue", "orange", "green"],
+  colorRewards: [0.2, 0.4, 0.6, 0.8],
 };
 let exportedMethods = {
   /**
@@ -80,21 +80,21 @@ let exportedMethods = {
     let tasks = kanban.tasks;
     tasks.map((task) => {
       task.votingStatus[userId] = -1; // allows new user to vote on tasks
-    })
-    
+    });
+
     let newUser = {
       _id: new ObjectId(),
       userId: userId,
       points: 0,
       rewards: {
         profileRewards: [0],
-        borderRewards: ["default"],
-        colorRewards: [0],
+        borderRewards: ["black"],
+        colorRewards: [0.5],
       },
       selectedReward: {
         profileReward: 0,
-        borderReward: "default",
-        colorReward: 0,
+        borderReward: "black",
+        colorReward: 0.5,
       },
     };
     let availColors = kanban.availColors;
@@ -268,7 +268,7 @@ let exportedMethods = {
     }
 
     const validRewards = allRewards[rewardType];
-    if (rewardType === "profileRewards" || rewardType === "colorRewards") {
+    if (rewardType === "profileRewards" || rewardType === "colorReward") {
       reward = parseInt(reward);
       if (!validRewards || (!validRewards.includes(reward) && reward !== 0)) {
         throw "Error: Invalid reward";
