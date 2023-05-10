@@ -237,6 +237,9 @@
     width: 90%;
   }
   
+  #landingNav {
+    text-align: left;
+  }
   .kanban-board {
     display: flex;
     flex-direction: row;
@@ -423,7 +426,7 @@
 
    .kanban-link {
     padding: 1vh;
-    background-color: #3aa93f;
+    background-color: #008b00;
     color: #fff;
     text-decoration: none;
     border-radius: 4px;
@@ -439,7 +442,7 @@
     padding: 10px;
     font-size: 16px;
     color: white;
-    background-color: #3aa93f;
+    background-color: #008b00;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -528,7 +531,7 @@
     padding: 10px;
     font-size: 16px;
     color: white;
-    background-color: #3aa93f;
+    background-color: #008b00;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -741,3 +744,17 @@
   }
 
 
+/* ---------------------------------------------------------------- */
+
+.landing-link {
+  padding: 1vh;
+  margin-left: 2vh;
+  background-color: #0072ee;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+
+}
+.landing-link:hover {
+  background-color: #0069d9;
+}
