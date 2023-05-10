@@ -4,15 +4,17 @@
         <h1 class="page-title">Accounts Page</h1>
        
         <nav>
-            <button id="accounts-button" onclick="location.href='/user/privateUser/'" type="button">Profile Page</button>
-            <button id="accounts-button" onclick="location.href='/user/createKanban'" type="button">Create/Join Kanban</button>
+            {{!-- <button onclick="location.href='/user/privateUser/'" type="button">Profile Page</button>
+            <button onclick="location.href='/user/createKanban'" type="button">Create/Join Kanban</button> --}}
+            <a href="/user/privateUser/" class="accounts-page-link">Profile Page</a>
+            <a href="/user/createKanban/" class="accounts-page-link">Create/Join Kanban</a>
         </nav>
     </div>
 
 
     <div class="accounts-block">
         <p>Keep track of your achievements through all your groups, with the Accounts page!</p> 
-        <h2 class="accounts-total-rewards">Total Rewards: {{totalRewards}}</h1>
+        <h2 class="accounts-total-rewards">Total Rewards: {{totalRewards}}</h2>
         <h2 class="accounts-total-tasks">Total Completed Tasks: {{totalCompletedTasks}}</h2>
         {{#if error}}
             <p class="error"> Error: {{error}} </p>
