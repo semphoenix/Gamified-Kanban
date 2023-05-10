@@ -228,8 +228,8 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     return res.status(404).render("error", {
       title: "Error Page",
       error: "User is not logged in!?",
-      buttonTitle: "Back to accounts page",
-      link: "/user/accountsPage",
+      buttonTitle: "Back to create kanban page",
+      link: "/user/createKanban",
     });
   }
 
@@ -258,8 +258,8 @@ router.route("/createKanban/joinGroup").post(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error Page",
       error: e,
-      buttonTitle: "Back to accounts page",
-      link: "/user/accountsPage",
+      buttonTitle: "Back to create kanban page",
+      link: "/user/createKanban",
     });
   }
 });
@@ -274,8 +274,8 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     return res.status(404).render("error", {
       title: "Error Page",
       error: "There are no fields in the request body",
-      buttonTitle: "Back to accounts page",
-      link: "/user/accountsPage",
+      buttonTitle: "Back to create kanban page",
+      link: "/user/createKanban",
     });
   }
   let kanbanData = req.body;
@@ -283,8 +283,8 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     return res.status(400).render("error", {
       title: "Error Page",
       error: "There are no fields in the request body",
-      buttonTitle: "Back to accounts page",
-      link: "/user/accountsPage",
+      buttonTitle: "Back to create kanban page",
+      link: "/user/createKanban",
     });
   }
   try {
@@ -297,8 +297,8 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     return res.status(400).render("error", {
       title: "Error Page",
       error: e,
-      buttonTitle: "Back to accounts page",
-      link: "/user/accountsPage",
+      buttonTitle: "Back to create kanban page",
+      link: "/user/createKanban",
     });
   }
   try {
@@ -311,8 +311,8 @@ router.route("/createKanban/createGroup").post(async (req, res) => {
     return res.status(500).render("error", {
       title: "Error Page",
       error: e,
-      buttonTitle: "Back to accounts page",
-      link: "/user/accountsPage",
+      buttonTitle: "Back to create kanban page",
+      link: "/user/createKanban",
     });
   }
 });
