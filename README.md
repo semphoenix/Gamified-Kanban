@@ -14,17 +14,17 @@ Once you register an account you can:
 9. See all the Completed Tasks of a Kanban
 10. View User Stats
 
-To get started, you will need to download all our code. 
+To get started, you will need to download all our code. You can either download directly from GitHub, or if you have git installed, clone the repo.  
 
-You must run the following commands:
-$ git clone https://github.com/semphoenix/Gamified-Kanban
-$ cd Gamified-Kanban
-$ npm install
+```$ git clone https://github.com/semphoenix/Gamified-Kanban```\
+```$ cd Gamified-Kanban```\
+This will install all dependencies: \
+```$ npm install```
 
 To seed the database, you must run:
-$ npm run seed
+```$ npm run seed```
 
 Then, to start the application, you must run: 
-$ npm start
+```$ npm start```
 
 This will start our application on http://localhost:3000, which can be opened in any browser. 
