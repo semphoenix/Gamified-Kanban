@@ -474,7 +474,7 @@ router.route("/vote/:taskId").patch(async (req, res) => {
   }
 
   try {
-    const task = await taskFxns.castVote(userId, taskId, vote);
+    const { tenVotes, task } = await taskFxns.castVote(userId, taskId, vote);
     let voterIds = Object.keys(task.votingStatus);
     let voterUsers = [];
     for (let j = 0; j < voterIds.length; j++) {
@@ -500,6 +500,7 @@ router.route("/vote/:taskId").patch(async (req, res) => {
       completed: task.status === 3,
       rejected: task.status === 0,
       votingStatus: voterUsers,
+      tenVotes: tenVotes
     });
   } catch (e) {
     return res.status(404).render("error", {
