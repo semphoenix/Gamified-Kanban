@@ -4,6 +4,15 @@ import xss from "xss";
 import { userFxns } from "../data/index.js";
 import validation from "../validation.js";
 
+router.route("/landingPage").get(async (req, res) => {
+  try {
+    res.status(200).render("landingPage", { title: "Landing Page" });
+  } catch (e) {
+    res
+      .status(500)
+      .render("error", { title: "Error Page", error: e, status: "500" });
+  }
+});
 router
   .route("/login")
   .get(async (req, res) => {
@@ -115,6 +124,7 @@ router
         SignupErrors: true,
         user: userForm,
       });
+      console.log(errors);
       return;
     }
     try {
@@ -142,6 +152,10 @@ router.get("/logout", async (req, res) => {
   req.session.destroy();
   console.log("Logged Out!");
   res.status(200).redirect("/login");
+});
+
+router.get("/landing", async (req, res) => {
+  res.render("landingPage");
 });
 
 export default router;

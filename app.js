@@ -54,14 +54,19 @@ app.use("/", async (req, res, next) => {
   } else {
     isAuth = false;
   }
-  console.log(req.path);
   if (req.path === "/") {
     if (isAuth) return res.redirect(`/user/createKanban`);
-    else return res.redirect("/login");
+    else return res.redirect("/landingPage");
   }
   next();
 });
-
+app.use("/landingPage", async (req, res, next) => {
+  if (isAuth) {
+    res.redirect(`/user/createKanban`);
+    return;
+  }
+  next();
+});
 app.use("/login", async (req, res, next) => {
   if (isAuth) {
     res.redirect(`/user/createKanban`);
@@ -79,37 +84,41 @@ app.use("/signup", async (req, res, next) => {
 });
 app.use("/logout", async (req, res, next) => {
   if (!isAuth) {
-    res.redirect(`/login`);
+    res.redirect(`/landingPage`);
     return;
   }
   next();
 });
 app.use("/user", async (req, res, next) => {
-  console.log("User Middleware");
-  console.log(req.path);
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     } else if (isAuth) {
       return res.redirect(`/user/createKanban`);
     }
   }
   next();
 });
-app.use("/user/privateUser", async (req, res, next) => {
-  // Have to check if you can access page
-  console.log("Private User Middleware");
-  console.log(req.path);
+app.use("/user/accountsPage", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
+    }
+  }
+  next();
+});
+app.use("/user/privateUser", async (req, res, next) => {
+  // Have to check if you can access page
+  if (req.path === "/") {
+    if (!isAuth) {
+      return res.redirect("/landingPage");
     }
     let user = await userFxns.getUserById(id);
     if (user.groups === 0) {
       return res.render("error", {
         title: "Error Page",
         error: "You must be in at least one kanban to access profiles page",
-        buttonTitle: "Back to accounts page",
+        buttonTitle: "Back to create/join page",
         link: "/user/createKanban",
       });
     }
@@ -118,11 +127,9 @@ app.use("/user/privateUser", async (req, res, next) => {
 });
 app.use("/user/privateUser/selectPicture", async (req, res, next) => {
   // Have to check if you can access page
-  console.log("SelectPicture Middleware");
-  console.log(req.path);
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       let user = await userFxns.getUserById(id);
@@ -130,7 +137,7 @@ app.use("/user/privateUser/selectPicture", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "You must be in at least one kanban to access profiles page",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       }
@@ -145,11 +152,9 @@ app.use("/user/privateUser/selectPicture", async (req, res, next) => {
 });
 app.use("/user/privateUser/selectBorder", async (req, res, next) => {
   // Have to check if you can access page
-  console.log("SelectBorder Middleware");
-  console.log(req.path);
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       let user = await userFxns.getUserById(id);
@@ -157,7 +162,7 @@ app.use("/user/privateUser/selectBorder", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "You must be in at least one kanban to access profiles page",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       }
@@ -172,11 +177,9 @@ app.use("/user/privateUser/selectBorder", async (req, res, next) => {
 });
 app.use("/user/privateUser/selectColor", async (req, res, next) => {
   // Have to check if you can access page
-  console.log("SelectColor Middleware");
-  console.log(req.path);
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       let user = await userFxns.getUserById(id);
@@ -184,7 +187,7 @@ app.use("/user/privateUser/selectColor", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "You must be in at least one kanban to access profiles page",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       }
@@ -195,11 +198,9 @@ app.use("/user/privateUser/selectColor", async (req, res, next) => {
   next();
 });
 app.use("/user/createKanban", async (req, res, next) => {
-  console.log("Accounts Middleware");
-  console.log(req.path);
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
   }
   next();
@@ -207,7 +208,7 @@ app.use("/user/createKanban", async (req, res, next) => {
 app.use("/kanban", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     } else if (isAuth) {
       return res.redirect(`/createKanban`);
     }
@@ -217,14 +218,14 @@ app.use("/kanban", async (req, res, next) => {
 app.use("/kanban/kanbans", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       if (!req.session.selectedKanbanId)
         return res.status(403).render("error", {
           title: "Error Page",
           error: "There is no kanban in cookie!",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       const kanban = await kanbanFxns.getKanbanById(
@@ -237,7 +238,7 @@ app.use("/kanban/kanbans", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "Cannot access this kanban",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       }
@@ -250,16 +251,15 @@ app.use("/kanban/kanbans", async (req, res, next) => {
 app.use("/user/createKanban", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
   }
   next();
 });
 app.use("/user/createKanban/createGroup", async (req, res, next) => {
   if (req.path === "/") {
-    console.log("CreateGroup Middleware");
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       const user = await userFxns.getUserById(id);
@@ -268,7 +268,7 @@ app.use("/user/createKanban/createGroup", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "User is already in 5 kanbans",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
     } catch (e) {
@@ -280,7 +280,7 @@ app.use("/user/createKanban/createGroup", async (req, res, next) => {
 app.use("/user/createKanban/joinGroup", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       const user = await userFxns.getUserById(id);
@@ -288,7 +288,7 @@ app.use("/user/createKanban/joinGroup", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "User is already in 5 kanbans",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
     } catch (e) {
@@ -300,14 +300,14 @@ app.use("/user/createKanban/joinGroup", async (req, res, next) => {
 app.use("/kanban/createTask", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       if (!req.session.selectedKanbanId)
         return res.status(403).render("error", {
           title: "Error Page",
           error: "There is no kanban in cookie!",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       const kanban = await kanbanFxns.getKanbanById(
@@ -320,7 +320,7 @@ app.use("/kanban/createTask", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "Cannot access this kanban",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       }
@@ -333,14 +333,14 @@ app.use("/kanban/createTask", async (req, res, next) => {
 app.use("/kanban/gatcha", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       if (!req.session.selectedKanbanId)
         return res.status(403).render("error", {
           title: "Error Page",
           error: "There is no kanban in cookie!",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       const kanban = await kanbanFxns.getKanbanById(
@@ -353,7 +353,7 @@ app.use("/kanban/gatcha", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "Cannot access this kanban",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       }
@@ -366,14 +366,14 @@ app.use("/kanban/gatcha", async (req, res, next) => {
 app.use("/kanban/completedTasks", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     try {
       if (!req.session.selectedKanbanId)
         return res.status(403).render("error", {
           title: "Error Page",
           error: "There is no kanban in cookie!",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       const kanban = await kanbanFxns.getKanbanById(
@@ -386,7 +386,7 @@ app.use("/kanban/completedTasks", async (req, res, next) => {
         return res.status(403).render("error", {
           title: "Error Page",
           error: "Cannot access this kanban",
-          buttonTitle: "Back to accounts page",
+          buttonTitle: "Back to create/join page",
           link: "/user/createKanban",
         });
       }
@@ -399,7 +399,7 @@ app.use("/kanban/completedTasks", async (req, res, next) => {
 app.use("/kanban/vote", async (req, res, next) => {
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     if (isAuth) {
       return res.redirect("/user/createKanban");
@@ -409,14 +409,14 @@ app.use("/kanban/vote", async (req, res, next) => {
 });
 app.use("/kanban/vote/:taskId", async (req, res, next) => {
   if (!isAuth) {
-    return res.redirect("/login");
+    return res.redirect("/landingPage");
   }
   try {
     if (!req.session.selectedKanbanId)
       return res.status(403).render("error", {
         title: "Error Page",
         error: "There is no kanban in cookie!",
-        buttonTitle: "Back to accounts page",
+        buttonTitle: "Back to create/join page",
         link: "/user/createKanban",
       });
     const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
@@ -427,7 +427,7 @@ app.use("/kanban/vote/:taskId", async (req, res, next) => {
       return res.status(403).render("error", {
         title: "Error Page",
         error: "Cannot access this kanban",
-        buttonTitle: "Back to accounts page",
+        buttonTitle: "Back to create/join page",
         link: "/user/createKanban",
       });
     }
@@ -437,10 +437,9 @@ app.use("/kanban/vote/:taskId", async (req, res, next) => {
   next();
 });
 app.use("/kanban/changeStatus", async (req, res, next) => {
-  console.log("ChangeStatus Middleware");
   if (req.path === "/") {
     if (!isAuth) {
-      return res.redirect("/login");
+      return res.redirect("/landingPage");
     }
     if (isAuth) {
       return res.redirect("/user/createKanban");
@@ -450,14 +449,14 @@ app.use("/kanban/changeStatus", async (req, res, next) => {
 });
 app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
   if (!isAuth) {
-    return res.redirect("/login");
+    return res.redirect("/landingPage");
   }
   try {
     if (!req.session.selectedKanbanId)
       return res.status(403).render("error", {
         title: "Error Page",
         error: "There is no kanban in cookie!",
-        buttonTitle: "Back to accounts page",
+        buttonTitle: "Back to create/join page",
         link: "/user/createKanban",
       });
     const kanban = await kanbanFxns.getKanbanById(req.session.selectedKanbanId);
@@ -468,7 +467,7 @@ app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
       return res.status(403).render("error", {
         title: "Error Page",
         error: "Cannot access this kanban",
-        buttonTitle: "Back to accounts page",
+        buttonTitle: "Back to create/join page",
         link: "/user/createKanban",
       });
     }
@@ -479,7 +478,7 @@ app.use("/kanban/changeStatus/:taskId", async (req, res, next) => {
 });
 app.use("/error", async (req, res, next) => {
   if (!isAuth) {
-    return res.redirect("/login");
+    return res.redirect("/landingPage");
   }
   next();
 });

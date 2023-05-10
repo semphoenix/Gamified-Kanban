@@ -1,4 +1,5 @@
 import kanbanFxns from "./kanban.js";
+import { userFxns } from "./index.js";
 import validation from "../validation.js";
 import { kanbans } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
@@ -156,6 +157,7 @@ let exportedMethods = {
     });
     if (task.assignment === userId)
       throw "Error: user cannot vote on their own task";
+    if (task.status === 3) throw "Error: task is already completed";
     // get the task from taskId, go into votingstatus, find the key that matches userId and set the
     // value to cite
     task.votingStatus[userId] = vote;
@@ -173,8 +175,8 @@ let exportedMethods = {
     
     // novotes is at least 1 because of the user whose task it is doesn't vote
     let draw = (noVotes === 1 && acceptedVotes === rejectedVotes);
-
-    if (acceptedVotes > kanban.groupUsers.length/2 || draw) {
+    let num_to_accept = kanban.groupUsers.length/2 - 1;
+    if (acceptedVotes > num_to_accept || draw) {
       task.status = 3;
       kanban.completedTasks += 1;
       // I changed this because it gave points to the user who casted the final vote, not the person whose task it is
@@ -183,8 +185,11 @@ let exportedMethods = {
         if (user.userId === task.assignment) {
           user.points += 5;
         }
-      }      
-    } else if(rejectedVotes > kanban.groupUsers.length/2) {
+      }   
+      // increments the completed task
+      await userFxns.addCompletedTask(task.assignment);
+      
+    } else if(rejectedVotes > num_to_accept) {
       task.status = 0;
       // resets the votes again since it's being moved back to todo
       users.forEach((user) => {

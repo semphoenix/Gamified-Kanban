@@ -19,9 +19,9 @@ router
       const user = await userFxns.getUserById(req.session.user._id);
 
       // Make sure user is part of a group
-      if (user.groups.length === 0)
-        throw "Route: privateUser ~ User should be part of a group before getting here!";
-
+      if (user.groups.length === 0){
+        return res.status(500).render("error", {error: "Route: privateUser ~ User should be part of a group before getting here!", buttonTitle: "Back to Accounts", link:"/user/createKanban"})
+      }
       // Check the cookie for SelectedKanbanId & default to first group if not found
       if (!req.session.selectedKanbanId)
         req.session.selectedKanbanId = user.groups[0];
@@ -146,6 +146,7 @@ router
   .route("/accountsPage")
   .get(async (req, res) => {
     try{  
+      if(!req.session.selectedKanbanId) throw "No kanban in cookie. Please join or create a kanban!"
       validation.checkId(req.session.selectedKanbanId, "Current Kanban")
       validation.checkQuantity(req.session.user.completedTasks, "Total Task Count")
       validation.checkQuantity(req.session.user.totalRewards, "Total Reward Count")
@@ -170,6 +171,11 @@ router
     try {
       if (!req.session.user)
         throw "Router: /createKanban ~ User param not attached to session cookie!";
+      if (!req.session.selectedKanbanId){
+        if(req.session.user.groups.length === 0) throw "Router: /createKanban ~ You need to join a group! Join a group or create your own"
+        req.session.selectedKanbanId = req.session.user.groups[0]
+      }
+      req.session.selectedKanbanId = validation.checkId(req.session.selectedKanbanId, "Selected Kanban Id")
       req.session.user._id = validation.checkId(req.session.user._id, "User Id");
     } catch (e) {
       return res.status(400).render("error", { title: "Error Page", error: e });
