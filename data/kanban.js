@@ -9,6 +9,7 @@ let allRewards = {
   borderRewards: ["red", "blue", "orange", "green", "purple"],
   colorRewards: [-2, -1, 1, 2],
 };
+
 let exportedMethods = {
   /**
    *

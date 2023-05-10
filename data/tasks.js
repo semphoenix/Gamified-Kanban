@@ -1,5 +1,5 @@
 import kanbanFxns from "./kanban.js";
-import { userFxns } from "./index.js";
+import userFxns from "./users.js";
 import validation from "../validation.js";
 import { kanbans } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
@@ -230,4 +230,6 @@ let exportedMethods = {
     return someTasks;
   },
 };
+
 export default exportedMethods;
+
