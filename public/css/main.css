@@ -127,17 +127,42 @@
     font-size: 2rem;
   }
 
-
-  #accounts-profile-link {
+  .accounts-page-link {
     padding: 1vh;
     background-color: #0072ee;
     color: #fff;
     text-decoration: none;
     border-radius: 4px;
   }
-  #accounts-profile-link:hover {
+  .accounts-page-link:hover {
     background-color: #0069d9;
   }
+
+  .accounts-profile-link {
+    padding: 1vh;
+    background-color: #0072ee;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+  }
+  .accounts-profile-link:hover {
+    background-color: #0069d9;
+  }
+
+  .profile-link {
+    padding: 1vh;
+    margin-left: 2vh;
+    background-color: #0072ee;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+
+  }
+  .profile-link:hover {
+    background-color: #0069d9;
+  }
+
+  
   .join-group-block h2, .create-group-block h2 {
     margin: 0;
     font-size: 1.5rem;
@@ -209,9 +234,12 @@
   }
 
   nav button {
-    width: 90%%;
+    width: 90%;
   }
   
+  #landingNav {
+    text-align: left;
+  }
   .kanban-board {
     display: flex;
     flex-direction: row;
@@ -294,6 +322,10 @@
     font-size: 1rem;
   }
 
+
+  #create-task-button {
+    width: 90%;
+  }
   #task-button {
     margin-bottom: 1vh;
     padding: 1vh 2vh;
@@ -309,6 +341,7 @@
   #task-button:hover {
     background-color: #ff9900;
   }
+
 
   #create-new-task-block {
     display: none;
@@ -327,30 +360,6 @@
     display: block;
     font-size: 1.2rem;
     margin-bottom: 5px;
-  }
-
-  .create-task-form-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 1vh;
-    font-size: 1.2rem;
-    border: 1px solid gray;
-    border-radius: 5px;
-  }
-
-  .create-task-form-input:focus {
-    outline: none;
-    border-color: #e37800;
-  }
-  #create-task-form button {
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    background-color: #e37800;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-left: 10px;
   }
 
   #create-task-form button:hover {
@@ -409,28 +418,23 @@
     align-items: center;
   }
 
-   #chooseGroup {
-    text-align: center;
-  }
-
   .sideButtons button, .kanban-board input[type="submit"] {
     font-size: 2vh;
     margin-top: 1vh;
     width: 19vh;
   }
 
-  #kanban-button {
-    width: 90%;
-    background-color: #3aa93f;
-    margin-left: 1vh;
+   .kanban-link {
+    padding: 1vh;
+    background-color: #008b00;
     color: #fff;
-    padding: 1vh 2vh;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+    text-decoration: none;
+    border-radius: 4px;
+    width: 100%;
+    text-align: center;
+    margin-top: 1vh;
   }
-
-  #kanban-button:hover {
+  .kanban-link:hover {
     background-color: #3e8e41;
   }
 
@@ -438,7 +442,7 @@
     padding: 10px;
     font-size: 16px;
     color: white;
-    background-color: #3aa93f;
+    background-color: #008b00;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -496,7 +500,8 @@
   }
 
   .reward-container {
-    margin-left: 30%;
+    margin-left: 40%;
+    margin-right: auto;
     /* background-color: #fff; */
     border: 2px solid black;
     height: 30vh;
@@ -526,7 +531,7 @@
     padding: 10px;
     font-size: 16px;
     color: white;
-    background-color: #3aa93f;
+    background-color: #008b00;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -559,44 +564,34 @@
       color: red;
   }
 
-  /* form {
-      flex-direction: "column";
-  }
-
-  h1 {
-      align-self: "center";
-  } 
 
   ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
-  /* Style for the group button block */
   .group-button-block {
     display: flex;
     flex-direction: row;
   }
 
 
-  /* Style for the choose group label */
   .group-button-block label {
     display: flex;
     flex-direction: row;
     font-size: 2rem;
   }
 
-  /* Style for the choose group select */
   #chooseGroup {
+    text-align: center;
     margin-left: 1vh;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-size: 1rem;
-    height: 3vh;
+    font-size: 2vh;
+    height: 4vh;
     width: 80%;
     margin-right: 10px;
   }
 
-  /* Style for the accounts button */
   .accounts-button, .kanban-button, .group-button-block {
     display: flex;
     flex-direction: row;
@@ -749,3 +744,17 @@
   }
 
 
+/* ---------------------------------------------------------------- */
+
+.landing-link {
+  padding: 1vh;
+  margin-left: 2vh;
+  background-color: #0072ee;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+
+}
+.landing-link:hover {
+  background-color: #0069d9;
+}

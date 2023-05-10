@@ -6,7 +6,7 @@
             <h1 id="group-heading-text">{{groupName}}</h1>
             <h2 id="group-id">Group Id: {{kanbanId}}</h2>
             <div class="logout-button" id="logout-button">
-                <button onclick="window.location.href='/logout';">Logout</button>
+                <button onclick="window.location.href='/logout'">Logout</button>
             </div>
         </div>
         
@@ -24,7 +24,7 @@
                     <option class="choosen-group-option" value="{{this._id}}">{{this.groupName}}</option>
                     {{/each}}
                 </select>
-                <input type="submit" value="submit"/>
+                <input type="submit" value="submit">
             </form>
         </div>
 
@@ -34,13 +34,13 @@
         </div>
 
         <div class="sideButtons">
-            <button id="kanban-button" onclick="location.href='/kanban/gatcha'" type="button">Gacha</button>
-            <button id="kanban-button" onclick="location.href='/kanban/completedTasks'" type="button">Completed Tasks</button>
-            <button id="kanban-button" onclick="location.href='/user/privateUser'" type="button">Profile</button>
-            <button id="kanban-button" onclick="location.href='/user/createKanban'" type="button">Create/Join Kanban</button>
-            {{!-- <a href="/kanban/gatcha"><button id="gacha-button">Gacha</button></a>
-            <a href="/kanban/completedTasks"><button id="completed-tasks-button">Completed Tasks</button></a>
-            <a href="/user/privateUser"><button id="profile-button">Profile</button></a> --}}
+
+            <a href="/kanban/gatcha" class="kanban-link">Gatcha</a>
+            <a href="/kanban/completedTasks" class="kanban-link">Completed Tasks</a>
+            <a href="/user/privateUser" class="kanban-link">Profile</a>
+            <a href="/user/createKanban" class="kanban-link">Create/Join Kanban</a>
+
+
         </div>
     </div>
     
@@ -78,7 +78,7 @@
                 <p class="task-description">{{this.description}}</p>
                 <p class="task-user">Assigned to: {{this.user}}</p>
                 {{#if this.canVote}}
-                    <form class="task-vote-form">
+                    <form id="task-vote-form" class="task-vote-form">
                         <label for="task-vote">Approve? </label>
                         <select class="task-vote" name="task-vote" id="task-vote" form="task-vote-form">
                             <option value="1">Yes</option>
@@ -119,6 +119,6 @@
                 <button type="button" id="cancel-button">Close</button>
             </div>
         </form>
-        <div id="task-error"></div hidden>
+        <div id="task-error"  hidden></div>
     </div>
 </div>
