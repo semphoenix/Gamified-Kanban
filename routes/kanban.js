@@ -43,7 +43,6 @@ router
         );
         task.user = username;
         task.color = userColors[task.assignment];
-        task.brightness = userKanban.selectedReward.colorReward;
       }
 
       for (const task of inprogressTasks) {
@@ -54,7 +53,6 @@ router
         );
         task.user = username;
         task.color = userColors[task.assignment];
-        task.brightness = userKanban.selectedReward.colorReward;
       }
       for (const task of inreviewTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
@@ -64,7 +62,6 @@ router
         );
         task.user = username;
         task.color = userColors[task.assignment];
-        task.brightness = userKanban.selectedReward.colorReward;
         task.canVote =
           task.assignment !== req.session.user._id &&
           task.votingStatus[req.session.user._id] === -1;
