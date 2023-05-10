@@ -269,15 +269,20 @@ let exportedMethods = {
     }
 
     const validRewards = allRewards[rewardType];
-    if (rewardType === "profileRewards" || rewardType === "colorReward") {
+    if (rewardType === "profileRewards") {
       reward = parseInt(reward);
       if (!validRewards || (!validRewards.includes(reward) && reward !== 0)) {
+        throw "Error: Invalid reward";
+      }
+    } else if (rewardType === "colorReward") {
+      reward = parseInt(reward);
+      if (!validRewards || (!validRewards.includes(reward) && reward !== 0.5)) {
         throw "Error: Invalid reward";
       }
     } else {
       if (
         !validRewards ||
-        (!validRewards.includes(reward) && reward !== "default")
+        (!validRewards.includes(reward) && reward !== "black")
       ) {
         throw "Error: Invalid reward";
       }
