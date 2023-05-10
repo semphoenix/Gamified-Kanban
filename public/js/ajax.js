@@ -91,8 +91,7 @@
             }).fail(function() {
                 alert("drag failed");
             });
-
-        },
+        }
     });
 
     $(".kanban-task-block").on("submit", function(event) {
@@ -105,9 +104,8 @@
         try {
             vote = checkVote(+vote, "vote");
         } catch(e) {
-            const error = `<li>${e}</li>`;
-            form.children(".error-list").append(error);
-            form.children(".error-list").hidden = false;
+            alert("invalid vote option");
+            return;
         }
 
         $.ajax({
@@ -118,7 +116,7 @@
             }
         })
         .done(function(result) {
-            const { completed, votingStatus, rejected } = result;
+            const { completed, votingStatus, rejected, tenVotes } = result;
             if (completed) {
                 task.remove();
                 alert("task has been marked complete and will be moved to completed tasks page");
@@ -135,6 +133,9 @@
                 task.children(".task-vote-form").remove();
                 task.append(votingStatusList);
             }
+
+            if(tenVotes) 
+                alert("completed 10 more tasks, all users get 10 points!");
         })
         .fail(function(xhr, status, error) {
             alert(error);

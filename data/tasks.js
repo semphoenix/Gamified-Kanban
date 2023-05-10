@@ -31,6 +31,12 @@ let exportedMethods = {
       return uid;
     }, {});
 
+    if(!kanban)
+      throw "Error: kanban with that Id doesn't exist";
+    
+    if (kanban.groupUsers.length < 2)
+      throw "Error: kanban must have at least two users to start adding tasks";
+
     // any limit on number of tasks per kanban or per users?
     const newTask = {
       _id: new ObjectId(),
@@ -196,6 +202,15 @@ let exportedMethods = {
       });
     }
 
+    let tenVotes = false;
+    if (kanban.completedTasks%10===0) {
+      for (let i = 0; i < kanban.groupUsers.length; i++) {
+        const user = kanban.groupUsers[i];
+        user.points += 10;
+      }   
+      tenVotes = true;
+    }
+
     const updateInfo = {
       tasks: kanban.tasks,
       completedTasks: kanban.completedTasks,
@@ -208,7 +223,7 @@ let exportedMethods = {
       { returnDocument: "after" }
     );
     if (res.lastErrorObject.n === 0) throw "Error: castVote failed";
-    return task;
+    return {task: task, tenVotes: tenVotes};
   },
   /**
    * This will be used to retrieve all tasks with certain status in Kanban.
