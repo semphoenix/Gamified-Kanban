@@ -11,7 +11,7 @@
         </div>
         
         <div id="kanban-profile-picture">
-            <img src="../public/assets/{{selectedReward.profileReward}}.jpg" alt="profile picture">
+            <img style="border: 5px solid {{selectedReward.borderReward}};" src="../public/assets/{{selectedReward.profileReward}}.jpg">
         </div>
     </header>
 
@@ -49,7 +49,7 @@
         <h3 class="kanban-block-title" id="todo-title">To Do</h3>
         {{#each todoTasks}}
             <div class="kanban-task-block" data-id={{this._id}}>
-                <div class="task-block-top" style="height: 8px; background-color: {{this.color}};"></div>
+                <div class="task-block-top" style="height: 8px; background-color: {{this.color}}; filter: brightness({{this.brightness}});"></div>
                 <h3 class="task-name">{{this.name}}</h3>
                 <p class="task-description">{{this.description}}</p>
                 <p class="task-user">Assigned to: {{this.user}}</p>
@@ -61,7 +61,7 @@
         <h3 class="kanban-block-title" id="inprogress-title">In Progress</h3>
         {{#each inprogressTasks}}
             <div class="kanban-task-block" data-id={{this._id}}>
-                <div class="task-block-top" style="height: 8px; background-color: {{this.color}};"></div>
+                <div class="task-block-top" style="height: 8px; background-color: {{this.color}}; filter: brightness({{this.brightness}});"></div>
                 <h3 class="task-name">{{this.name}}</h3>
                 <p class="task-description">{{this.description}}</p>
                 <p class="task-user">Assigned to: {{this.user}}</p>
@@ -73,7 +73,7 @@
         <h3 class="kanban-block-title" id="inprogress-review">In Review</h3>
         {{#each inreviewTasks}}
             <div class="kanban-task-block" data-id={{this._id}}>
-                <div class="task-block-top" style="height: 8px; background-color: {{this.color}};"></div>
+                <div class="task-block-top" style="height: 8px; background-color: {{this.color}}; filter: brightness({{this.brightness}});"></div>
                 <h3 class="task-name">{{this.name}}</h3>
                 <p class="task-description">{{this.description}}</p>
                 <p class="task-user">Assigned to: {{this.user}}</p>

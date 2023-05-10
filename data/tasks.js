@@ -1,5 +1,5 @@
 import kanbanFxns from "./kanban.js";
-import { userFxns } from "./index.js";
+import userFxns from "./users.js";
 import validation from "../validation.js";
 import { kanbans } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
@@ -172,10 +172,10 @@ let exportedMethods = {
       else if (vote === 0) rejectedVotes++;
       else noVotes++;
     });
-    
+
     // novotes is at least 1 because of the user whose task it is doesn't vote
-    let draw = (noVotes === 1 && acceptedVotes === rejectedVotes);
-    let num_to_accept = kanban.groupUsers.length/2 - 1;
+    let draw = noVotes === 1 && acceptedVotes === rejectedVotes;
+    let num_to_accept = kanban.groupUsers.length / 2 - 1;
     if (acceptedVotes > num_to_accept || draw) {
       task.status = 3;
       kanban.completedTasks += 1;
@@ -185,11 +185,10 @@ let exportedMethods = {
         if (user.userId === task.assignment) {
           user.points += 5;
         }
-      }   
+      }
       // increments the completed task
       await userFxns.addCompletedTask(task.assignment);
-      
-    } else if(rejectedVotes > num_to_accept) {
+    } else if (rejectedVotes > num_to_accept) {
       task.status = 0;
       // resets the votes again since it's being moved back to todo
       users.forEach((user) => {

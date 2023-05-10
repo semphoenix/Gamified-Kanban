@@ -37,20 +37,34 @@ router
 
       for (const task of todoTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
+        const userKanban = await kanbanFxns.getUserinKanban(
+          req.session.user._id,
+          req.session.selectedKanbanId
+        );
         task.user = username;
         task.color = userColors[task.assignment];
+        task.brightness = userKanban.selectedReward.colorReward;
       }
 
       for (const task of inprogressTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
+        const userKanban = await kanbanFxns.getUserinKanban(
+          req.session.user._id,
+          req.session.selectedKanbanId
+        );
         task.user = username;
         task.color = userColors[task.assignment];
+        task.brightness = userKanban.selectedReward.colorReward;
       }
-
       for (const task of inreviewTasks) {
         const username = await userFxns.getUsernameById(task.assignment);
+        const userKanban = await kanbanFxns.getUserinKanban(
+          req.session.user._id,
+          req.session.selectedKanbanId
+        );
         task.user = username;
         task.color = userColors[task.assignment];
+        task.brightness = userKanban.selectedReward.colorReward;
         task.canVote =
           task.assignment !== req.session.user._id &&
           task.votingStatus[req.session.user._id] === -1;
@@ -175,7 +189,6 @@ router
       });
     }
   });
-
 
 router.route("/createTask").post(async (req, res) => {
   let { taskname, taskdescription, taskdifficulty } = req.body;
@@ -425,7 +438,9 @@ router.route("/completedTasks").get(async (req, res) => {
         voterUsers.push({ user: username, status: votingStatus });
       }
       completedTasks[i]["voterInfo"] = voterUsers;
-      completedTasks[i]["assignedUser"] = (await userFxns.getUserById(completedTasks[i].assignment)).username
+      completedTasks[i]["assignedUser"] = (
+        await userFxns.getUserById(completedTasks[i].assignment)
+      ).username;
       voterUsers = [];
     }
     return res.render("completed", {
