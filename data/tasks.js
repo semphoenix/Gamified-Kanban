@@ -229,4 +229,6 @@ let exportedMethods = {
     return someTasks;
   },
 };
+
 export default exportedMethods;
+
