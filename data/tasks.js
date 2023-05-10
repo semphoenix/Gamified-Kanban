@@ -1,5 +1,5 @@
 import kanbanFxns from "./kanban.js";
-import { userFxns } from "./index.js";
+import userFxns from "./users.js";
 import validation from "../validation.js";
 import { kanbans } from "../config/mongoCollections.js";
 import { ObjectId } from "mongodb";
@@ -24,6 +24,13 @@ let exportedMethods = {
     status = validation.checkStatus(status, "status");
     // voting status -- init each to -1
     let kanban = await kanbanFxns.getKanbanById(kanbanId);
+
+    if (!kanban)
+      throw "Error: there is no kanban with that Id";
+    
+    if (kanban.groupUsers.length < 2)
+      throw "Error: kanban must have at least two users before you can start adding tasks";
+    
     const votingStatus = kanban.groupUsers.reduce((uid, obj) => {
       Object.keys(obj).forEach((key) => {
         if (key === "userId") uid[obj[key]] = -1; // -1 means user hasn't voted yet
@@ -188,13 +195,22 @@ let exportedMethods = {
       }   
       // increments the completed task
       await userFxns.addCompletedTask(task.assignment);
-      
+
     } else if(rejectedVotes > num_to_accept) {
       task.status = 0;
       // resets the votes again since it's being moved back to todo
       users.forEach((user) => {
         task.votingStatus[user] = -1;
       });
+    }
+
+    let tenVotes = false;
+    if (kanban.completedTasks%10===0) {
+      for (let i = 0; i < kanban.groupUsers.length; i++) {
+        const user = kanban.groupUsers[i];
+        user.points += 10;
+      }   
+      tenVotes = true;
     }
 
     const updateInfo = {
@@ -209,7 +225,7 @@ let exportedMethods = {
       { returnDocument: "after" }
     );
     if (res.lastErrorObject.n === 0) throw "Error: castVote failed";
-    return task;
+    return {task: task, tenVotes: tenVotes};
   },
   /**
    * This will be used to retrieve all tasks with certain status in Kanban.

@@ -459,7 +459,7 @@ router.route("/vote/:taskId").patch(async (req, res) => {
   }
 
   try {
-    const task = await taskFxns.castVote(userId, taskId, vote);
+    const { tenVotes, task } = await taskFxns.castVote(userId, taskId, vote);
     let voterIds = Object.keys(task.votingStatus);
     let voterUsers = [];
     for (let j = 0; j < voterIds.length; j++) {
@@ -485,8 +485,10 @@ router.route("/vote/:taskId").patch(async (req, res) => {
       completed: task.status === 3,
       rejected: task.status === 0,
       votingStatus: voterUsers,
+      tenVotes: tenVotes
     });
   } catch (e) {
+    console.log(e);
     return res.status(404).render("error", {
       title: "Error Page",
       error: e,
@@ -517,7 +519,7 @@ router.route("/changeStatus/:taskId").patch(async (req, res) => {
   }
 
   try {
-    const task = await taskFxns.changeStatus(taskId, +req.body.status);
+    const task = await taskFxns.changeStatus(taskId, status);
     let userId = req.session.user._id;
     const canVote =
       task.assignment !== userId &&
