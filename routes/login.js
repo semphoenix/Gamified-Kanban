@@ -145,4 +145,9 @@ router.get("/logout", async (req, res) => {
   res.status(200).redirect("/login");
 });
 
+router
+  .get("/landing", async (req, res) => {
+    res.render("landingPage")
+  })
+
 export default router;
