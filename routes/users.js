@@ -156,7 +156,7 @@ router
         totalRewards: req.session.user.totalRewards
       })
     } catch(e){
-      return res.status(400).render("error", {
+      return res.status(400).render("accounts", {
         title: "Accounts Page",
         error: e, 
         totalCompletedTasks: req.session.user.completedTasks, 
@@ -168,28 +168,44 @@ router
 router
   .route("/createKanban")
   .get(async (req, res) => {
+    let user;
     try {
       if (!req.session.user)
         throw "Router: /createKanban ~ User param not attached to session cookie!";
+    } catch (e) {
+      return res.status(400).render("error", { title: "createKanban", error: e, link:"/user/createKanban", buttonTitle: "Back to Kanban!"});
+    }
+
+    try{
+      user = await userFxns.getUserById(req.session.user._id);
       if (!req.session.selectedKanbanId){
         if(req.session.user.groups.length === 0) throw "Router: /createKanban ~ You need to join a group! Join a group or create your own"
         req.session.selectedKanbanId = req.session.user.groups[0]
       }
-      req.session.selectedKanbanId = validation.checkId(req.session.selectedKanbanId, "Selected Kanban Id")
-      req.session.user._id = validation.checkId(req.session.user._id, "User Id");
-    } catch (e) {
-      return res.status(400).render("error", { title: "Error Page", error: e });
-    }
-
-    try {
-      const user = await userFxns.getUserById(req.session.user._id); //Not used
-      res.render("createKanban", {
+    } catch(e){
+      return res.status(400).render("createKanban", {
         title: "Create/Join Group Page",
         userId: req.session.user._id,
         username: user.username,
-      }); //Change this to render when we have pages
-    } catch (e) {
-      res.status(500).render("error", { title: "Error Page", error: e });
+        error: e
+      });
     }
-  });
+     
+    try{
+      req.session.selectedKanbanId = validation.checkId(req.session.selectedKanbanId, "Selected Kanban Id")
+      req.session.user._id = validation.checkId(req.session.user._id, "User Id");
+
+      return res.render("createKanban", {
+        title: "Create/Join Group Page",
+        userId: req.session.user._id,
+        username: user.username,
+      });
+    } catch(e) {
+      return res.status(400).render("error", {
+        title: "Create/Join Group Page",
+        error: e,
+        link: "/user/createKanban",
+        buttonTitle: "Back to Kanban!"
+      })
+  }});
 export default router;
