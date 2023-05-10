@@ -275,7 +275,7 @@ let exportedMethods = {
         throw "Error: Invalid reward";
       }
     } else if (rewardType === "colorReward") {
-      reward = parseInt(reward);
+      reward = parseFloat(reward);
       if (!validRewards || (!validRewards.includes(reward) && reward !== 0.5)) {
         throw "Error: Invalid reward";
       }
